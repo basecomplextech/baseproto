@@ -14,7 +14,23 @@ import (
 func EncodeString(b buffer.Buffer, s string) (int, error) {
 	size := len(s)
 	if size > format.MaxSize {
-		return 0, fmt.Errorf("encode: string too large, max size=%d, actual size=%d", format.MaxSize, size)
+		return 0, fmt.Errorf("encode: string too large, max size=%d, actual size=%d",
+			format.MaxSize, size)
+	}
+
+	n := size + 1 // plus zero byte
+	p := b.Grow(n)
+	copy(p, s)
+
+	n += encodeSizeType(b, uint32(size), format.TypeString)
+	return n, nil
+}
+
+func EncodeStringBytes(b buffer.Buffer, s []byte) (int, error) {
+	size := len(s)
+	if size > format.MaxSize {
+		return 0, fmt.Errorf("encode: string too large, max size=%d, actual size=%d",
+			format.MaxSize, size)
 	}
 
 	n := size + 1 // plus zero byte

@@ -28,12 +28,13 @@ const (
 	KindUint32
 	KindUint64
 
-	KindBin64
-	KindBin128
-	KindBin256
-
 	KindFloat32
 	KindFloat64
+
+	KindBin64
+	KindBin128
+	KindBin192
+	KindBin256
 
 	KindBytes
 	KindString
@@ -82,17 +83,19 @@ func parseKind(pkind syntax.Kind) (Kind, error) {
 	case syntax.KindUint64:
 		return KindUint64, nil
 
-	case syntax.KindBin64:
-		return KindBin64, nil
-	case syntax.KindBin128:
-		return KindBin128, nil
-	case syntax.KindBin256:
-		return KindBin256, nil
-
 	case syntax.KindFloat32:
 		return KindFloat32, nil
 	case syntax.KindFloat64:
 		return KindFloat64, nil
+
+	case syntax.KindBin64:
+		return KindBin64, nil
+	case syntax.KindBin128:
+		return KindBin128, nil
+	case syntax.KindBin192:
+		return KindBin128, nil
+	case syntax.KindBin256:
+		return KindBin256, nil
 
 	case syntax.KindBytes:
 		return KindBytes, nil

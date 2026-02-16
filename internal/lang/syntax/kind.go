@@ -26,6 +26,7 @@ const (
 
 	KindBin64
 	KindBin128
+	KindBin192
 	KindBin256
 
 	KindBytes
@@ -72,6 +73,8 @@ func GetKind(type_ string) Kind {
 		return KindBin64
 	case "bin128":
 		return KindBin128
+	case "bin192":
+		return KindBin192
 	case "bin256":
 		return KindBin256
 
@@ -121,6 +124,8 @@ func (k Kind) String() string {
 		return "bin64"
 	case KindBin128:
 		return "bin128"
+	case KindBin192:
+		return "bin192"
 	case KindBin256:
 		return "bin256"
 

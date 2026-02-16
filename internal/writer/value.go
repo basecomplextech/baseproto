@@ -166,6 +166,18 @@ func (w ValueWriter) Bin128(v bin.Bin128) error {
 	return w.w.pushData(start, end)
 }
 
+func (w ValueWriter) Bin192(v bin.Bin192) error {
+	if w.w.err != nil {
+		return w.w.err
+	}
+
+	start := w.w.buf.Len()
+	encode.EncodeBin192(w.w.buf, v)
+	end := w.w.buf.Len()
+
+	return w.w.pushData(start, end)
+}
+
 func (w ValueWriter) Bin256(v bin.Bin256) error {
 	if w.w.err != nil {
 		return w.w.err
@@ -227,6 +239,20 @@ func (w ValueWriter) String(v string) error {
 
 	start := w.w.buf.Len()
 	if _, err := encode.EncodeString(w.w.buf, v); err != nil {
+		return w.w.fail(err)
+	}
+	end := w.w.buf.Len()
+
+	return w.w.pushData(start, end)
+}
+
+func (w ValueWriter) StringBytes(v []byte) error {
+	if w.w.err != nil {
+		return w.w.err
+	}
+
+	start := w.w.buf.Len()
+	if _, err := encode.EncodeStringBytes(w.w.buf, v); err != nil {
 		return w.w.fail(err)
 	}
 	end := w.w.buf.Len()

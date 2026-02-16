@@ -31,6 +31,13 @@ func EncodeBin128Bytes(b buffer.Buffer, v bin.Bin128) ([]byte, int, error) {
 	return p, 17, nil
 }
 
+func EncodeBin192(b buffer.Buffer, v bin.Bin192) (int, error) {
+	p := b.Grow(25)
+	v.MarshalTo(p)
+	p[24] = byte(format.TypeBin192)
+	return 25, nil
+}
+
 func EncodeBin256(b buffer.Buffer, v bin.Bin256) (int, error) {
 	p := b.Grow(33)
 	v.MarshalTo(p)

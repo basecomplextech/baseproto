@@ -46,6 +46,8 @@ func typeName(typ *model.Type) string {
 		return "bin.Bin64"
 	case model.KindBin128:
 		return "bin.Bin128"
+	case model.KindBin192:
+		return "bin.Bin192"
 	case model.KindBin256:
 		return "bin.Bin256"
 
@@ -197,17 +199,19 @@ func typeDecodeFunc(typ *model.Type) string {
 	case model.KindUint64:
 		return "spec.DecodeUint64"
 
-	case model.KindBin64:
-		return "spec.DecodeBin64"
-	case model.KindBin128:
-		return "spec.DecodeBin128"
-	case model.KindBin256:
-		return "spec.DecodeBin256"
-
 	case model.KindFloat32:
 		return "spec.DecodeFloat32"
 	case model.KindFloat64:
 		return "spec.DecodeFloat64"
+
+	case model.KindBin64:
+		return "spec.DecodeBin64"
+	case model.KindBin128:
+		return "spec.DecodeBin128"
+	case model.KindBin192:
+		return "spec.DecodeBin192"
+	case model.KindBin256:
+		return "spec.DecodeBin256"
 
 	case model.KindBytes:
 		return "spec.DecodeBytes"

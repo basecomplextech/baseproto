@@ -109,6 +109,13 @@ func ParseValue(b []byte) (_ Value, n int, err error) {
 	return b[len(b)-n:], n, nil
 }
 
+// Clone returns a head-allocated copy of the value.
+func (v Value) Clone() Value {
+	c := make([]byte, len(v))
+	copy(c, v)
+	return c
+}
+
 // Types
 
 // Type decodes and returns a type or undefined.
@@ -266,6 +273,18 @@ func (v Value) Bin128() bin.Bin128 {
 // Bin128Err decodes and returns a bin128 or an error.
 func (v Value) Bin128Err() (bin.Bin128, error) {
 	p, _, err := decode.DecodeBin128(v)
+	return p, err
+}
+
+// Bin192 decodes and returns a bin192 or a zero value.
+func (v Value) Bin192() bin.Bin192 {
+	p, _, _ := decode.DecodeBin192(v)
+	return p
+}
+
+// Bin192Err decodes and returns a bin192 or an error.
+func (v Value) Bin192Err() (bin.Bin192, error) {
+	p, _, err := decode.DecodeBin192(v)
 	return p, err
 }
 

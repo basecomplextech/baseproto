@@ -97,6 +97,13 @@ func DecodeTypeSize(b []byte) (format.Type, int, error) {
 		}
 		return t, n + m, nil
 
+	case format.TypeBin192:
+		m := 24
+		if len(v) < m {
+			return 0, 0, fmt.Errorf("decode bin192: invalid data")
+		}
+		return t, n + m, nil
+
 	case format.TypeBin256:
 		m := 32
 		if len(v) < m {

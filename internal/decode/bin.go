@@ -78,6 +78,39 @@ func DecodeBin128(b []byte) (_ bin.Bin128, size int, err error) {
 	return v, size, nil
 }
 
+func DecodeBin192(b []byte) (_ bin.Bin192, size int, err error) {
+	if len(b) == 0 {
+		return bin.Bin192{}, 0, nil
+	}
+
+	typ, n := decodeType(b)
+	if n < 0 {
+		err = errors.New("decode bin192: invalid data")
+		return
+	}
+	if typ != format.TypeBin192 {
+		err = fmt.Errorf("decode bin192: invalid type, type=%v", typ)
+		return
+	}
+
+	size = n
+	start := len(b) - (n + 24)
+	end := len(b) - n
+
+	if start < 0 {
+		err = fmt.Errorf("decode bin192: invalid data")
+		return
+	}
+
+	v, err := bin.Parse192(b[start:end])
+	if err != nil {
+		return
+	}
+
+	size += 24
+	return v, size, nil
+}
+
 func DecodeBin256(b []byte) (_ bin.Bin256, size int, err error) {
 	if len(b) == 0 {
 		return bin.Bin256{}, 0, nil

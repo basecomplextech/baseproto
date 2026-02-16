@@ -58,6 +58,27 @@ func TestDecodeBin128__should_decode_bin128(t *testing.T) {
 	assert.Equal(t, size, len(p))
 }
 
+func TestDecodeBin192__should_decode_bin192(t *testing.T) {
+	b := buffer.New()
+	v := bin.Random192()
+	encode.EncodeBin192(b, v)
+	p := b.Bytes()
+
+	v1, n, err := DecodeBin192(p)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, n, b.Len())
+	assert.Equal(t, v, v1)
+
+	typ, size, err := DecodeTypeSize(p)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, format.TypeBin192, typ)
+	assert.Equal(t, size, len(p))
+}
+
 func TestDecodeBin256__should_decode_bin256(t *testing.T) {
 	b := buffer.New()
 	v := bin.Random256()
