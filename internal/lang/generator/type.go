@@ -292,6 +292,8 @@ func typeWriteFunc(typ *model.Type) string {
 		return "spec.EncodeBin64"
 	case model.KindBin128:
 		return "spec.EncodeBin128"
+	case model.KindBin192:
+		return "spec.EncodeBin192"
 	case model.KindBin256:
 		return "spec.EncodeBin256"
 

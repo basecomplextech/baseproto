@@ -191,6 +191,13 @@ func (f FieldWriter) Bin128(v bin.Bin128) error {
 	return f.w.field(f.tag)
 }
 
+func (f FieldWriter) Bin192(v bin.Bin192) error {
+	if err := f.w.Value().Bin192(v); err != nil {
+		return err
+	}
+	return f.w.field(f.tag)
+}
+
 func (f FieldWriter) Bin256(v bin.Bin256) error {
 	if err := f.w.Value().Bin256(v); err != nil {
 		return err

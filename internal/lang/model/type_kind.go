@@ -93,7 +93,7 @@ func parseKind(pkind syntax.Kind) (Kind, error) {
 	case syntax.KindBin128:
 		return KindBin128, nil
 	case syntax.KindBin192:
-		return KindBin128, nil
+		return KindBin192, nil
 	case syntax.KindBin256:
 		return KindBin256, nil
 

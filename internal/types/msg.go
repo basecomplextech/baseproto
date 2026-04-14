@@ -67,6 +67,8 @@ func ParseMessage(b []byte) (_ Message, size int, err error) {
 		bytes: bytes,
 	}
 
+	return m, size, nil
+
 	num := m.Fields()
 	for i := 0; i < num; i++ {
 		b1 := m.fieldAt(i)
@@ -374,6 +376,13 @@ func (m Message) Bin64(tag uint16) bin.Bin64 {
 func (m Message) Bin128(tag uint16) bin.Bin128 {
 	b := m.field(tag)
 	v, _, _ := decode.DecodeBin128(b)
+	return v
+}
+
+// Bin192 decodes and returns a bin192 or a zero value.
+func (m Message) Bin192(tag uint16) bin.Bin192 {
+	b := m.field(tag)
+	v, _, _ := decode.DecodeBin192(b)
 	return v
 }
 

@@ -15,6 +15,7 @@ var (
 	EncodeBin64       = encode.EncodeBin64
 	EncodeBin128      = encode.EncodeBin128
 	EncodeBin128Bytes = encode.EncodeBin128Bytes
+	EncodeBin192      = encode.EncodeBin192
 	EncodeBin256      = encode.EncodeBin256
 
 	EncodeBytes = encode.EncodeBytes

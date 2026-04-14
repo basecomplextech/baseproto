@@ -15,6 +15,7 @@ var (
 
 	DecodeBin64  = decode.DecodeBin64
 	DecodeBin128 = decode.DecodeBin128
+	DecodeBin192 = decode.DecodeBin192
 	DecodeBin256 = decode.DecodeBin256
 
 	DecodeBytes = decode.DecodeBytes

@@ -77,6 +77,8 @@ func ParseValue(b []byte) (_ Value, n int, err error) {
 		_, n, err = decode.DecodeBin64(b)
 	case format.TypeBin128:
 		_, n, err = decode.DecodeBin128(b)
+	case format.TypeBin192:
+		_, n, err = decode.DecodeBin192(b)
 	case format.TypeBin256:
 		_, n, err = decode.DecodeBin256(b)
 

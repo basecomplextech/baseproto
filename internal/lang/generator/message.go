@@ -129,6 +129,8 @@ func (w *messageWriter) field(def *model.Definition, field *model.Field) error {
 			w.writef(`return m.msg.Bin64(%d)`, tag)
 		case model.KindBin128:
 			w.writef(`return m.msg.Bin128(%d)`, tag)
+		case model.KindBin192:
+			w.writef(`return m.msg.Bin192(%d)`, tag)
 		case model.KindBin256:
 			w.writef(`return m.msg.Bin256(%d)`, tag)
 
@@ -365,6 +367,8 @@ func (w *messageWriter) writer_field(def *model.Definition, field *model.Field) 
 			w.writef(`w.w.Field(%d).Bin64(v)`, tag)
 		case model.KindBin128:
 			w.writef(`w.w.Field(%d).Bin128(v)`, tag)
+		case model.KindBin192:
+			w.writef(`w.w.Field(%d).Bin192(v)`, tag)
 		case model.KindBin256:
 			w.writef(`w.w.Field(%d).Bin256(v)`, tag)
 
