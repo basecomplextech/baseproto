@@ -6,17 +6,17 @@ package baserpc
 
 import (
 	"github.com/basecomplextech/baselibrary/async"
-	"github.com/basecomplextech/baseproto/mpx"
+	"github.com/basecomplextech/baseproto/basemtp"
 )
 
-type TestContext = mpx.TestContext
+type TestContext = basemtp.TestContext
 
 // TestNewContext returns a test context with a test connection.
 func TestNewContext() TestContext {
-	return mpx.TestNewContext()
+	return basemtp.TestNewContext()
 }
 
 // TestNextContext returns a test context with a test connection.
 func TestNextContext(super async.Context) TestContext {
-	return mpx.TestNextContext(super)
+	return basemtp.TestNextContext(super)
 }

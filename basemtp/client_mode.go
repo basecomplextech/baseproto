@@ -2,18 +2,16 @@
 // Use of this software is governed by the MIT License
 // that can be found in the LICENSE file.
 
-package baserpc
-
-import "github.com/basecomplextech/baseproto/basemtp"
+package basemtp
 
 // ClientMode specifies how the client connects to the server.
-type ClientMode = basemtp.ClientMode
+type ClientMode int
 
 const (
 	// ClientMode_OnDemand connects to the server on demand, does not reconnect on errors.
-	ClientMode_OnDemand = basemtp.ClientMode_OnDemand
+	ClientMode_OnDemand ClientMode = iota
 
 	// ClientMode_AutoConnect automatically connects and reconnects to the server.
 	// The client reconnects with exponential backoff on errors.
-	ClientMode_AutoConnect = basemtp.ClientMode_AutoConnect
+	ClientMode_AutoConnect
 )

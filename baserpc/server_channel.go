@@ -13,7 +13,7 @@ import (
 	"github.com/basecomplextech/baselibrary/pools"
 	"github.com/basecomplextech/baselibrary/ref"
 	"github.com/basecomplextech/baselibrary/status"
-	"github.com/basecomplextech/baseproto/mpx"
+	"github.com/basecomplextech/baseproto/basemtp"
 	"github.com/basecomplextech/baseproto/proto/prpc"
 )
 
@@ -70,8 +70,8 @@ type serverChannel struct {
 }
 
 type serverChannelState struct {
-	ch     mpx.Channel // unowned
-	method []byte      // call method names, separated by '/'
+	ch     basemtp.Channel // unowned
+	method []byte          // call method names, separated by '/'
 
 	// send
 	sendMu      sync.Mutex
@@ -87,7 +87,7 @@ type serverChannelState struct {
 	recvError  status.Status
 }
 
-func newServerChannel(ch mpx.Channel, req prpc.Request) *serverChannel {
+func newServerChannel(ch basemtp.Channel, req prpc.Request) *serverChannel {
 	s := acquireServerState()
 	s.ch = ch
 	s.method = requestMethod(s.method, req)
@@ -120,7 +120,7 @@ func (ch *serverChannel) Method() string {
 func (ch *serverChannel) Context() Context {
 	s, ok := ch.acquire()
 	if !ok {
-		return mpx.ClosedContext()
+		return basemtp.ClosedContext()
 	}
 	defer ch.release()
 

@@ -12,7 +12,7 @@ import (
 	"github.com/basecomplextech/baselibrary/ref"
 	"github.com/basecomplextech/baselibrary/status"
 	"github.com/basecomplextech/baseproto"
-	"github.com/basecomplextech/baseproto/mpx"
+	"github.com/basecomplextech/baseproto/basemtp"
 	"github.com/basecomplextech/baseproto/proto/prpc"
 )
 
@@ -54,12 +54,12 @@ type Client interface {
 	// Internal
 
 	// Unwrap returns the internal client.
-	Unwrap() mpx.Client
+	Unwrap() basemtp.Client
 }
 
 // NewClient returns a new client.
 func NewClient(addr string, mode ClientMode, logger logging.Logger, opts Options) Client {
-	super := mpx.NewClient(addr, mode, logger, opts)
+	super := basemtp.NewClient(addr, mode, logger, opts)
 	return newClient(super, logger)
 }
 
@@ -67,7 +67,7 @@ func NewClient(addr string, mode ClientMode, logger logging.Logger, opts Options
 func NewClientDialer(addr string, mode ClientMode, dialer *net.Dialer, logger logging.Logger,
 	opts Options) Client {
 
-	super := mpx.NewClientDialer(addr, mode, dialer, logger, opts)
+	super := basemtp.NewClientDialer(addr, mode, dialer, logger, opts)
 	return newClient(super, logger)
 }
 
@@ -76,11 +76,11 @@ func NewClientDialer(addr string, mode ClientMode, dialer *net.Dialer, logger lo
 var _ Client = (*client)(nil)
 
 type client struct {
-	client mpx.Client
+	client basemtp.Client
 	logger logging.Logger
 }
 
-func newClient(super mpx.Client, logger logging.Logger) *client {
+func newClient(super basemtp.Client, logger logging.Logger) *client {
 	return &client{
 		client: super,
 		logger: logger,
@@ -238,7 +238,7 @@ func (c *client) RequestOneway(ctx async.Context, req prpc.Request) status.Statu
 // Internal
 
 // Unwrap returns the internal client.
-func (c *client) Unwrap() mpx.Client {
+func (c *client) Unwrap() basemtp.Client {
 	return c.client
 }
 

@@ -15,7 +15,7 @@ import (
 	"github.com/basecomplextech/baselibrary/ref"
 	"github.com/basecomplextech/baselibrary/status"
 	"github.com/basecomplextech/baseproto"
-	"github.com/basecomplextech/baseproto/mpx"
+	"github.com/basecomplextech/baseproto/basemtp"
 	"github.com/basecomplextech/baseproto/proto/prpc"
 )
 
@@ -71,7 +71,7 @@ type channel struct {
 }
 
 type channelState struct {
-	ch     mpx.Channel
+	ch     basemtp.Channel
 	logger logging.Logger
 	method []byte
 
@@ -95,7 +95,7 @@ type channelState struct {
 	resultSt status.Status
 }
 
-func newChannel(ch mpx.Channel, logger logging.Logger) *channel {
+func newChannel(ch basemtp.Channel, logger logging.Logger) *channel {
 	s := acquireState()
 	s.ch = ch
 	s.logger = logger
@@ -127,7 +127,7 @@ func (ch *channel) Method() string {
 func (ch *channel) Context() Context {
 	s, ok := ch.acquire()
 	if !ok {
-		return mpx.ClosedContext()
+		return basemtp.ClosedContext()
 	}
 	defer ch.release()
 

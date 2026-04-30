@@ -11,7 +11,7 @@ import (
 	"github.com/basecomplextech/baselibrary/logging"
 	"github.com/basecomplextech/baselibrary/ref"
 	"github.com/basecomplextech/baselibrary/status"
-	"github.com/basecomplextech/baseproto/mpx"
+	"github.com/basecomplextech/baseproto/basemtp"
 	"github.com/basecomplextech/baseproto/proto/prpc"
 )
 
@@ -37,7 +37,7 @@ func NewServer(address string, handler Handler, logger logging.Logger, opts Opti
 // internal
 
 type server struct {
-	mpx.Server
+	basemtp.Server
 
 	handler Handler
 	logger  logging.Logger
@@ -48,12 +48,12 @@ func newServer(address string, handler Handler, logger logging.Logger, opts Opti
 		handler: handler,
 		logger:  logger,
 	}
-	s.Server = mpx.NewServer(address, s, logger, opts)
+	s.Server = basemtp.NewServer(address, s, logger, opts)
 	return s
 }
 
 // HandleChannel handles an incoming TCP channel.
-func (s *server) HandleChannel(ctx Context, ch mpx.Channel) (st status.Status) {
+func (s *server) HandleChannel(ctx Context, ch basemtp.Channel) (st status.Status) {
 	// Receive message
 	b, st := ch.Receive(ctx)
 	if !st.OK() {

@@ -16,13 +16,13 @@ import (
 	"github.com/basecomplextech/baselibrary/status"
 	"github.com/basecomplextech/baselibrary/tests"
 	"github.com/basecomplextech/baseproto"
-	"github.com/basecomplextech/baseproto/mpx"
+	"github.com/basecomplextech/baseproto/basemtp"
 	"github.com/stretchr/testify/assert"
 )
 
 func testClient(t tests.T, s *server) *client {
 	addr := s.Address()
-	super := mpx.NewClient(addr, ClientMode_OnDemand, s.logger, s.Server.Options())
+	super := basemtp.NewClient(addr, ClientMode_OnDemand, s.logger, s.Server.Options())
 	return newClient(super, s.logger)
 }
 

@@ -7,7 +7,7 @@ package baserpc
 import (
 	"github.com/basecomplextech/baselibrary/alloc"
 	"github.com/basecomplextech/baselibrary/status"
-	"github.com/basecomplextech/baseproto/mpx"
+	"github.com/basecomplextech/baseproto/basemtp"
 )
 
 const (
@@ -16,14 +16,14 @@ const (
 )
 
 type (
-	// Context is an RPC context, which is an alias for mpx.Context.
-	Context = mpx.Context
+	// Context is an RPC context, which is an alias for basemtp.Context.
+	Context = basemtp.Context
 
-	// ConnContext is an RPC connection context, which is an alias for mpx.ConnContext.
-	ConnContext = mpx.ConnContext
+	// ConnContext is an RPC connection context, which is an alias for basemtp.ConnContext.
+	ConnContext = basemtp.ConnContext
 
-	// Options is RPC options, which are a type alias for mpx.Options.
-	Options = mpx.Options
+	// Options is RPC options, which are a type alias for basemtp.Options.
+	Options = basemtp.Options
 )
 
 // SkipResponse instructs the server to skip a response for a oneway method.
@@ -34,7 +34,7 @@ var SkipResponse = status.Status{
 
 // Default returns default options.
 func Default() Options {
-	return mpx.Default()
+	return basemtp.Default()
 }
 
 // NewBuffer returns a new alloc.Buffer.
