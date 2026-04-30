@@ -12,14 +12,14 @@ import (
 	"github.com/basecomplextech/baselibrary/bin"
 	"github.com/basecomplextech/baselibrary/logging"
 	"github.com/basecomplextech/baselibrary/tests"
-	"github.com/basecomplextech/baseproto/rpc"
+	"github.com/basecomplextech/baseproto/baserpc"
 	"github.com/stretchr/testify/assert"
 )
 
-func testServer(t tests.T, logger logging.Logger, service Service) rpc.Server {
-	opts := rpc.Default()
+func testServer(t tests.T, logger logging.Logger, service Service) baserpc.Server {
+	opts := baserpc.Default()
 	handler := NewServiceHandler(service)
-	server := rpc.NewServer("localhost:0", handler, logger, opts)
+	server := baserpc.NewServer("localhost:0", handler, logger, opts)
 
 	st := server.Start()
 	if !st.OK() {
@@ -44,9 +44,9 @@ func testServer(t tests.T, logger logging.Logger, service Service) rpc.Server {
 	return server
 }
 
-func testClient(t tests.T, logger logging.Logger, server rpc.Server) ServiceClient {
+func testClient(t tests.T, logger logging.Logger, server baserpc.Server) ServiceClient {
 	address := server.Address()
-	client := rpc.NewClient(address, rpc.ClientMode_OnDemand, logger, server.Options())
+	client := baserpc.NewClient(address, baserpc.ClientMode_OnDemand, logger, server.Options())
 	return NewServiceClient(client)
 }
 

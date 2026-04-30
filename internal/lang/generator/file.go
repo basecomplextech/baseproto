@@ -33,7 +33,7 @@ func (w *fileWriter) file(file *model.File) error {
 	w.line(`"github.com/basecomplextech/baseproto"`)
 
 	if !w.skipRPC {
-		w.line(`"github.com/basecomplextech/baseproto/rpc"`)
+		w.line(`"github.com/basecomplextech/baseproto/baserpc"`)
 		w.line(`"github.com/basecomplextech/baseproto/proto/prpc"`)
 	}
 

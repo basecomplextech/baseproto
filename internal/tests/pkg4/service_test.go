@@ -9,8 +9,8 @@ import (
 	"github.com/basecomplextech/baselibrary/bin"
 	"github.com/basecomplextech/baselibrary/ref"
 	"github.com/basecomplextech/baselibrary/status"
+	"github.com/basecomplextech/baseproto/baserpc"
 	"github.com/basecomplextech/baseproto/internal/tests/pkg1"
-	"github.com/basecomplextech/baseproto/rpc"
 )
 
 var _ Service = (*testService)(nil)
@@ -21,25 +21,25 @@ func newTestService() *testService {
 	return &testService{}
 }
 
-func (s *testService) Subservice(ctx rpc.Context, req ServiceSubserviceRequest,
-	next rpc.NextHandler[Subservice]) status.Status {
+func (s *testService) Subservice(ctx baserpc.Context, req ServiceSubserviceRequest,
+	next baserpc.NextHandler[Subservice]) status.Status {
 	s1 := &testSubservice{}
 	return next.Handle(s1)
 }
 
-func (s *testService) Method(ctx rpc.Context) status.Status {
+func (s *testService) Method(ctx baserpc.Context) status.Status {
 	return status.OK
 }
 
-func (s *testService) Method0(ctx rpc.ConnContext, req ServiceMethod0Request) status.Status {
+func (s *testService) Method0(ctx baserpc.ConnContext, req ServiceMethod0Request) status.Status {
 	return status.OK
 }
 
-func (s *testService) Method1(ctx rpc.Context, req ServiceMethod1Request) status.Status {
+func (s *testService) Method1(ctx baserpc.Context, req ServiceMethod1Request) status.Status {
 	return status.OK
 }
 
-func (s *testService) Method2(ctx rpc.Context, req ServiceMethod2Request) (ref.R[ServiceMethod2Response], status.Status) {
+func (s *testService) Method2(ctx baserpc.Context, req ServiceMethod2Request) (ref.R[ServiceMethod2Response], status.Status) {
 	w := NewServiceMethod2ResponseWriter()
 	w.A(req.A())
 	w.B(req.B())
@@ -51,7 +51,7 @@ func (s *testService) Method2(ctx rpc.Context, req ServiceMethod2Request) (ref.R
 	return ref.NewNoop(resp), status.OK
 }
 
-func (s *testService) Method3(ctx rpc.Context, req Request) (ref.R[Response], status.Status) {
+func (s *testService) Method3(ctx baserpc.Context, req Request) (ref.R[Response], status.Status) {
 	msg := req.Msg()
 
 	buf := alloc.NewBuffer()
@@ -65,7 +65,7 @@ func (s *testService) Method3(ctx rpc.Context, req Request) (ref.R[Response], st
 	return ref.NewFreer(resp, buf), status.OK
 }
 
-func (s *testService) Method4(ctx rpc.Context, req ServiceMethod4Request) (ref.R[ServiceMethod4Response], status.Status) {
+func (s *testService) Method4(ctx baserpc.Context, req ServiceMethod4Request) (ref.R[ServiceMethod4Response], status.Status) {
 	w := NewServiceMethod4ResponseWriter()
 	w.Ok(true)
 
@@ -76,7 +76,7 @@ func (s *testService) Method4(ctx rpc.Context, req ServiceMethod4Request) (ref.R
 	return ref.NewNoop(resp), status.OK
 }
 
-func (s *testService) Method10(ctx rpc.Context) (ref.R[ServiceMethod10Response], status.Status) {
+func (s *testService) Method10(ctx baserpc.Context) (ref.R[ServiceMethod10Response], status.Status) {
 	w := NewServiceMethod10ResponseWriter()
 	w.A00(true)
 	w.A01(1)
@@ -99,7 +99,7 @@ func (s *testService) Method10(ctx rpc.Context) (ref.R[ServiceMethod10Response],
 	return ref.NewNoop(resp), status.OK
 }
 
-func (s *testService) Method11(ctx rpc.Context) (ref.R[ServiceMethod11Response], status.Status) {
+func (s *testService) Method11(ctx baserpc.Context) (ref.R[ServiceMethod11Response], status.Status) {
 	w := NewServiceMethod11ResponseWriter()
 	w.A50("hello")
 	w.A51([]byte("world"))
@@ -112,7 +112,7 @@ func (s *testService) Method11(ctx rpc.Context) (ref.R[ServiceMethod11Response],
 	return ref.NewNoop(resp), status.OK
 }
 
-func (s *testService) Method20(ctx rpc.Context, ch ServiceMethod20Channel) (ref.R[ServiceMethod20Response], status.Status) {
+func (s *testService) Method20(ctx baserpc.Context, ch ServiceMethod20Channel) (ref.R[ServiceMethod20Response], status.Status) {
 	req, st := ch.Request()
 	if !st.OK() {
 		return nil, st
@@ -130,7 +130,7 @@ func (s *testService) Method20(ctx rpc.Context, ch ServiceMethod20Channel) (ref.
 	return ref.NewNoop(resp), status.OK
 }
 
-func (s *testService) Method21(ctx rpc.Context, ch ServiceMethod21Channel) (ref.R[Response], status.Status) {
+func (s *testService) Method21(ctx baserpc.Context, ch ServiceMethod21Channel) (ref.R[Response], status.Status) {
 	req, st := ch.Request()
 	if !st.OK() {
 		return nil, st
@@ -151,7 +151,7 @@ func (s *testService) Method21(ctx rpc.Context, ch ServiceMethod21Channel) (ref.
 	return ref.NewNoop(resp), status.OK
 }
 
-func (s *testService) Method22(ctx rpc.Context, ch ServiceMethod22Channel) (ref.R[Response], status.Status) {
+func (s *testService) Method22(ctx baserpc.Context, ch ServiceMethod22Channel) (ref.R[Response], status.Status) {
 	req, st := ch.Request()
 	if !st.OK() {
 		return nil, st
@@ -180,7 +180,7 @@ func (s *testService) Method22(ctx rpc.Context, ch ServiceMethod22Channel) (ref.
 	return ref.NewNoop(resp), status.OK
 }
 
-func (s *testService) Method23(ctx rpc.Context, ch ServiceMethod23Channel) (ref.R[Response], status.Status) {
+func (s *testService) Method23(ctx baserpc.Context, ch ServiceMethod23Channel) (ref.R[Response], status.Status) {
 	req, st := ch.Request()
 	if !st.OK() {
 		return nil, st
@@ -218,7 +218,7 @@ var _ Subservice = (*testSubservice)(nil)
 
 type testSubservice struct{}
 
-func (s *testSubservice) Hello(ctx rpc.Context, req SubserviceHelloRequest) (
+func (s *testSubservice) Hello(ctx baserpc.Context, req SubserviceHelloRequest) (
 	ref.R[SubserviceHelloResponse], status.Status) {
 	msg := req.Msg().Clone()
 
