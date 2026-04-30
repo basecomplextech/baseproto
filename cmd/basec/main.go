@@ -10,7 +10,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/basecomplextech/baseproto/internal/lang"
+	"github.com/basecomplextech/baseproto/basec"
 	"github.com/urfave/cli/v2"
 )
 
@@ -58,8 +58,8 @@ func main() {
 					skipRPC := x.Bool("skip-rpc")
 
 					// Generate
-					baseproto := lang.New(imports, skipRPC)
-					return baseproto.Generate(src, dst)
+					compiler := basec.New(imports, skipRPC)
+					return compiler.Generate(src, dst)
 				},
 			},
 		},
