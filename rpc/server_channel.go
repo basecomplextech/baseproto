@@ -13,8 +13,8 @@ import (
 	"github.com/basecomplextech/baselibrary/pools"
 	"github.com/basecomplextech/baselibrary/ref"
 	"github.com/basecomplextech/baselibrary/status"
-	"github.com/basecomplextech/spec/mpx"
-	"github.com/basecomplextech/spec/proto/prpc"
+	"github.com/basecomplextech/baseproto/mpx"
+	"github.com/basecomplextech/baseproto/proto/prpc"
 )
 
 // ServerChannel is a server RPC channel.

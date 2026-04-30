@@ -8,7 +8,7 @@ import (
 	"github.com/basecomplextech/baselibrary/alloc"
 	"github.com/basecomplextech/baselibrary/async"
 	"github.com/basecomplextech/baselibrary/status"
-	"github.com/basecomplextech/spec/proto/pmpx"
+	"github.com/basecomplextech/baseproto/proto/pmpx"
 )
 
 type channelSender struct {

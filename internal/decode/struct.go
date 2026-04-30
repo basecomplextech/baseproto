@@ -8,7 +8,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/basecomplextech/spec/internal/format"
+	"github.com/basecomplextech/baseproto/internal/format"
 )
 
 func DecodeStruct(b []byte) (dataSize int, size int, err error) {

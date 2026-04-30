@@ -10,7 +10,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/basecomplextech/spec/internal/lang/model"
+	"github.com/basecomplextech/baseproto/internal/lang/model"
 )
 
 const (

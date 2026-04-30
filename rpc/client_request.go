@@ -8,8 +8,8 @@ import (
 	"github.com/basecomplextech/baselibrary/alloc"
 	"github.com/basecomplextech/baselibrary/pools"
 	"github.com/basecomplextech/baselibrary/status"
-	"github.com/basecomplextech/spec"
-	"github.com/basecomplextech/spec/proto/prpc"
+	baseproto "github.com/basecomplextech/baseproto"
+	"github.com/basecomplextech/baseproto/proto/prpc"
 )
 
 // Request is an outgoing RPC request builder.
@@ -63,7 +63,7 @@ func (r *Request) AddEmpty(method string) status.Status {
 }
 
 // AddMessage adds a call with an input message.
-func (r *Request) AddMessage(method string, input spec.Message) status.Status {
+func (r *Request) AddMessage(method string, input baseproto.Message) status.Status {
 	s := r.state()
 	if s.done {
 		panic("request is done")
@@ -112,10 +112,10 @@ var requestStatePool = pools.NewPoolFunc(newRequestState)
 
 type requestState struct {
 	buf    alloc.Buffer
-	writer spec.Writer
+	writer baseproto.Writer
 
 	req   prpc.RequestWriter
-	calls spec.MessageListWriter[prpc.CallWriter]
+	calls baseproto.MessageListWriter[prpc.CallWriter]
 	done  bool
 }
 
@@ -130,7 +130,7 @@ func releaseRequestState(s *requestState) {
 
 func newRequestState() *requestState {
 	buf := alloc.NewBuffer()
-	writer := spec.NewWriterBuffer(buf)
+	writer := baseproto.NewWriterBuffer(buf)
 
 	req := prpc.NewRequestWriterBuffer(buf)
 	calls := req.Calls()

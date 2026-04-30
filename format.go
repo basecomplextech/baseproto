@@ -2,10 +2,10 @@
 // Use of this software is governed by the MIT License
 // that can be found in the LICENSE file.
 
-package spec
+package baseproto
 
 import (
-	"github.com/basecomplextech/spec/internal/format"
+	"github.com/basecomplextech/baseproto/internal/format"
 )
 
 // Type specifies a value type.
@@ -46,11 +46,11 @@ const (
 )
 
 type (
-	// Bytes is a spec byte slice backed by a buffer.
+	// Bytes is a baseproto byte slice backed by a buffer.
 	// Clone it if you need to keep it around.
 	Bytes = format.Bytes
 
-	// String is a spec string backed by a buffer.
+	// String is a baseproto string backed by a buffer.
 	// Clone it if you need to keep it around.
 	String = format.String
 

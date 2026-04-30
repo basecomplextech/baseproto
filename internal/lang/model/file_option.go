@@ -4,7 +4,7 @@
 
 package model
 
-import "github.com/basecomplextech/spec/internal/lang/syntax"
+import "github.com/basecomplextech/baseproto/internal/lang/syntax"
 
 type Option struct {
 	Name  string

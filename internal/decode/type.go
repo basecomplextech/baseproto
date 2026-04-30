@@ -9,7 +9,7 @@ import (
 	"fmt"
 
 	"github.com/basecomplextech/baselibrary/encoding/compactint"
-	"github.com/basecomplextech/spec/internal/format"
+	"github.com/basecomplextech/baseproto/internal/format"
 )
 
 // DecodeType decodes a value type.

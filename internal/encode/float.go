@@ -9,7 +9,7 @@ import (
 	"math"
 
 	"github.com/basecomplextech/baselibrary/buffer"
-	"github.com/basecomplextech/spec/internal/format"
+	"github.com/basecomplextech/baseproto/internal/format"
 )
 
 func EncodeFloat32(b buffer.Buffer, v float32) (int, error) {

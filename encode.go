@@ -2,10 +2,10 @@
 // Use of this software is governed by the MIT License
 // that can be found in the LICENSE file.
 
-package spec
+package baseproto
 
 import (
-	"github.com/basecomplextech/spec/internal/encode"
+	"github.com/basecomplextech/baseproto/internal/encode"
 )
 
 var (

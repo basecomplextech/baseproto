@@ -5,23 +5,23 @@
 package lang
 
 import (
-	"github.com/basecomplextech/spec/internal/lang/compiler"
-	"github.com/basecomplextech/spec/internal/lang/generator"
+	"github.com/basecomplextech/baseproto/internal/lang/compiler"
+	"github.com/basecomplextech/baseproto/internal/lang/generator"
 )
 
-type Spec struct {
+type baseProto struct {
 	importPath []string
 	skipRPC    bool
 }
 
-func New(importPath []string, skipRPC bool) *Spec {
-	return &Spec{
+func New(importPath []string, skipRPC bool) *baseProto {
+	return &baseProto{
 		importPath: importPath,
 		skipRPC:    skipRPC,
 	}
 }
 
-func (s *Spec) Generate(srcPath string, dstPath string) error {
+func (s *baseProto) Generate(srcPath string, dstPath string) error {
 	if dstPath == "" {
 		dstPath = srcPath
 	}

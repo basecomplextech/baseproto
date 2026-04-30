@@ -12,7 +12,7 @@ import (
 	"github.com/basecomplextech/baselibrary/bin"
 	"github.com/basecomplextech/baselibrary/logging"
 	"github.com/basecomplextech/baselibrary/tests"
-	"github.com/basecomplextech/spec/rpc"
+	"github.com/basecomplextech/baseproto/rpc"
 	"github.com/stretchr/testify/assert"
 )
 

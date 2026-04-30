@@ -9,8 +9,8 @@ import (
 	"github.com/basecomplextech/baselibrary/bin"
 	"github.com/basecomplextech/baselibrary/ref"
 	"github.com/basecomplextech/baselibrary/status"
-	"github.com/basecomplextech/spec/internal/tests/pkg1"
-	"github.com/basecomplextech/spec/rpc"
+	"github.com/basecomplextech/baseproto/internal/tests/pkg1"
+	"github.com/basecomplextech/baseproto/rpc"
 )
 
 var _ Service = (*testService)(nil)

@@ -6,7 +6,7 @@ package rpc
 
 import (
 	"github.com/basecomplextech/baselibrary/async"
-	"github.com/basecomplextech/spec/mpx"
+	"github.com/basecomplextech/baseproto/mpx"
 )
 
 type TestContext = mpx.TestContext

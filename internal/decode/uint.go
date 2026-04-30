@@ -10,7 +10,7 @@ import (
 	"math"
 
 	"github.com/basecomplextech/baselibrary/encoding/compactint"
-	"github.com/basecomplextech/spec/internal/format"
+	"github.com/basecomplextech/baseproto/internal/format"
 )
 
 func DecodeUint16(b []byte) (uint16, int, error) {

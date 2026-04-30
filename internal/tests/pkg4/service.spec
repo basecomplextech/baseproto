@@ -4,7 +4,7 @@ import (
 )
 
 options (
-    go_package="github.com/basecomplextech/spec/internal/tests/pkg4"
+    go_package="github.com/basecomplextech/baseproto/internal/tests/pkg4"
 )
 
 service Service {
@@ -34,7 +34,7 @@ service Service {
         a10 int16   10,
         a11 int32   11,
         a12 int64   12,
-        
+
         a20 uint16  20,
         a21 uint32  21,
         a22 uint64  22,

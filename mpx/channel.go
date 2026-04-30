@@ -11,7 +11,7 @@ import (
 	"github.com/basecomplextech/baselibrary/async"
 	"github.com/basecomplextech/baselibrary/bin"
 	"github.com/basecomplextech/baselibrary/status"
-	"github.com/basecomplextech/spec/proto/pmpx"
+	"github.com/basecomplextech/baseproto/proto/pmpx"
 )
 
 type Channel interface {

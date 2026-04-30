@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/basecomplextech/spec/internal/lang/syntax"
+	"github.com/basecomplextech/baseproto/internal/lang/syntax"
 )
 
 type Kind int

@@ -7,7 +7,7 @@ package generator
 import (
 	"fmt"
 
-	"github.com/basecomplextech/spec/internal/lang/model"
+	"github.com/basecomplextech/baseproto/internal/lang/model"
 )
 
 type serviceWriter struct {

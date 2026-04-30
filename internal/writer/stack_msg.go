@@ -7,7 +7,7 @@ package writer
 import (
 	"sort"
 
-	"github.com/basecomplextech/spec/internal/format"
+	"github.com/basecomplextech/baseproto/internal/format"
 )
 
 // messageStack is a stack for encoding nested message tables.

@@ -7,7 +7,7 @@ package mpx
 import (
 	"github.com/basecomplextech/baselibrary/async"
 	"github.com/basecomplextech/baselibrary/status"
-	"github.com/basecomplextech/spec/proto/pmpx"
+	"github.com/basecomplextech/baseproto/proto/pmpx"
 )
 
 func (c *conn) sendLoop(ctx async.Context) status.Status {

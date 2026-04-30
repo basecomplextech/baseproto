@@ -12,7 +12,7 @@ import (
 	"github.com/basecomplextech/baselibrary/async"
 	"github.com/basecomplextech/baselibrary/ref"
 	"github.com/basecomplextech/baselibrary/status"
-	"github.com/basecomplextech/spec"
+	"github.com/basecomplextech/baseproto"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -92,7 +92,7 @@ func BenchmarkStream(b *testing.B) {
 		}
 
 		buf := alloc.NewBuffer()
-		w := spec.NewValueWriterBuffer(buf)
+		w := baseproto.NewValueWriterBuffer(buf)
 		w.String("response")
 		if _, err := w.Build(); err != nil {
 			return nil, status.WrapError(err)

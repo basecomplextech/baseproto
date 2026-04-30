@@ -10,12 +10,12 @@ import (
 
 	"github.com/basecomplextech/baselibrary/buffer"
 	"github.com/basecomplextech/baselibrary/pools"
-	"github.com/basecomplextech/spec/internal/decode"
-	"github.com/basecomplextech/spec/internal/encode"
-	"github.com/basecomplextech/spec/internal/format"
+	"github.com/basecomplextech/baseproto/internal/decode"
+	"github.com/basecomplextech/baseproto/internal/encode"
+	"github.com/basecomplextech/baseproto/internal/format"
 )
 
-// Writer writes spec objects.
+// Writer writes baseproto objects.
 type Writer interface {
 	// Err returns the current write error or nil.
 	Err() error

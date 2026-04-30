@@ -7,7 +7,7 @@ package generator
 import (
 	"fmt"
 
-	"github.com/basecomplextech/spec/internal/lang/model"
+	"github.com/basecomplextech/baseproto/internal/lang/model"
 )
 
 type structWriter struct {
@@ -74,7 +74,7 @@ func (w *structWriter) open(def *model.Definition) error {
 
 func (w *structWriter) decode_method(def *model.Definition) error {
 	w.linef(`func (s *%v) Decode(b []byte) (size int, err error) {`, def.Name)
-	w.line(`dataSize, size, err := spec.DecodeStruct(b)`)
+	w.line(`dataSize, size, err := baseproto.DecodeStruct(b)`)
 	w.line(`if err != nil || size == 0 {
 		return
 	}`)
@@ -95,7 +95,7 @@ func (w *structWriter) decode_method(def *model.Definition) error {
 		fieldName := structFieldName(field)
 		decodeName := typeDecodeFunc(field.Type)
 		if field.Type.Kind == model.KindString {
-			decodeName = "spec.DecodeStringClone"
+			decodeName = "baseproto.DecodeStringClone"
 		}
 
 		w.linef(`s.%v, n, err = %v(b[:off])`, fieldName, decodeName)
@@ -131,7 +131,7 @@ func (w *structWriter) encode_method(def *model.Definition) error {
 		w.line()
 	}
 
-	w.line(`n, err = spec.EncodeStruct(b, dataSize)`)
+	w.line(`n, err = baseproto.EncodeStruct(b, dataSize)`)
 	w.line(`if err != nil {
 			return 0, err
 		}`)

@@ -7,7 +7,7 @@ package encode
 import (
 	"github.com/basecomplextech/baselibrary/buffer"
 	"github.com/basecomplextech/baselibrary/encoding/compactint"
-	"github.com/basecomplextech/spec/internal/format"
+	"github.com/basecomplextech/baseproto/internal/format"
 )
 
 func EncodeInt16(b buffer.Buffer, v int16) (int, error) {

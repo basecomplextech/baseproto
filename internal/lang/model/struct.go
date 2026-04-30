@@ -8,7 +8,7 @@ import (
 	"fmt"
 
 	"github.com/basecomplextech/baselibrary/collect"
-	"github.com/basecomplextech/spec/internal/lang/syntax"
+	"github.com/basecomplextech/baseproto/internal/lang/syntax"
 )
 
 type Struct struct {

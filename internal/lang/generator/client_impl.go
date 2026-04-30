@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/basecomplextech/spec/internal/lang/model"
+	"github.com/basecomplextech/baseproto/internal/lang/model"
 )
 
 type clientImplWriter struct {

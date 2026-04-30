@@ -8,7 +8,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/basecomplextech/spec/internal/format"
+	"github.com/basecomplextech/baseproto/internal/format"
 )
 
 func DecodeBytes(b []byte) (_ format.Bytes, size int, err error) {

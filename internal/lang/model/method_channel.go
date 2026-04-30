@@ -7,7 +7,7 @@ package model
 import (
 	"fmt"
 
-	"github.com/basecomplextech/spec/internal/lang/syntax"
+	"github.com/basecomplextech/baseproto/internal/lang/syntax"
 )
 
 // MethodChannel defines in/out channel messages.

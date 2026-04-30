@@ -7,7 +7,7 @@ package compiler
 import (
 	"testing"
 
-	"github.com/basecomplextech/spec/internal/lang/model"
+	"github.com/basecomplextech/baseproto/internal/lang/model"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -52,8 +52,8 @@ func TestCompiler__should_compile_files(t *testing.T) {
 	file0 := pkg.Files[0]
 	file1 := pkg.Files[1]
 
-	assert.Equal(t, "enum.spec", file0.Name)
-	assert.Equal(t, "pkg1.spec", file1.Name)
+	assert.Equal(t, "enum.baseproto", file0.Name)
+	assert.Equal(t, "pkg1.baseproto", file1.Name)
 }
 
 // Imports
@@ -81,7 +81,7 @@ func TestCompiler__should_resolve_imports(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	file := pkg.FileNames["pkg1.spec"]
+	file := pkg.FileNames["pkg1.baseproto"]
 	require.NotNil(t, file)
 
 	imp := file.Imports[0]
@@ -101,7 +101,7 @@ func TestCompiler__should_recursively_resolve_imports(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	file := pkg.FileNames["pkg1.spec"]
+	file := pkg.FileNames["pkg1.baseproto"]
 	require.NotNil(t, file)
 
 	imp := file.Imports[0]
@@ -135,7 +135,7 @@ func TestCompiler__should_compile_options(t *testing.T) {
 
 	gopkg := file1.OptionMap["go_package"]
 	require.NotNil(t, gopkg)
-	assert.Equal(t, "github.com/basecomplextech/spec/internal/tests/pkg1", gopkg.Value)
+	assert.Equal(t, "github.com/basecomplextech/baseproto/internal/tests/pkg1", gopkg.Value)
 }
 
 // model.Definitions

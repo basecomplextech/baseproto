@@ -13,7 +13,7 @@ root:
 		-newkey rsa:2048 \
 		-keyout root_ca.key \
 		-out root_ca.pem \
-		-subj "/C=US/CN=Spec-Root-CA"
+		-subj "/C=US/CN=baseProto-Root-CA"
 	@ openssl x509 \
 		-outform pem \
 		-in root_ca.pem \
@@ -24,7 +24,7 @@ localhost:
 		-newkey rsa:2048 \
 		-keyout localhost.key \
 		-out localhost.csr \
-		-subj "/C=US/ST=NoState/L=NoCity/O=Spec-Certificates/CN=localhost"
+		-subj "/C=US/ST=NoState/L=NoCity/O=baseProto-Certificates/CN=localhost"
 	@ openssl x509 \
 		-req -sha256 \
 		-days 1024 \

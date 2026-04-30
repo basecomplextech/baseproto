@@ -7,7 +7,7 @@ package rpc
 import (
 	"github.com/basecomplextech/baselibrary/alloc"
 	"github.com/basecomplextech/baselibrary/status"
-	"github.com/basecomplextech/spec/proto/prpc"
+	"github.com/basecomplextech/baseproto/proto/prpc"
 )
 
 type builder struct{}

@@ -2,14 +2,14 @@
 // Use of this software is governed by the MIT License
 // that can be found in the LICENSE file.
 
-//go:generate spec generate --skip-rpc .
+//go:generate baseproto generate --skip-rpc .
 
 package pmpx
 
 import (
 	"github.com/basecomplextech/baselibrary/alloc"
 	"github.com/basecomplextech/baselibrary/bin"
-	"github.com/basecomplextech/spec"
+	"github.com/basecomplextech/baseproto"
 )
 
 // ConnectInput
@@ -201,7 +201,7 @@ func BuildChannelWindow(w MessageWriter, id bin.Bin128, delta int32) (Message, e
 type BatchBuilder struct {
 	w  MessageWriter
 	w1 BatchWriter
-	w2 spec.MessageListWriter[MessageWriter]
+	w2 baseproto.MessageListWriter[MessageWriter]
 }
 
 func NewBatchBuilder(buf alloc.Buffer) BatchBuilder {

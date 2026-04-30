@@ -2,7 +2,7 @@
 // Use of this software is governed by the MIT License
 // that can be found in the LICENSE file.
 
-package spec
+package baseproto
 
 import (
 	"bytes"
@@ -10,7 +10,7 @@ import (
 	"testing"
 
 	"github.com/basecomplextech/baselibrary/buffer"
-	"github.com/basecomplextech/spec/internal/tests/pkg1"
+	"github.com/basecomplextech/baseproto/internal/tests/pkg1"
 )
 
 func BenchmarkWrite_Small(b *testing.B) {

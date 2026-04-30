@@ -8,13 +8,13 @@ import (
 	"os"
 	"testing"
 
-	"github.com/basecomplextech/spec/internal/lang/syntax"
+	"github.com/basecomplextech/baseproto/internal/lang/syntax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func testFile(t *testing.T) string {
-	b, err := os.ReadFile("test.spec")
+	b, err := os.ReadFile("test.baseproto")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -22,7 +22,7 @@ func testFile(t *testing.T) string {
 }
 
 func testServiceFile(t *testing.T) string {
-	b, err := os.ReadFile("test_service.spec")
+	b, err := os.ReadFile("test_service.baseproto")
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -11,8 +11,8 @@ import (
 	"github.com/basecomplextech/baselibrary/logging"
 	"github.com/basecomplextech/baselibrary/ref"
 	"github.com/basecomplextech/baselibrary/status"
-	"github.com/basecomplextech/spec/mpx"
-	"github.com/basecomplextech/spec/proto/prpc"
+	"github.com/basecomplextech/baseproto/mpx"
+	"github.com/basecomplextech/baseproto/proto/prpc"
 )
 
 // Server is an RPC server.

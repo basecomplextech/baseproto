@@ -9,7 +9,7 @@ import (
 	"fmt"
 
 	"github.com/basecomplextech/baselibrary/bin"
-	"github.com/basecomplextech/spec/internal/format"
+	"github.com/basecomplextech/baseproto/internal/format"
 )
 
 func DecodeBin64(b []byte) (_ bin.Bin64, size int, err error) {

@@ -14,8 +14,8 @@ import (
 	"github.com/basecomplextech/baselibrary/ref"
 	"github.com/basecomplextech/baselibrary/status"
 	"github.com/basecomplextech/baselibrary/tests"
-	"github.com/basecomplextech/spec"
-	"github.com/basecomplextech/spec/proto/prpc"
+	"github.com/basecomplextech/baseproto"
+	"github.com/basecomplextech/baseproto/proto/prpc"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -65,7 +65,7 @@ func testEchoServer(t tests.T) *server {
 			}
 		}()
 
-		w := spec.NewValueWriterBuffer(buf)
+		w := baseproto.NewValueWriterBuffer(buf)
 		w.String(msg)
 
 		bytes, err := w.Build()

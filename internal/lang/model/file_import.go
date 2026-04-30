@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/basecomplextech/spec/internal/lang/syntax"
+	"github.com/basecomplextech/baseproto/internal/lang/syntax"
 )
 
 type Import struct {

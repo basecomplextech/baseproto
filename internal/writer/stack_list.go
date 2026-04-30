@@ -5,7 +5,7 @@
 package writer
 
 import (
-	"github.com/basecomplextech/spec/internal/format"
+	"github.com/basecomplextech/baseproto/internal/format"
 )
 
 // listStack is a stack for encoding nested list tables.

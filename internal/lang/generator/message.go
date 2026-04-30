@@ -7,7 +7,7 @@ package generator
 import (
 	"fmt"
 
-	"github.com/basecomplextech/spec/internal/lang/model"
+	"github.com/basecomplextech/baseproto/internal/lang/model"
 )
 
 type messageWriter struct {
@@ -44,26 +44,26 @@ func (w *messageWriter) def(def *model.Definition) error {
 	w.linef(`// %v`, def.Name)
 	w.line()
 	w.linef(`type %v struct {`, def.Name)
-	w.line(`msg spec.Message`)
+	w.line(`msg baseproto.Message`)
 	w.line(`}`)
 	w.line()
 	return nil
 }
 
 func (w *messageWriter) new_methods(def *model.Definition) error {
-	w.linef(`func New%v(msg spec.Message) %v {`, def.Name, def.Name)
+	w.linef(`func New%v(msg baseproto.Message) %v {`, def.Name, def.Name)
 	w.linef(`return %v{msg}`, def.Name)
 	w.linef(`}`)
 	w.line()
 
 	w.linef(`func Open%v(b []byte) %v {`, def.Name, def.Name)
-	w.linef(`msg := spec.OpenMessage(b)`)
+	w.linef(`msg := baseproto.OpenMessage(b)`)
 	w.linef(`return %v{msg}`, def.Name)
 	w.linef(`}`)
 	w.line()
 
 	w.linef(`func Open%vErr(b []byte) (_ %v, err error) {`, def.Name, def.Name)
-	w.linef(`msg, err := spec.OpenMessageErr(b)`)
+	w.linef(`msg, err := baseproto.OpenMessageErr(b)`)
 	w.linef(`return %v{msg}, err`, def.Name)
 	w.linef(`}`)
 	w.line()
@@ -72,7 +72,7 @@ func (w *messageWriter) new_methods(def *model.Definition) error {
 
 func (w *messageWriter) parse_method(def *model.Definition) error {
 	w.linef(`func Parse%v(b []byte) (_ %v, size int, err error) {`, def.Name, def.Name)
-	w.linef(`msg, size, err := spec.ParseMessage(b)`)
+	w.linef(`msg, size, err := baseproto.ParseMessage(b)`)
 	w.linef(`return %v{msg}, size, err`, def.Name)
 	w.linef(`}`)
 	w.line()
@@ -159,9 +159,9 @@ func (w *messageWriter) field(def *model.Definition, field *model.Field) error {
 
 		w.writef(`func (m %v) %v() %v {`, def.Name, fieldName, typeName)
 		if elem.Kind == model.KindMessage {
-			w.writef(`return spec.NewMessageList(m.msg.List(%d), %v)`, tag, decodeFunc)
+			w.writef(`return baseproto.NewMessageList(m.msg.List(%d), %v)`, tag, decodeFunc)
 		} else {
-			w.writef(`return spec.NewValueList(m.msg.List(%d), %v)`, tag, decodeFunc)
+			w.writef(`return baseproto.NewValueList(m.msg.List(%d), %v)`, tag, decodeFunc)
 		}
 
 		w.writef(`}`)
@@ -236,7 +236,7 @@ func (w *messageWriter) methods(def *model.Definition) error {
 	w.writef(`}`)
 	w.line()
 
-	w.writef(`func (m %v) Unwrap() spec.Message {`, def.Name)
+	w.writef(`func (m %v) Unwrap() baseproto.Message {`, def.Name)
 	w.writef(`return m.msg`)
 	w.writef(`}`)
 	w.line()
@@ -265,7 +265,7 @@ func (w *messageWriter) writer_def(def *model.Definition) error {
 	w.linef(`// %vWriter`, def.Name)
 	w.line()
 	w.linef(`type %vWriter struct {`, def.Name)
-	w.line(`w spec.MessageWriter`)
+	w.line(`w baseproto.MessageWriter`)
 	w.line(`}`)
 	w.line()
 	return nil
@@ -273,18 +273,18 @@ func (w *messageWriter) writer_def(def *model.Definition) error {
 
 func (w *messageWriter) writer_new_method(def *model.Definition) error {
 	w.linef(`func New%vWriter() %vWriter {`, def.Name, def.Name)
-	w.linef(`w := spec.NewMessageWriter()`)
+	w.linef(`w := baseproto.NewMessageWriter()`)
 	w.linef(`return %vWriter{w}`, def.Name)
 	w.linef(`}`)
 	w.line()
 
 	w.linef(`func New%vWriterBuffer(b buffer.Buffer) %vWriter {`, def.Name, def.Name)
-	w.linef(`w := spec.NewMessageWriterBuffer(b)`)
+	w.linef(`w := baseproto.NewMessageWriterBuffer(b)`)
 	w.linef(`return %vWriter{w}`, def.Name)
 	w.linef(`}`)
 	w.line()
 
-	w.linef(`func New%vWriterTo(w spec.MessageWriter) %vWriter {`, def.Name, def.Name)
+	w.linef(`func New%vWriterTo(w baseproto.MessageWriter) %vWriter {`, def.Name, def.Name)
 	w.linef(`return %vWriter{w}`, def.Name)
 	w.linef(`}`)
 	w.line()
@@ -311,7 +311,7 @@ func (w *messageWriter) writer_end(def *model.Definition) error {
 	w.linef(`}`)
 	w.line()
 
-	w.linef(`func (w %vWriter) Unwrap() spec.MessageWriter {`, def.Name)
+	w.linef(`func (w %vWriter) Unwrap() baseproto.MessageWriter {`, def.Name)
 	w.linef(`return w.w`)
 	w.linef(`}`)
 	w.line()
@@ -385,20 +385,20 @@ func (w *messageWriter) writer_field(def *model.Definition, field *model.Field) 
 		w.linef(`}`)
 
 	case model.KindAny:
-		w.writef(`func (w %v) %v() spec.FieldWriter {`, wname, fname)
+		w.writef(`func (w %v) %v() baseproto.FieldWriter {`, wname, fname)
 		w.writef(`return w.w.Field(%d)`, tag)
 		w.linef(`}`)
 
-		w.writef(`func (w %v) Copy%v(v spec.Value) error {`, wname, fname)
+		w.writef(`func (w %v) Copy%v(v baseproto.Value) error {`, wname, fname)
 		w.writef(`return w.w.Field(%d).Any(v)`, tag)
 		w.linef(`}`)
 
 	case model.KindAnyMessage:
-		w.writef(`func (w %v) %v() spec.MessageWriter {`, wname, fname)
+		w.writef(`func (w %v) %v() baseproto.MessageWriter {`, wname, fname)
 		w.writef(`return w.w.Field(%d).Message()`, tag)
 		w.linef(`}`)
 
-		w.writef(`func (w %v) Copy%v(v spec.Message) error {`, wname, fname)
+		w.writef(`func (w %v) Copy%v(v baseproto.Message) error {`, wname, fname)
 		w.writef(`return w.w.Field(%d).Any(v.Raw())`, tag)
 		w.linef(`}`)
 
@@ -406,14 +406,14 @@ func (w *messageWriter) writer_field(def *model.Definition, field *model.Field) 
 		writeFunc := typeWriteFunc(field.Type)
 
 		w.writef(`func (w %v) %v(v %v) {`, wname, fname, tname)
-		w.writef(`spec.WriteField(w.w.Field(%d), v, %v)`, tag, writeFunc)
+		w.writef(`baseproto.WriteField(w.w.Field(%d), v, %v)`, tag, writeFunc)
 		w.linef(`}`)
 
 	case model.KindStruct:
 		writeFunc := typeWriteFunc(field.Type)
 
 		w.writef(`func (w %v) %v(v %v) {`, wname, fname, tname)
-		w.writef(`spec.WriteField(w.w.Field(%d), v, %v)`, tag, writeFunc)
+		w.writef(`baseproto.WriteField(w.w.Field(%d), v, %v)`, tag, writeFunc)
 		w.linef(`}`)
 
 	case model.KindList:

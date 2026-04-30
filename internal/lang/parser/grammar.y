@@ -5,7 +5,7 @@ package parser
 import (
 	"fmt"
 
-	"github.com/basecomplextech/spec/internal/lang/syntax"
+	"github.com/basecomplextech/baseproto/internal/lang/syntax"
 )
 %}
 
@@ -178,7 +178,7 @@ keyword:
 // file
 
 file: imports options definitions
-	{ 
+	{
 		file := &syntax.File{
 			Imports:     $1,
 			Options:     $2,
@@ -191,7 +191,7 @@ file: imports options definitions
 
 import:
 	STRING
-	{ 
+	{
 		if debugParser {
 			fmt.Println("import ", $1)
 		}
@@ -212,7 +212,7 @@ import:
 
 import_list:
 	// Empty
-	{ 
+	{
 		$$ = nil
 	}
 	| import_list import
@@ -225,7 +225,7 @@ import_list:
 
 imports:
 	// Empty
-	{ 
+	{
 		$$ = nil
 	}
 	| IMPORT '(' import_list ')'
@@ -240,7 +240,7 @@ imports:
 
 options:
 	// Empty
-	{ 
+	{
 		$$ = nil
 	}
 	| OPTIONS '(' option_list ')'
@@ -253,7 +253,7 @@ options:
 
 option_list:
 	// Empty
-	{ 
+	{
 		$$ = nil
 	}
 	| option_list option
@@ -342,8 +342,8 @@ base_type:
 
 // definition
 
-definition: 
-	enum 
+definition:
+	enum
 	| message
 	| struct
     | service
@@ -352,7 +352,7 @@ definition:
 
 definitions:
 	// Empty
-	{ 
+	{
 		$$ = nil
 	}
 	| definitions definition
@@ -408,8 +408,8 @@ enum_values:
 
 // message
 
-message: MESSAGE IDENT '{' fields semi_opt '}' 
-	{ 
+message: MESSAGE IDENT '{' fields semi_opt '}'
+	{
 		if debugParser {
 			fmt.Println("message", $2, $4)
 		}
@@ -458,8 +458,8 @@ fields:
 
 // struct
 
-struct: STRUCT IDENT '{' struct_fields '}' 
-	{ 
+struct: STRUCT IDENT '{' struct_fields '}'
+	{
 		if debugParser {
 			fmt.Println("struct", $2, $4)
 		}
@@ -486,7 +486,7 @@ struct_field: field_name type ';'
 
 struct_fields:
 	// Empty
-	{ 
+	{
 		$$ = nil
 	}
 	| struct_fields struct_field

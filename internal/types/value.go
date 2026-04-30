@@ -8,8 +8,8 @@ import (
 	"fmt"
 
 	"github.com/basecomplextech/baselibrary/bin"
-	"github.com/basecomplextech/spec/internal/decode"
-	"github.com/basecomplextech/spec/internal/format"
+	"github.com/basecomplextech/baseproto/internal/decode"
+	"github.com/basecomplextech/baseproto/internal/format"
 )
 
 // Value is a raw value.

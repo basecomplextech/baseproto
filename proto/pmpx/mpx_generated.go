@@ -8,7 +8,7 @@ import (
 	"github.com/basecomplextech/baselibrary/pools"
 	"github.com/basecomplextech/baselibrary/ref"
 	"github.com/basecomplextech/baselibrary/status"
-	"github.com/basecomplextech/spec"
+	baseproto "github.com/basecomplextech/baseproto"
 )
 
 var (
@@ -16,10 +16,10 @@ var (
 	_ async.Context
 	_ bin.Bin128
 	_ buffer.Buffer
-	_ spec.MessageTable
+	_ baseproto.MessageTable
 	_ pools.Pool[any]
 	_ ref.Ref
-	_ spec.Type
+	_ baseproto.Type
 	_ status.Status
 )
 
@@ -33,12 +33,12 @@ const (
 )
 
 func OpenVersion(b []byte) Version {
-	v, _, _ := spec.DecodeInt32(b)
+	v, _, _ := baseproto.DecodeInt32(b)
 	return Version(v)
 }
 
 func DecodeVersion(b []byte) (result Version, size int, err error) {
-	v, size, err := spec.DecodeInt32(b)
+	v, size, err := baseproto.DecodeInt32(b)
 	if err != nil || size == 0 {
 		return
 	}
@@ -47,7 +47,7 @@ func DecodeVersion(b []byte) (result Version, size int, err error) {
 }
 
 func EncodeVersionTo(b buffer.Buffer, v Version) (int, error) {
-	return spec.EncodeInt32(b, int32(v))
+	return baseproto.EncodeInt32(b, int32(v))
 }
 
 func (e Version) String() string {
@@ -76,12 +76,12 @@ const (
 )
 
 func OpenCode(b []byte) Code {
-	v, _, _ := spec.DecodeInt32(b)
+	v, _, _ := baseproto.DecodeInt32(b)
 	return Code(v)
 }
 
 func DecodeCode(b []byte) (result Code, size int, err error) {
-	v, size, err := spec.DecodeInt32(b)
+	v, size, err := baseproto.DecodeInt32(b)
 	if err != nil || size == 0 {
 		return
 	}
@@ -90,7 +90,7 @@ func DecodeCode(b []byte) (result Code, size int, err error) {
 }
 
 func EncodeCodeTo(b buffer.Buffer, v Code) (int, error) {
-	return spec.EncodeInt32(b, int32(v))
+	return baseproto.EncodeInt32(b, int32(v))
 }
 
 func (e Code) String() string {
@@ -118,20 +118,20 @@ func (e Code) String() string {
 // Message
 
 type Message struct {
-	msg spec.Message
+	msg baseproto.Message
 }
 
-func NewMessage(msg spec.Message) Message {
+func NewMessage(msg baseproto.Message) Message {
 	return Message{msg}
 }
 
 func OpenMessage(b []byte) Message {
-	msg := spec.OpenMessage(b)
+	msg := baseproto.OpenMessage(b)
 	return Message{msg}
 }
 
 func OpenMessageErr(b []byte) (_ Message, err error) {
-	msg, err := spec.OpenMessageErr(b)
+	msg, err := baseproto.OpenMessageErr(b)
 	if err != nil {
 		return
 	}
@@ -139,7 +139,7 @@ func OpenMessageErr(b []byte) (_ Message, err error) {
 }
 
 func ParseMessage(b []byte) (_ Message, size int, err error) {
-	msg, size, err := spec.ParseMessage(b)
+	msg, size, err := baseproto.ParseMessage(b)
 	if err != nil || size == 0 {
 		return
 	}
@@ -168,25 +168,25 @@ func (m Message) IsEmpty() bool                         { return m.msg.Empty() }
 func (m Message) Clone() Message                        { return Message{m.msg.Clone()} }
 func (m Message) CloneToArena(a alloc.Arena) Message    { return Message{m.msg.CloneToArena(a)} }
 func (m Message) CloneToBuffer(b buffer.Buffer) Message { return Message{m.msg.CloneToBuffer(b)} }
-func (m Message) Unwrap() spec.Message                  { return m.msg }
+func (m Message) Unwrap() baseproto.Message             { return m.msg }
 
 // ConnectRequest
 
 type ConnectRequest struct {
-	msg spec.Message
+	msg baseproto.Message
 }
 
-func NewConnectRequest(msg spec.Message) ConnectRequest {
+func NewConnectRequest(msg baseproto.Message) ConnectRequest {
 	return ConnectRequest{msg}
 }
 
 func OpenConnectRequest(b []byte) ConnectRequest {
-	msg := spec.OpenMessage(b)
+	msg := baseproto.OpenMessage(b)
 	return ConnectRequest{msg}
 }
 
 func OpenConnectRequestErr(b []byte) (_ ConnectRequest, err error) {
-	msg, err := spec.OpenMessageErr(b)
+	msg, err := baseproto.OpenMessageErr(b)
 	if err != nil {
 		return
 	}
@@ -194,18 +194,18 @@ func OpenConnectRequestErr(b []byte) (_ ConnectRequest, err error) {
 }
 
 func ParseConnectRequest(b []byte) (_ ConnectRequest, size int, err error) {
-	msg, size, err := spec.ParseMessage(b)
+	msg, size, err := baseproto.ParseMessage(b)
 	if err != nil || size == 0 {
 		return
 	}
 	return ConnectRequest{msg}, size, nil
 }
 
-func (m ConnectRequest) Versions() spec.ValueList[Version] {
-	return spec.NewValueList(m.msg.List(1), DecodeVersion)
+func (m ConnectRequest) Versions() baseproto.ValueList[Version] {
+	return baseproto.NewValueList(m.msg.List(1), DecodeVersion)
 }
-func (m ConnectRequest) Compression() spec.ValueList[ConnectCompression] {
-	return spec.NewValueList(m.msg.List(2), DecodeConnectCompression)
+func (m ConnectRequest) Compression() baseproto.ValueList[ConnectCompression] {
+	return baseproto.NewValueList(m.msg.List(2), DecodeConnectCompression)
 }
 
 func (m ConnectRequest) HasVersions() bool    { return m.msg.HasField(1) }
@@ -219,25 +219,25 @@ func (m ConnectRequest) CloneToArena(a alloc.Arena) ConnectRequest {
 func (m ConnectRequest) CloneToBuffer(b buffer.Buffer) ConnectRequest {
 	return ConnectRequest{m.msg.CloneToBuffer(b)}
 }
-func (m ConnectRequest) Unwrap() spec.Message { return m.msg }
+func (m ConnectRequest) Unwrap() baseproto.Message { return m.msg }
 
 // ConnectResponse
 
 type ConnectResponse struct {
-	msg spec.Message
+	msg baseproto.Message
 }
 
-func NewConnectResponse(msg spec.Message) ConnectResponse {
+func NewConnectResponse(msg baseproto.Message) ConnectResponse {
 	return ConnectResponse{msg}
 }
 
 func OpenConnectResponse(b []byte) ConnectResponse {
-	msg := spec.OpenMessage(b)
+	msg := baseproto.OpenMessage(b)
 	return ConnectResponse{msg}
 }
 
 func OpenConnectResponseErr(b []byte) (_ ConnectResponse, err error) {
-	msg, err := spec.OpenMessageErr(b)
+	msg, err := baseproto.OpenMessageErr(b)
 	if err != nil {
 		return
 	}
@@ -245,16 +245,16 @@ func OpenConnectResponseErr(b []byte) (_ ConnectResponse, err error) {
 }
 
 func ParseConnectResponse(b []byte) (_ ConnectResponse, size int, err error) {
-	msg, size, err := spec.ParseMessage(b)
+	msg, size, err := baseproto.ParseMessage(b)
 	if err != nil || size == 0 {
 		return
 	}
 	return ConnectResponse{msg}, size, nil
 }
 
-func (m ConnectResponse) Ok() bool           { return m.msg.Bool(1) }
-func (m ConnectResponse) Error() spec.String { return m.msg.String(2) }
-func (m ConnectResponse) Version() Version   { return OpenVersion(m.msg.FieldRaw(10)) }
+func (m ConnectResponse) Ok() bool                { return m.msg.Bool(1) }
+func (m ConnectResponse) Error() baseproto.String { return m.msg.String(2) }
+func (m ConnectResponse) Version() Version        { return OpenVersion(m.msg.FieldRaw(10)) }
 func (m ConnectResponse) Compression() ConnectCompression {
 	return OpenConnectCompression(m.msg.FieldRaw(11))
 }
@@ -272,7 +272,7 @@ func (m ConnectResponse) CloneToArena(a alloc.Arena) ConnectResponse {
 func (m ConnectResponse) CloneToBuffer(b buffer.Buffer) ConnectResponse {
 	return ConnectResponse{m.msg.CloneToBuffer(b)}
 }
-func (m ConnectResponse) Unwrap() spec.Message { return m.msg }
+func (m ConnectResponse) Unwrap() baseproto.Message { return m.msg }
 
 // ConnectCompression
 
@@ -284,12 +284,12 @@ const (
 )
 
 func OpenConnectCompression(b []byte) ConnectCompression {
-	v, _, _ := spec.DecodeInt32(b)
+	v, _, _ := baseproto.DecodeInt32(b)
 	return ConnectCompression(v)
 }
 
 func DecodeConnectCompression(b []byte) (result ConnectCompression, size int, err error) {
-	v, size, err := spec.DecodeInt32(b)
+	v, size, err := baseproto.DecodeInt32(b)
 	if err != nil || size == 0 {
 		return
 	}
@@ -298,7 +298,7 @@ func DecodeConnectCompression(b []byte) (result ConnectCompression, size int, er
 }
 
 func EncodeConnectCompressionTo(b buffer.Buffer, v ConnectCompression) (int, error) {
-	return spec.EncodeInt32(b, int32(v))
+	return baseproto.EncodeInt32(b, int32(v))
 }
 
 func (e ConnectCompression) String() string {
@@ -314,20 +314,20 @@ func (e ConnectCompression) String() string {
 // Batch
 
 type Batch struct {
-	msg spec.Message
+	msg baseproto.Message
 }
 
-func NewBatch(msg spec.Message) Batch {
+func NewBatch(msg baseproto.Message) Batch {
 	return Batch{msg}
 }
 
 func OpenBatch(b []byte) Batch {
-	msg := spec.OpenMessage(b)
+	msg := baseproto.OpenMessage(b)
 	return Batch{msg}
 }
 
 func OpenBatchErr(b []byte) (_ Batch, err error) {
-	msg, err := spec.OpenMessageErr(b)
+	msg, err := baseproto.OpenMessageErr(b)
 	if err != nil {
 		return
 	}
@@ -335,40 +335,40 @@ func OpenBatchErr(b []byte) (_ Batch, err error) {
 }
 
 func ParseBatch(b []byte) (_ Batch, size int, err error) {
-	msg, size, err := spec.ParseMessage(b)
+	msg, size, err := baseproto.ParseMessage(b)
 	if err != nil || size == 0 {
 		return
 	}
 	return Batch{msg}, size, nil
 }
 
-func (m Batch) List() spec.MessageList[Message] {
-	return spec.NewMessageList(m.msg.List(1), OpenMessageErr)
+func (m Batch) List() baseproto.MessageList[Message] {
+	return baseproto.NewMessageList(m.msg.List(1), OpenMessageErr)
 }
 func (m Batch) HasList() bool                       { return m.msg.HasField(1) }
 func (m Batch) IsEmpty() bool                       { return m.msg.Empty() }
 func (m Batch) Clone() Batch                        { return Batch{m.msg.Clone()} }
 func (m Batch) CloneToArena(a alloc.Arena) Batch    { return Batch{m.msg.CloneToArena(a)} }
 func (m Batch) CloneToBuffer(b buffer.Buffer) Batch { return Batch{m.msg.CloneToBuffer(b)} }
-func (m Batch) Unwrap() spec.Message                { return m.msg }
+func (m Batch) Unwrap() baseproto.Message           { return m.msg }
 
 // ChannelOpen
 
 type ChannelOpen struct {
-	msg spec.Message
+	msg baseproto.Message
 }
 
-func NewChannelOpen(msg spec.Message) ChannelOpen {
+func NewChannelOpen(msg baseproto.Message) ChannelOpen {
 	return ChannelOpen{msg}
 }
 
 func OpenChannelOpen(b []byte) ChannelOpen {
-	msg := spec.OpenMessage(b)
+	msg := baseproto.OpenMessage(b)
 	return ChannelOpen{msg}
 }
 
 func OpenChannelOpenErr(b []byte) (_ ChannelOpen, err error) {
-	msg, err := spec.OpenMessageErr(b)
+	msg, err := baseproto.OpenMessageErr(b)
 	if err != nil {
 		return
 	}
@@ -376,16 +376,16 @@ func OpenChannelOpenErr(b []byte) (_ ChannelOpen, err error) {
 }
 
 func ParseChannelOpen(b []byte) (_ ChannelOpen, size int, err error) {
-	msg, size, err := spec.ParseMessage(b)
+	msg, size, err := baseproto.ParseMessage(b)
 	if err != nil || size == 0 {
 		return
 	}
 	return ChannelOpen{msg}, size, nil
 }
 
-func (m ChannelOpen) Id() bin.Bin128   { return m.msg.Bin128(1) }
-func (m ChannelOpen) Window() int32    { return m.msg.Int32(2) }
-func (m ChannelOpen) Data() spec.Bytes { return m.msg.Bytes(3) }
+func (m ChannelOpen) Id() bin.Bin128        { return m.msg.Bin128(1) }
+func (m ChannelOpen) Window() int32         { return m.msg.Int32(2) }
+func (m ChannelOpen) Data() baseproto.Bytes { return m.msg.Bytes(3) }
 
 func (m ChannelOpen) HasId() bool     { return m.msg.HasField(1) }
 func (m ChannelOpen) HasWindow() bool { return m.msg.HasField(2) }
@@ -399,25 +399,25 @@ func (m ChannelOpen) CloneToArena(a alloc.Arena) ChannelOpen {
 func (m ChannelOpen) CloneToBuffer(b buffer.Buffer) ChannelOpen {
 	return ChannelOpen{m.msg.CloneToBuffer(b)}
 }
-func (m ChannelOpen) Unwrap() spec.Message { return m.msg }
+func (m ChannelOpen) Unwrap() baseproto.Message { return m.msg }
 
 // ChannelClose
 
 type ChannelClose struct {
-	msg spec.Message
+	msg baseproto.Message
 }
 
-func NewChannelClose(msg spec.Message) ChannelClose {
+func NewChannelClose(msg baseproto.Message) ChannelClose {
 	return ChannelClose{msg}
 }
 
 func OpenChannelClose(b []byte) ChannelClose {
-	msg := spec.OpenMessage(b)
+	msg := baseproto.OpenMessage(b)
 	return ChannelClose{msg}
 }
 
 func OpenChannelCloseErr(b []byte) (_ ChannelClose, err error) {
-	msg, err := spec.OpenMessageErr(b)
+	msg, err := baseproto.OpenMessageErr(b)
 	if err != nil {
 		return
 	}
@@ -425,15 +425,15 @@ func OpenChannelCloseErr(b []byte) (_ ChannelClose, err error) {
 }
 
 func ParseChannelClose(b []byte) (_ ChannelClose, size int, err error) {
-	msg, size, err := spec.ParseMessage(b)
+	msg, size, err := baseproto.ParseMessage(b)
 	if err != nil || size == 0 {
 		return
 	}
 	return ChannelClose{msg}, size, nil
 }
 
-func (m ChannelClose) Id() bin.Bin128   { return m.msg.Bin128(1) }
-func (m ChannelClose) Data() spec.Bytes { return m.msg.Bytes(2) }
+func (m ChannelClose) Id() bin.Bin128        { return m.msg.Bin128(1) }
+func (m ChannelClose) Data() baseproto.Bytes { return m.msg.Bytes(2) }
 
 func (m ChannelClose) HasId() bool   { return m.msg.HasField(1) }
 func (m ChannelClose) HasData() bool { return m.msg.HasField(2) }
@@ -446,25 +446,25 @@ func (m ChannelClose) CloneToArena(a alloc.Arena) ChannelClose {
 func (m ChannelClose) CloneToBuffer(b buffer.Buffer) ChannelClose {
 	return ChannelClose{m.msg.CloneToBuffer(b)}
 }
-func (m ChannelClose) Unwrap() spec.Message { return m.msg }
+func (m ChannelClose) Unwrap() baseproto.Message { return m.msg }
 
 // ChannelData
 
 type ChannelData struct {
-	msg spec.Message
+	msg baseproto.Message
 }
 
-func NewChannelData(msg spec.Message) ChannelData {
+func NewChannelData(msg baseproto.Message) ChannelData {
 	return ChannelData{msg}
 }
 
 func OpenChannelData(b []byte) ChannelData {
-	msg := spec.OpenMessage(b)
+	msg := baseproto.OpenMessage(b)
 	return ChannelData{msg}
 }
 
 func OpenChannelDataErr(b []byte) (_ ChannelData, err error) {
-	msg, err := spec.OpenMessageErr(b)
+	msg, err := baseproto.OpenMessageErr(b)
 	if err != nil {
 		return
 	}
@@ -472,15 +472,15 @@ func OpenChannelDataErr(b []byte) (_ ChannelData, err error) {
 }
 
 func ParseChannelData(b []byte) (_ ChannelData, size int, err error) {
-	msg, size, err := spec.ParseMessage(b)
+	msg, size, err := baseproto.ParseMessage(b)
 	if err != nil || size == 0 {
 		return
 	}
 	return ChannelData{msg}, size, nil
 }
 
-func (m ChannelData) Id() bin.Bin128   { return m.msg.Bin128(1) }
-func (m ChannelData) Data() spec.Bytes { return m.msg.Bytes(2) }
+func (m ChannelData) Id() bin.Bin128        { return m.msg.Bin128(1) }
+func (m ChannelData) Data() baseproto.Bytes { return m.msg.Bytes(2) }
 
 func (m ChannelData) HasId() bool   { return m.msg.HasField(1) }
 func (m ChannelData) HasData() bool { return m.msg.HasField(2) }
@@ -493,25 +493,25 @@ func (m ChannelData) CloneToArena(a alloc.Arena) ChannelData {
 func (m ChannelData) CloneToBuffer(b buffer.Buffer) ChannelData {
 	return ChannelData{m.msg.CloneToBuffer(b)}
 }
-func (m ChannelData) Unwrap() spec.Message { return m.msg }
+func (m ChannelData) Unwrap() baseproto.Message { return m.msg }
 
 // ChannelWindow
 
 type ChannelWindow struct {
-	msg spec.Message
+	msg baseproto.Message
 }
 
-func NewChannelWindow(msg spec.Message) ChannelWindow {
+func NewChannelWindow(msg baseproto.Message) ChannelWindow {
 	return ChannelWindow{msg}
 }
 
 func OpenChannelWindow(b []byte) ChannelWindow {
-	msg := spec.OpenMessage(b)
+	msg := baseproto.OpenMessage(b)
 	return ChannelWindow{msg}
 }
 
 func OpenChannelWindowErr(b []byte) (_ ChannelWindow, err error) {
-	msg, err := spec.OpenMessageErr(b)
+	msg, err := baseproto.OpenMessageErr(b)
 	if err != nil {
 		return
 	}
@@ -519,7 +519,7 @@ func OpenChannelWindowErr(b []byte) (_ ChannelWindow, err error) {
 }
 
 func ParseChannelWindow(b []byte) (_ ChannelWindow, size int, err error) {
-	msg, size, err := spec.ParseMessage(b)
+	msg, size, err := baseproto.ParseMessage(b)
 	if err != nil || size == 0 {
 		return
 	}
@@ -540,29 +540,29 @@ func (m ChannelWindow) CloneToArena(a alloc.Arena) ChannelWindow {
 func (m ChannelWindow) CloneToBuffer(b buffer.Buffer) ChannelWindow {
 	return ChannelWindow{m.msg.CloneToBuffer(b)}
 }
-func (m ChannelWindow) Unwrap() spec.Message { return m.msg }
+func (m ChannelWindow) Unwrap() baseproto.Message { return m.msg }
 
 // MessageWriter
 
 type MessageWriter struct {
-	w spec.MessageWriter
+	w baseproto.MessageWriter
 }
 
 func NewMessageWriter() MessageWriter {
-	w := spec.NewMessageWriter()
+	w := baseproto.NewMessageWriter()
 	return MessageWriter{w}
 }
 
 func NewMessageWriterBuffer(b buffer.Buffer) MessageWriter {
-	w := spec.NewMessageWriterBuffer(b)
+	w := baseproto.NewMessageWriterBuffer(b)
 	return MessageWriter{w}
 }
 
-func NewMessageWriterTo(w spec.MessageWriter) MessageWriter {
+func NewMessageWriterTo(w baseproto.MessageWriter) MessageWriter {
 	return MessageWriter{w}
 }
 
-func (w MessageWriter) Code(v Code) { spec.WriteField(w.w.Field(1), v, EncodeCodeTo) }
+func (w MessageWriter) Code(v Code) { baseproto.WriteField(w.w.Field(1), v, EncodeCodeTo) }
 func (w MessageWriter) ConnectRequest() ConnectRequestWriter {
 	w1 := w.w.Field(2).Message()
 	return NewConnectRequestWriterTo(w1)
@@ -629,37 +629,37 @@ func (w MessageWriter) Build() (_ Message, err error) {
 	return OpenMessageErr(bytes)
 }
 
-func (w MessageWriter) Unwrap() spec.MessageWriter {
+func (w MessageWriter) Unwrap() baseproto.MessageWriter {
 	return w.w
 }
 
 // ConnectRequestWriter
 
 type ConnectRequestWriter struct {
-	w spec.MessageWriter
+	w baseproto.MessageWriter
 }
 
 func NewConnectRequestWriter() ConnectRequestWriter {
-	w := spec.NewMessageWriter()
+	w := baseproto.NewMessageWriter()
 	return ConnectRequestWriter{w}
 }
 
 func NewConnectRequestWriterBuffer(b buffer.Buffer) ConnectRequestWriter {
-	w := spec.NewMessageWriterBuffer(b)
+	w := baseproto.NewMessageWriterBuffer(b)
 	return ConnectRequestWriter{w}
 }
 
-func NewConnectRequestWriterTo(w spec.MessageWriter) ConnectRequestWriter {
+func NewConnectRequestWriterTo(w baseproto.MessageWriter) ConnectRequestWriter {
 	return ConnectRequestWriter{w}
 }
 
-func (w ConnectRequestWriter) Versions() spec.ValueListWriter[Version] {
+func (w ConnectRequestWriter) Versions() baseproto.ValueListWriter[Version] {
 	w1 := w.w.Field(1).List()
-	return spec.NewValueListWriter(w1, EncodeVersionTo)
+	return baseproto.NewValueListWriter(w1, EncodeVersionTo)
 }
-func (w ConnectRequestWriter) Compression() spec.ValueListWriter[ConnectCompression] {
+func (w ConnectRequestWriter) Compression() baseproto.ValueListWriter[ConnectCompression] {
 	w1 := w.w.Field(2).List()
-	return spec.NewValueListWriter(w1, EncodeConnectCompressionTo)
+	return baseproto.NewValueListWriter(w1, EncodeConnectCompressionTo)
 }
 
 func (w ConnectRequestWriter) Merge(msg ConnectRequest) error {
@@ -678,35 +678,37 @@ func (w ConnectRequestWriter) Build() (_ ConnectRequest, err error) {
 	return OpenConnectRequestErr(bytes)
 }
 
-func (w ConnectRequestWriter) Unwrap() spec.MessageWriter {
+func (w ConnectRequestWriter) Unwrap() baseproto.MessageWriter {
 	return w.w
 }
 
 // ConnectResponseWriter
 
 type ConnectResponseWriter struct {
-	w spec.MessageWriter
+	w baseproto.MessageWriter
 }
 
 func NewConnectResponseWriter() ConnectResponseWriter {
-	w := spec.NewMessageWriter()
+	w := baseproto.NewMessageWriter()
 	return ConnectResponseWriter{w}
 }
 
 func NewConnectResponseWriterBuffer(b buffer.Buffer) ConnectResponseWriter {
-	w := spec.NewMessageWriterBuffer(b)
+	w := baseproto.NewMessageWriterBuffer(b)
 	return ConnectResponseWriter{w}
 }
 
-func NewConnectResponseWriterTo(w spec.MessageWriter) ConnectResponseWriter {
+func NewConnectResponseWriterTo(w baseproto.MessageWriter) ConnectResponseWriter {
 	return ConnectResponseWriter{w}
 }
 
-func (w ConnectResponseWriter) Ok(v bool)         { w.w.Field(1).Bool(v) }
-func (w ConnectResponseWriter) Error(v string)    { w.w.Field(2).String(v) }
-func (w ConnectResponseWriter) Version(v Version) { spec.WriteField(w.w.Field(10), v, EncodeVersionTo) }
+func (w ConnectResponseWriter) Ok(v bool)      { w.w.Field(1).Bool(v) }
+func (w ConnectResponseWriter) Error(v string) { w.w.Field(2).String(v) }
+func (w ConnectResponseWriter) Version(v Version) {
+	baseproto.WriteField(w.w.Field(10), v, EncodeVersionTo)
+}
 func (w ConnectResponseWriter) Compression(v ConnectCompression) {
-	spec.WriteField(w.w.Field(11), v, EncodeConnectCompressionTo)
+	baseproto.WriteField(w.w.Field(11), v, EncodeConnectCompressionTo)
 }
 
 func (w ConnectResponseWriter) Merge(msg ConnectResponse) error {
@@ -725,33 +727,33 @@ func (w ConnectResponseWriter) Build() (_ ConnectResponse, err error) {
 	return OpenConnectResponseErr(bytes)
 }
 
-func (w ConnectResponseWriter) Unwrap() spec.MessageWriter {
+func (w ConnectResponseWriter) Unwrap() baseproto.MessageWriter {
 	return w.w
 }
 
 // BatchWriter
 
 type BatchWriter struct {
-	w spec.MessageWriter
+	w baseproto.MessageWriter
 }
 
 func NewBatchWriter() BatchWriter {
-	w := spec.NewMessageWriter()
+	w := baseproto.NewMessageWriter()
 	return BatchWriter{w}
 }
 
 func NewBatchWriterBuffer(b buffer.Buffer) BatchWriter {
-	w := spec.NewMessageWriterBuffer(b)
+	w := baseproto.NewMessageWriterBuffer(b)
 	return BatchWriter{w}
 }
 
-func NewBatchWriterTo(w spec.MessageWriter) BatchWriter {
+func NewBatchWriterTo(w baseproto.MessageWriter) BatchWriter {
 	return BatchWriter{w}
 }
 
-func (w BatchWriter) List() spec.MessageListWriter[MessageWriter] {
+func (w BatchWriter) List() baseproto.MessageListWriter[MessageWriter] {
 	w1 := w.w.Field(1).List()
-	return spec.NewMessageListWriter(w1, NewMessageWriterTo)
+	return baseproto.NewMessageListWriter(w1, NewMessageWriterTo)
 }
 
 func (w BatchWriter) Merge(msg Batch) error {
@@ -770,27 +772,27 @@ func (w BatchWriter) Build() (_ Batch, err error) {
 	return OpenBatchErr(bytes)
 }
 
-func (w BatchWriter) Unwrap() spec.MessageWriter {
+func (w BatchWriter) Unwrap() baseproto.MessageWriter {
 	return w.w
 }
 
 // ChannelOpenWriter
 
 type ChannelOpenWriter struct {
-	w spec.MessageWriter
+	w baseproto.MessageWriter
 }
 
 func NewChannelOpenWriter() ChannelOpenWriter {
-	w := spec.NewMessageWriter()
+	w := baseproto.NewMessageWriter()
 	return ChannelOpenWriter{w}
 }
 
 func NewChannelOpenWriterBuffer(b buffer.Buffer) ChannelOpenWriter {
-	w := spec.NewMessageWriterBuffer(b)
+	w := baseproto.NewMessageWriterBuffer(b)
 	return ChannelOpenWriter{w}
 }
 
-func NewChannelOpenWriterTo(w spec.MessageWriter) ChannelOpenWriter {
+func NewChannelOpenWriterTo(w baseproto.MessageWriter) ChannelOpenWriter {
 	return ChannelOpenWriter{w}
 }
 
@@ -814,27 +816,27 @@ func (w ChannelOpenWriter) Build() (_ ChannelOpen, err error) {
 	return OpenChannelOpenErr(bytes)
 }
 
-func (w ChannelOpenWriter) Unwrap() spec.MessageWriter {
+func (w ChannelOpenWriter) Unwrap() baseproto.MessageWriter {
 	return w.w
 }
 
 // ChannelCloseWriter
 
 type ChannelCloseWriter struct {
-	w spec.MessageWriter
+	w baseproto.MessageWriter
 }
 
 func NewChannelCloseWriter() ChannelCloseWriter {
-	w := spec.NewMessageWriter()
+	w := baseproto.NewMessageWriter()
 	return ChannelCloseWriter{w}
 }
 
 func NewChannelCloseWriterBuffer(b buffer.Buffer) ChannelCloseWriter {
-	w := spec.NewMessageWriterBuffer(b)
+	w := baseproto.NewMessageWriterBuffer(b)
 	return ChannelCloseWriter{w}
 }
 
-func NewChannelCloseWriterTo(w spec.MessageWriter) ChannelCloseWriter {
+func NewChannelCloseWriterTo(w baseproto.MessageWriter) ChannelCloseWriter {
 	return ChannelCloseWriter{w}
 }
 
@@ -857,27 +859,27 @@ func (w ChannelCloseWriter) Build() (_ ChannelClose, err error) {
 	return OpenChannelCloseErr(bytes)
 }
 
-func (w ChannelCloseWriter) Unwrap() spec.MessageWriter {
+func (w ChannelCloseWriter) Unwrap() baseproto.MessageWriter {
 	return w.w
 }
 
 // ChannelDataWriter
 
 type ChannelDataWriter struct {
-	w spec.MessageWriter
+	w baseproto.MessageWriter
 }
 
 func NewChannelDataWriter() ChannelDataWriter {
-	w := spec.NewMessageWriter()
+	w := baseproto.NewMessageWriter()
 	return ChannelDataWriter{w}
 }
 
 func NewChannelDataWriterBuffer(b buffer.Buffer) ChannelDataWriter {
-	w := spec.NewMessageWriterBuffer(b)
+	w := baseproto.NewMessageWriterBuffer(b)
 	return ChannelDataWriter{w}
 }
 
-func NewChannelDataWriterTo(w spec.MessageWriter) ChannelDataWriter {
+func NewChannelDataWriterTo(w baseproto.MessageWriter) ChannelDataWriter {
 	return ChannelDataWriter{w}
 }
 
@@ -900,27 +902,27 @@ func (w ChannelDataWriter) Build() (_ ChannelData, err error) {
 	return OpenChannelDataErr(bytes)
 }
 
-func (w ChannelDataWriter) Unwrap() spec.MessageWriter {
+func (w ChannelDataWriter) Unwrap() baseproto.MessageWriter {
 	return w.w
 }
 
 // ChannelWindowWriter
 
 type ChannelWindowWriter struct {
-	w spec.MessageWriter
+	w baseproto.MessageWriter
 }
 
 func NewChannelWindowWriter() ChannelWindowWriter {
-	w := spec.NewMessageWriter()
+	w := baseproto.NewMessageWriter()
 	return ChannelWindowWriter{w}
 }
 
 func NewChannelWindowWriterBuffer(b buffer.Buffer) ChannelWindowWriter {
-	w := spec.NewMessageWriterBuffer(b)
+	w := baseproto.NewMessageWriterBuffer(b)
 	return ChannelWindowWriter{w}
 }
 
-func NewChannelWindowWriterTo(w spec.MessageWriter) ChannelWindowWriter {
+func NewChannelWindowWriterTo(w baseproto.MessageWriter) ChannelWindowWriter {
 	return ChannelWindowWriter{w}
 }
 
@@ -943,6 +945,6 @@ func (w ChannelWindowWriter) Build() (_ ChannelWindow, err error) {
 	return OpenChannelWindowErr(bytes)
 }
 
-func (w ChannelWindowWriter) Unwrap() spec.MessageWriter {
+func (w ChannelWindowWriter) Unwrap() baseproto.MessageWriter {
 	return w.w
 }

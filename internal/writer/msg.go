@@ -6,7 +6,7 @@ package writer
 
 import (
 	"github.com/basecomplextech/baselibrary/bin"
-	"github.com/basecomplextech/spec/internal/types"
+	"github.com/basecomplextech/baseproto/internal/types"
 )
 
 // MessageWriter writes a message.
@@ -94,7 +94,7 @@ func newField(w *writer, tag uint16) FieldWriter {
 	}
 }
 
-// Any writes a field with any valid spec object.
+// Any writes a field with any valid baseproto object.
 func (f FieldWriter) Any(b []byte) error {
 	return f.w.fieldAny(f.tag, b)
 }

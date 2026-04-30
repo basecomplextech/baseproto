@@ -1,4 +1,4 @@
-module github.com/basecomplextech/spec
+module github.com/basecomplextech/baseproto
 
 go 1.24
 

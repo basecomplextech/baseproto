@@ -7,7 +7,7 @@ package rpc
 import (
 	"github.com/basecomplextech/baselibrary/alloc"
 	"github.com/basecomplextech/baselibrary/status"
-	"github.com/basecomplextech/spec/mpx"
+	"github.com/basecomplextech/baseproto/mpx"
 )
 
 const (

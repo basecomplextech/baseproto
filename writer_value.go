@@ -2,11 +2,11 @@
 // Use of this software is governed by the MIT License
 // that can be found in the LICENSE file.
 
-package spec
+package baseproto
 
 import (
 	"github.com/basecomplextech/baselibrary/buffer"
-	"github.com/basecomplextech/spec/internal/writer"
+	"github.com/basecomplextech/baseproto/internal/writer"
 )
 
 type ValueWriter = writer.ValueWriter

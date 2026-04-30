@@ -1,5 +1,5 @@
 options (
-    go_package="github.com/basecomplextech/spec/proto/pmpx2"
+    go_package="github.com/basecomplextech/baseproto/proto/pmpx2"
 )
 
 enum Version {

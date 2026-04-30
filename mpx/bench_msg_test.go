@@ -9,7 +9,7 @@ import (
 
 	"github.com/basecomplextech/baselibrary/alloc"
 	"github.com/basecomplextech/baselibrary/bin"
-	"github.com/basecomplextech/spec/proto/pmpx"
+	"github.com/basecomplextech/baseproto/proto/pmpx"
 )
 
 func BenchmarkMessageBuild(b *testing.B) {

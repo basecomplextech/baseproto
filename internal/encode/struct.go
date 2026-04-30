@@ -8,7 +8,7 @@ import (
 	"fmt"
 
 	"github.com/basecomplextech/baselibrary/buffer"
-	"github.com/basecomplextech/spec/internal/format"
+	"github.com/basecomplextech/baseproto/internal/format"
 )
 
 func EncodeStruct(b buffer.Buffer, dataSize int) (int, error) {

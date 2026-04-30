@@ -14,7 +14,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/basecomplextech/spec/internal/lang/syntax"
+	"github.com/basecomplextech/baseproto/internal/lang/syntax"
 )
 
 type Parser interface {
@@ -62,7 +62,7 @@ func (p *parser) ParseDirectory(path string) ([]*syntax.File, error) {
 	}
 
 	// Scan files
-	pattern := filepath.Join(path, "*.spec")
+	pattern := filepath.Join(path, "*.baseproto")
 	filepaths, err := filepath.Glob(pattern)
 	if err != nil {
 		return nil, err

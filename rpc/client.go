@@ -11,9 +11,9 @@ import (
 	"github.com/basecomplextech/baselibrary/logging"
 	"github.com/basecomplextech/baselibrary/ref"
 	"github.com/basecomplextech/baselibrary/status"
-	"github.com/basecomplextech/spec"
-	"github.com/basecomplextech/spec/mpx"
-	"github.com/basecomplextech/spec/proto/prpc"
+	"github.com/basecomplextech/baseproto"
+	"github.com/basecomplextech/baseproto/mpx"
+	"github.com/basecomplextech/baseproto/proto/prpc"
 )
 
 // Client is a SpecRPC client.
@@ -46,7 +46,7 @@ type Client interface {
 	Channel(ctx async.Context, req prpc.Request) (Channel, status.Status)
 
 	// Request sends a request and returns a response.
-	Request(ctx async.Context, req prpc.Request) (ref.R[spec.Value], status.Status)
+	Request(ctx async.Context, req prpc.Request) (ref.R[baseproto.Value], status.Status)
 
 	// RequestOneway sends a request and closes the channel, without waiting for a response.
 	RequestOneway(ctx async.Context, req prpc.Request) status.Status
@@ -162,7 +162,7 @@ func (c *client) Channel(ctx async.Context, req prpc.Request) (Channel, status.S
 }
 
 // Request sends a request and returns a response.
-func (c *client) Request(ctx async.Context, req prpc.Request) (ref.R[spec.Value], status.Status) {
+func (c *client) Request(ctx async.Context, req prpc.Request) (ref.R[baseproto.Value], status.Status) {
 	// Open channel
 	ch, st := c.channel(ctx)
 	switch st.Code {

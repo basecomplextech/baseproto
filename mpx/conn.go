@@ -14,7 +14,7 @@ import (
 	"github.com/basecomplextech/baselibrary/bin"
 	"github.com/basecomplextech/baselibrary/logging"
 	"github.com/basecomplextech/baselibrary/status"
-	"github.com/basecomplextech/spec/proto/pmpx"
+	"github.com/basecomplextech/baseproto/proto/pmpx"
 )
 
 type Conn interface {

@@ -7,7 +7,7 @@ package writer
 import (
 	"testing"
 
-	"github.com/basecomplextech/spec/internal/decode"
+	"github.com/basecomplextech/baseproto/internal/decode"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

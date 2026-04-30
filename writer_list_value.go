@@ -2,9 +2,9 @@
 // Use of this software is governed by the MIT License
 // that can be found in the LICENSE file.
 
-package spec
+package baseproto
 
-import "github.com/basecomplextech/spec/internal/writer"
+import "github.com/basecomplextech/baseproto/internal/writer"
 
 // ValueListWriter writes a list of primitive values.
 type ValueListWriter[T any] struct {

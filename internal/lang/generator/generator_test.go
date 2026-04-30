@@ -7,7 +7,7 @@ package generator
 import (
 	"testing"
 
-	"github.com/basecomplextech/spec/internal/lang/compiler"
+	"github.com/basecomplextech/baseproto/internal/lang/compiler"
 )
 
 func TestGenerator_Package__should_generate_go_package(t *testing.T) {

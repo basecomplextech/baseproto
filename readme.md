@@ -1,8 +1,8 @@
-Spec: Fast Alloc-Free Binary Format
-===================================
+baseProto: Flat Binary Protocol
+===============================
 
 See [format.md] for a format specifiction.
 
 ---
 
-© 2021-2023 Ivan Korobkov
+© 2021-2026 Ivan Korobkov

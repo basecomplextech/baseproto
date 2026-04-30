@@ -9,8 +9,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/basecomplextech/spec/internal/lang/parser"
-	"github.com/basecomplextech/spec/internal/lang/syntax"
+	"github.com/basecomplextech/baseproto/internal/lang/parser"
+	"github.com/basecomplextech/baseproto/internal/lang/syntax"
 )
 
 type Context struct {

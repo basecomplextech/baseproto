@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/basecomplextech/spec/internal/lang/model"
+	"github.com/basecomplextech/baseproto/internal/lang/model"
 )
 
 type serviceImplWriter struct {
@@ -314,10 +314,10 @@ func (w *serviceImplWriter) channel_def(def *model.Definition, m *model.Method) 
 	w.line()
 	w.linef(`type %v struct {`, name)
 	w.line(`ch rpc.ServerChannel`)
-	w.line(`req spec.Message`)
+	w.line(`req baseproto.Message`)
 	w.line(`}`)
 	w.line()
-	w.linef(`func new%v(ch rpc.ServerChannel, req spec.Message) *%v {`, strings.Title(name), name)
+	w.linef(`func new%v(ch rpc.ServerChannel, req baseproto.Message) *%v {`, strings.Title(name), name)
 	w.linef(`return &%v{ch: ch, req: req}`, name)
 	w.linef(`}`)
 	w.line()
@@ -334,7 +334,7 @@ func (w *serviceImplWriter) channel_request(def *model.Definition, m *model.Meth
 
 		w.linef(`func (c *%v) Request() (%v, status.Status) {`, name, typeName)
 		w.linef(`req := %v(c.req)`, makeFunc)
-		w.line(`c.req = spec.Message{}`)
+		w.line(`c.req = baseproto.Message{}`)
 		w.line(`return req, status.OK`)
 		w.line(`}`)
 		w.line()

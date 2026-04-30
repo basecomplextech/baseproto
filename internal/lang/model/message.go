@@ -5,7 +5,7 @@
 package model
 
 import (
-	"github.com/basecomplextech/spec/internal/lang/syntax"
+	"github.com/basecomplextech/baseproto/internal/lang/syntax"
 )
 
 type Message struct {

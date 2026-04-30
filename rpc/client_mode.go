@@ -4,7 +4,7 @@
 
 package rpc
 
-import "github.com/basecomplextech/spec/mpx"
+import "github.com/basecomplextech/baseproto/mpx"
 
 // ClientMode specifies how the client connects to the server.
 type ClientMode = mpx.ClientMode

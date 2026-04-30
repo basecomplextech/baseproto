@@ -6,8 +6,8 @@ package pkg1
 
 import (
 	"github.com/basecomplextech/baselibrary/bin"
-	"github.com/basecomplextech/spec/internal/tests/pkg2"
-	"github.com/basecomplextech/spec/internal/tests/pkg3/pkg3a"
+	"github.com/basecomplextech/baseproto/internal/tests/pkg2"
+	"github.com/basecomplextech/baseproto/internal/tests/pkg3/pkg3a"
 )
 
 type Object struct {

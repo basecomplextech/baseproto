@@ -15,8 +15,8 @@ import (
 	"github.com/basecomplextech/baselibrary/ref"
 	"github.com/basecomplextech/baselibrary/status"
 	"github.com/basecomplextech/baselibrary/tests"
-	"github.com/basecomplextech/spec"
-	"github.com/basecomplextech/spec/mpx"
+	"github.com/basecomplextech/baseproto"
+	"github.com/basecomplextech/baseproto/mpx"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -191,7 +191,7 @@ func TestClient_Receive__should_return_end_on_response(t *testing.T) {
 		}
 
 		buf := alloc.NewBuffer()
-		w := spec.NewValueWriterBuffer(buf)
+		w := baseproto.NewValueWriterBuffer(buf)
 		w.String("response")
 		if _, err := w.Build(); err != nil {
 			return nil, status.WrapError(err)
@@ -233,7 +233,7 @@ func TestClient_Receive__should_return_end_on_response(t *testing.T) {
 func TestClient_Response__should_receive_server_response(t *testing.T) {
 	handle := func(ctx Context, ch ServerChannel) (ref.R[[]byte], status.Status) {
 		buf := alloc.NewBuffer()
-		w := spec.NewValueWriterBuffer(buf)
+		w := baseproto.NewValueWriterBuffer(buf)
 		w.String("hello, world")
 		if _, err := w.Build(); err != nil {
 			return nil, status.WrapError(err)
@@ -269,7 +269,7 @@ func TestClient_Response__should_skip_message(t *testing.T) {
 		}
 
 		buf := alloc.NewBuffer()
-		w := spec.NewValueWriterBuffer(buf)
+		w := baseproto.NewValueWriterBuffer(buf)
 		w.String("response")
 		if _, err := w.Build(); err != nil {
 			return nil, status.WrapError(err)
@@ -321,7 +321,7 @@ func TestClient_Channel__should_send_receive_messages_response(t *testing.T) {
 		}
 
 		buf := alloc.NewBuffer()
-		w := spec.NewValueWriterBuffer(buf)
+		w := baseproto.NewValueWriterBuffer(buf)
 		w.String("response")
 		if _, err := w.Build(); err != nil {
 			return nil, status.WrapError(err)

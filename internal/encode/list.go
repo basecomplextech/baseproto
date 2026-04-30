@@ -9,7 +9,7 @@ import (
 	"fmt"
 
 	"github.com/basecomplextech/baselibrary/buffer"
-	"github.com/basecomplextech/spec/internal/format"
+	"github.com/basecomplextech/baseproto/internal/format"
 )
 
 func EncodeListTable(b buffer.Buffer, dataSize int, table []format.ListElement) (int, error) {

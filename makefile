@@ -1,8 +1,8 @@
-# Spec Makefile
+# baseProto Makefile
 .PHONY: proto
 
 install:
-	@ go install ./cmd/spec
+	@ go install ./cmd/basec
 
 generate:
 	@ go generate ./...

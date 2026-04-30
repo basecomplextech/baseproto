@@ -7,8 +7,8 @@ package types
 import (
 	"fmt"
 
-	"github.com/basecomplextech/spec/internal/decode"
-	"github.com/basecomplextech/spec/internal/format"
+	"github.com/basecomplextech/baseproto/internal/decode"
+	"github.com/basecomplextech/baseproto/internal/format"
 )
 
 // List is a raw list of elements.

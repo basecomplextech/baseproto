@@ -10,19 +10,19 @@ import (
 	"os"
 	"strings"
 
-	"github.com/basecomplextech/spec/internal/lang"
+	"github.com/basecomplextech/baseproto/internal/lang"
 	"github.com/urfave/cli/v2"
 )
 
 func main() {
 	app := &cli.App{
-		Name:  "spec",
-		Usage: "Spec code generator",
+		Name:  "baseproto",
+		Usage: "baseProto code generator",
 		Commands: []*cli.Command{
 			{
 				Name:        "generate",
-				Description: "Generate a Go package from a Spec package",
-				UsageText:   "spec generate [-i import-paths] [--skip-rpc] [src-dir] [dst-dir]",
+				Description: "Generate a Go package from a baseProto package",
+				UsageText:   "baseproto generate [-i import-paths] [--skip-rpc] [src-dir] [dst-dir]",
 				Args:        true,
 				Flags: []cli.Flag{
 					&cli.StringSliceFlag{
@@ -58,8 +58,8 @@ func main() {
 					skipRPC := x.Bool("skip-rpc")
 
 					// Generate
-					spec := lang.New(imports, skipRPC)
-					return spec.Generate(src, dst)
+					baseproto := lang.New(imports, skipRPC)
+					return baseproto.Generate(src, dst)
 				},
 			},
 		},

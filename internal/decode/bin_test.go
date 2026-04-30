@@ -9,8 +9,8 @@ import (
 
 	"github.com/basecomplextech/baselibrary/bin"
 	"github.com/basecomplextech/baselibrary/buffer"
-	"github.com/basecomplextech/spec/internal/encode"
-	"github.com/basecomplextech/spec/internal/format"
+	"github.com/basecomplextech/baseproto/internal/encode"
+	"github.com/basecomplextech/baseproto/internal/format"
 	"github.com/stretchr/testify/assert"
 )
 

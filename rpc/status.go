@@ -6,8 +6,8 @@ package rpc
 
 import (
 	"github.com/basecomplextech/baselibrary/status"
-	"github.com/basecomplextech/spec"
-	"github.com/basecomplextech/spec/proto/prpc"
+	baseproto "github.com/basecomplextech/baseproto"
+	"github.com/basecomplextech/baseproto/proto/prpc"
 )
 
 const ErrorCode status.Code = "rpc_error"
@@ -42,9 +42,9 @@ func parseStatus(s prpc.Status) status.Status {
 	return status.New(code, msg)
 }
 
-// parseStatusCode returns a spec string into a constant status code string,
+// parseStatusCode returns a baseproto string into a constant status code string,
 // or a clone of the original string.
-func parseStatusCode(code spec.String) status.Code {
+func parseStatusCode(code baseproto.String) status.Code {
 	switch status.Code(code) {
 
 	// General class
@@ -103,7 +103,7 @@ func parseStatusCode(code spec.String) status.Code {
 	return status.Code(code.Clone())
 }
 
-func parseStatusMessage(msg spec.String) string {
+func parseStatusMessage(msg baseproto.String) string {
 	if msg == "" {
 		return ""
 	}

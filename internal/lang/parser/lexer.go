@@ -11,7 +11,7 @@ import (
 	"strings"
 	"text/scanner"
 
-	"github.com/basecomplextech/spec/internal/lang/syntax"
+	"github.com/basecomplextech/baseproto/internal/lang/syntax"
 )
 
 const (

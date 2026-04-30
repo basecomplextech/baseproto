@@ -9,8 +9,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/basecomplextech/spec/internal/lang/model"
-	"github.com/basecomplextech/spec/internal/lang/parser"
+	"github.com/basecomplextech/baseproto/internal/lang/model"
+	"github.com/basecomplextech/baseproto/internal/lang/parser"
 )
 
 type Compiler interface {

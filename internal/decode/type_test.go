@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/basecomplextech/baselibrary/encoding/compactint"
-	"github.com/basecomplextech/spec/internal/format"
+	"github.com/basecomplextech/baseproto/internal/format"
 	"github.com/stretchr/testify/assert"
 )
 

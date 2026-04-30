@@ -6,11 +6,11 @@ package writer
 
 import (
 	"github.com/basecomplextech/baselibrary/bin"
-	"github.com/basecomplextech/spec/internal/decode"
-	"github.com/basecomplextech/spec/internal/encode"
+	"github.com/basecomplextech/baseproto/internal/decode"
+	"github.com/basecomplextech/baseproto/internal/encode"
 )
 
-// ValueWriter writes spec values.
+// ValueWriter writes baseproto values.
 type ValueWriter struct {
 	w *writer
 }

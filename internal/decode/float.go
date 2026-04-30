@@ -9,7 +9,7 @@ import (
 	"errors"
 	"math"
 
-	"github.com/basecomplextech/spec/internal/format"
+	"github.com/basecomplextech/baseproto/internal/format"
 )
 
 func DecodeFloat32(b []byte) (float32, int, error) {

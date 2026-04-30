@@ -6,7 +6,7 @@ package encode
 
 import (
 	"github.com/basecomplextech/baselibrary/buffer"
-	"github.com/basecomplextech/spec/internal/format"
+	"github.com/basecomplextech/baseproto/internal/format"
 )
 
 func EncodeBool(b buffer.Buffer, v bool) (int, error) {

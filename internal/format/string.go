@@ -6,7 +6,7 @@ package format
 
 import "strings"
 
-// String is a spec string backed by a buffer.
+// String is a baseproto string backed by a buffer.
 // Clone it if you need to keep it around.
 type String string
 

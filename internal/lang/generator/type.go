@@ -7,7 +7,7 @@ package generator
 import (
 	"fmt"
 
-	"github.com/basecomplextech/spec/internal/lang/model"
+	"github.com/basecomplextech/baseproto/internal/lang/model"
 )
 
 // typeName returns a type name.
@@ -16,7 +16,7 @@ func typeName(typ *model.Type) string {
 
 	switch kind {
 	case model.KindAny:
-		return "spec.Value"
+		return "baseproto.Value"
 
 	case model.KindBool:
 		return "bool"
@@ -56,14 +56,14 @@ func typeName(typ *model.Type) string {
 	case model.KindString:
 		return "string"
 	case model.KindAnyMessage:
-		return "spec.Message"
+		return "baseproto.Message"
 
 	case model.KindList:
 		elem := typeName(typ.Element)
 		if typ.Element.Kind == model.KindMessage {
-			return fmt.Sprintf("spec.MessageList[%v]", elem)
+			return fmt.Sprintf("baseproto.MessageList[%v]", elem)
 		}
-		return fmt.Sprintf("spec.ValueList[%v]", elem)
+		return fmt.Sprintf("baseproto.ValueList[%v]", elem)
 
 	case model.KindEnum,
 		model.KindMessage,
@@ -88,16 +88,16 @@ func typeRefName(typ *model.Type) string {
 
 	switch kind {
 	case model.KindBytes:
-		return "spec.Bytes"
+		return "baseproto.Bytes"
 	case model.KindString:
-		return "spec.String"
+		return "baseproto.String"
 
 	case model.KindList:
 		elem := typeRefName(typ.Element)
 		if typ.Element.Kind == model.KindMessage {
-			return fmt.Sprintf("spec.MessageList[%v]", elem)
+			return fmt.Sprintf("baseproto.MessageList[%v]", elem)
 		}
-		return fmt.Sprintf("spec.ValueList[%v]", elem)
+		return fmt.Sprintf("baseproto.ValueList[%v]", elem)
 	}
 
 	return typeName(typ)
@@ -120,7 +120,7 @@ func typeNewFunc(typ *model.Type) string {
 	switch kind {
 	case model.KindList:
 		elem := typeName(typ.Element)
-		return "spec.List[]" + elem
+		return "baseproto.List[]" + elem
 
 	case model.KindEnum,
 		model.KindMessage,
@@ -153,7 +153,7 @@ func typeParseFunc(typ *model.Type) string {
 	switch kind {
 	case model.KindList:
 		elem := typeName(typ.Element)
-		return "spec.List[]" + elem
+		return "baseproto.List[]" + elem
 
 	case model.KindEnum,
 		model.KindStruct:
@@ -178,55 +178,55 @@ func typeDecodeFunc(typ *model.Type) string {
 
 	switch kind {
 	case model.KindAny:
-		return "spec.ParseValue"
+		return "baseproto.ParseValue"
 
 	case model.KindBool:
-		return "spec.DecodeBool"
+		return "baseproto.DecodeBool"
 	case model.KindByte:
-		return "spec.DecodeByte"
+		return "baseproto.DecodeByte"
 
 	case model.KindInt16:
-		return "spec.DecodeInt16"
+		return "baseproto.DecodeInt16"
 	case model.KindInt32:
-		return "spec.DecodeInt32"
+		return "baseproto.DecodeInt32"
 	case model.KindInt64:
-		return "spec.DecodeInt64"
+		return "baseproto.DecodeInt64"
 
 	case model.KindUint16:
-		return "spec.DecodeUint16"
+		return "baseproto.DecodeUint16"
 	case model.KindUint32:
-		return "spec.DecodeUint32"
+		return "baseproto.DecodeUint32"
 	case model.KindUint64:
-		return "spec.DecodeUint64"
+		return "baseproto.DecodeUint64"
 
 	case model.KindFloat32:
-		return "spec.DecodeFloat32"
+		return "baseproto.DecodeFloat32"
 	case model.KindFloat64:
-		return "spec.DecodeFloat64"
+		return "baseproto.DecodeFloat64"
 
 	case model.KindBin64:
-		return "spec.DecodeBin64"
+		return "baseproto.DecodeBin64"
 	case model.KindBin128:
-		return "spec.DecodeBin128"
+		return "baseproto.DecodeBin128"
 	case model.KindBin192:
-		return "spec.DecodeBin192"
+		return "baseproto.DecodeBin192"
 	case model.KindBin256:
-		return "spec.DecodeBin256"
+		return "baseproto.DecodeBin256"
 
 	case model.KindBytes:
-		return "spec.DecodeBytes"
+		return "baseproto.DecodeBytes"
 	case model.KindString:
-		return "spec.DecodeString"
+		return "baseproto.DecodeString"
 	case model.KindAnyMessage:
-		return "spec.ParseMessage"
+		return "baseproto.ParseMessage"
 
 	case model.KindList:
 		elem := typ.Element
 		name := typeName(typ.Element)
 		if elem.Kind == model.KindMessage {
-			return fmt.Sprintf("spec.OpenMessageListErr[%v]", name)
+			return fmt.Sprintf("baseproto.OpenMessageListErr[%v]", name)
 		}
-		return fmt.Sprintf("spec.OpenValueListErr[%v]", name)
+		return fmt.Sprintf("baseproto.OpenValueListErr[%v]", name)
 
 	case model.KindEnum,
 		model.KindStruct:
@@ -250,13 +250,13 @@ func typeDecodeRefFunc(typ *model.Type) string {
 
 	switch kind {
 	case model.KindBytes:
-		return "spec.DecodeBytes"
+		return "baseproto.DecodeBytes"
 	case model.KindString:
-		return "spec.DecodeString"
+		return "baseproto.DecodeString"
 
 	case model.KindList:
 		elem := typeRefName(typ.Element)
-		return fmt.Sprintf("spec.ParseTypedList[%v]", elem)
+		return fmt.Sprintf("baseproto.ParseTypedList[%v]", elem)
 	}
 
 	return typeDecodeFunc(typ)
@@ -267,47 +267,47 @@ func typeWriteFunc(typ *model.Type) string {
 
 	switch kind {
 	case model.KindAny:
-		return "spec.WriteValue"
+		return "baseproto.WriteValue"
 
 	case model.KindBool:
-		return "spec.EncodeBool"
+		return "baseproto.EncodeBool"
 	case model.KindByte:
-		return "spec.EncodeByte"
+		return "baseproto.EncodeByte"
 
 	case model.KindInt16:
-		return "spec.EncodeInt16"
+		return "baseproto.EncodeInt16"
 	case model.KindInt32:
-		return "spec.EncodeInt32"
+		return "baseproto.EncodeInt32"
 	case model.KindInt64:
-		return "spec.EncodeInt64"
+		return "baseproto.EncodeInt64"
 
 	case model.KindUint16:
-		return "spec.EncodeUint16"
+		return "baseproto.EncodeUint16"
 	case model.KindUint32:
-		return "spec.EncodeUint32"
+		return "baseproto.EncodeUint32"
 	case model.KindUint64:
-		return "spec.EncodeUint64"
+		return "baseproto.EncodeUint64"
 
 	case model.KindBin64:
-		return "spec.EncodeBin64"
+		return "baseproto.EncodeBin64"
 	case model.KindBin128:
-		return "spec.EncodeBin128"
+		return "baseproto.EncodeBin128"
 	case model.KindBin192:
-		return "spec.EncodeBin192"
+		return "baseproto.EncodeBin192"
 	case model.KindBin256:
-		return "spec.EncodeBin256"
+		return "baseproto.EncodeBin256"
 
 	case model.KindFloat32:
-		return "spec.EncodeFloat32"
+		return "baseproto.EncodeFloat32"
 	case model.KindFloat64:
-		return "spec.EncodeFloat64"
+		return "baseproto.EncodeFloat64"
 
 	case model.KindBytes:
-		return "spec.EncodeBytes"
+		return "baseproto.EncodeBytes"
 	case model.KindString:
-		return "spec.EncodeString"
+		return "baseproto.EncodeString"
 	case model.KindAnyMessage:
-		return "spec.WriteMessage"
+		return "baseproto.WriteMessage"
 
 	case model.KindEnum:
 		if typ.Import != nil {
@@ -318,9 +318,9 @@ func typeWriteFunc(typ *model.Type) string {
 	case model.KindList:
 		elem := typ.Element
 		if elem.Kind == model.KindMessage {
-			return fmt.Sprintf("spec.NewMessageListWriter")
+			return fmt.Sprintf("baseproto.NewMessageListWriter")
 		}
-		return fmt.Sprintf("spec.NewValueListWriter")
+		return fmt.Sprintf("baseproto.NewValueListWriter")
 
 	case model.KindMessage:
 		if typ.Import != nil {
@@ -346,11 +346,11 @@ func typeWriter(typ *model.Type) string {
 		elem := typ.Element
 		if elem.Kind == model.KindMessage {
 			encoder := typeWriter(elem)
-			return fmt.Sprintf("spec.MessageListWriter[%v]", encoder)
+			return fmt.Sprintf("baseproto.MessageListWriter[%v]", encoder)
 		}
 
 		elemName := inTypeName(elem)
-		return fmt.Sprintf("spec.ValueListWriter[%v]", elemName)
+		return fmt.Sprintf("baseproto.ValueListWriter[%v]", elemName)
 
 	case model.KindMessage:
 		if typ.Import != nil {

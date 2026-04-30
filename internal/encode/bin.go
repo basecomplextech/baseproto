@@ -7,7 +7,7 @@ package encode
 import (
 	"github.com/basecomplextech/baselibrary/bin"
 	"github.com/basecomplextech/baselibrary/buffer"
-	"github.com/basecomplextech/spec/internal/format"
+	"github.com/basecomplextech/baseproto/internal/format"
 )
 
 func EncodeBin64(b buffer.Buffer, v bin.Bin64) (int, error) {

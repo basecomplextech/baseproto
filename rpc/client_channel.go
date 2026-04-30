@@ -14,9 +14,9 @@ import (
 	"github.com/basecomplextech/baselibrary/pools"
 	"github.com/basecomplextech/baselibrary/ref"
 	"github.com/basecomplextech/baselibrary/status"
-	"github.com/basecomplextech/spec"
-	"github.com/basecomplextech/spec/mpx"
-	"github.com/basecomplextech/spec/proto/prpc"
+	"github.com/basecomplextech/baseproto"
+	"github.com/basecomplextech/baseproto/mpx"
+	"github.com/basecomplextech/baseproto/proto/prpc"
 )
 
 // Channel is a client RPC channel.
@@ -52,7 +52,7 @@ type Channel interface {
 	// Response receives a response and returns its status and result if status is OK.
 	//
 	// The message is valid until the channel is freed.
-	Response(ctx async.Context) (spec.Value, status.Status)
+	Response(ctx async.Context) (baseproto.Value, status.Status)
 
 	// Internal
 
@@ -90,7 +90,7 @@ type channelState struct {
 	recvError  status.Status
 
 	// temp result stores result until Response is called
-	result   spec.Value
+	result   baseproto.Value
 	resultOK bool
 	resultSt status.Status
 }
@@ -326,7 +326,7 @@ func (ch *channel) ReceiveWait() <-chan struct{} {
 // Response receives a response and returns its status and result if status is OK.
 //
 // The message is valid until the channel is freed.
-func (ch *channel) Response(ctx async.Context) (spec.Value, status.Status) {
+func (ch *channel) Response(ctx async.Context) (baseproto.Value, status.Status) {
 	s, ok := ch.acquire()
 	if !ok {
 		return nil, status.Closed
@@ -520,7 +520,7 @@ func (s *channelState) receiveFail(st status.Status) {
 
 // util
 
-func parseResult(resp prpc.Response) (spec.Value, status.Status) {
+func parseResult(resp prpc.Response) (baseproto.Value, status.Status) {
 	// Parse status
 	st := parseStatus(resp.Status())
 	if !st.OK() {

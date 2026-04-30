@@ -5,7 +5,7 @@
 package generator
 
 import (
-	"github.com/basecomplextech/spec/internal/lang/model"
+	"github.com/basecomplextech/baseproto/internal/lang/model"
 )
 
 type fileWriter struct {
@@ -30,11 +30,11 @@ func (w *fileWriter) file(file *model.File) error {
 	w.line(`"github.com/basecomplextech/baselibrary/pools"`)
 	w.line(`"github.com/basecomplextech/baselibrary/ref"`)
 	w.line(`"github.com/basecomplextech/baselibrary/status"`)
-	w.line(`"github.com/basecomplextech/spec"`)
+	w.line(`"github.com/basecomplextech/baseproto"`)
 
 	if !w.skipRPC {
-		w.line(`"github.com/basecomplextech/spec/rpc"`)
-		w.line(`"github.com/basecomplextech/spec/proto/prpc"`)
+		w.line(`"github.com/basecomplextech/baseproto/rpc"`)
+		w.line(`"github.com/basecomplextech/baseproto/proto/prpc"`)
 	}
 
 	for _, imp := range file.Imports {
@@ -50,7 +50,7 @@ func (w *fileWriter) file(file *model.File) error {
 	w.line(`_ async.Context`)
 	w.line(`_ bin.Bin128`)
 	w.line(`_ buffer.Buffer`)
-	w.line(`_ spec.MessageTable`)
+	w.line(`_ baseproto.MessageTable`)
 	w.line(`_ pools.Pool[any]`)
 	w.line(`_ ref.Ref`)
 
@@ -59,7 +59,7 @@ func (w *fileWriter) file(file *model.File) error {
 		w.line(`_ prpc.Request`)
 	}
 
-	w.line(`_ spec.Type`)
+	w.line(`_ baseproto.Type`)
 	w.line(`_ status.Status`)
 	w.line(`)`)
 

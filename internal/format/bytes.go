@@ -8,7 +8,7 @@ import (
 	"bytes"
 )
 
-// Bytes is a spec byte slice backed by a buffer.
+// Bytes is a baseproto byte slice backed by a buffer.
 // Clone it if you need to keep it around.
 type Bytes []byte
 

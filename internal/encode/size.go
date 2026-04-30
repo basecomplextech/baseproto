@@ -1,9 +1,13 @@
+// Copyright 2026 Ivan Korobkov. All rights reserved.
+// Use of this software is governed by the MIT License
+// that can be found in the LICENSE file.
+
 package encode
 
 import (
 	"github.com/basecomplextech/baselibrary/buffer"
 	"github.com/basecomplextech/baselibrary/encoding/compactint"
-	"github.com/basecomplextech/spec/internal/format"
+	"github.com/basecomplextech/baseproto/internal/format"
 )
 
 func encodeSize(b buffer.Buffer, size uint32) int {
