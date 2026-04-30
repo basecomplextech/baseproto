@@ -30,6 +30,11 @@ func (b MessageListWriter[T]) Copy(msg MessageType) error {
 	return b.w.Any(raw)
 }
 
+// CopyBytes adds a message copy from raw bytes to the list.
+func (b MessageListWriter[T]) CopyBytes(raw []byte) error {
+	return b.w.Any(raw)
+}
+
 // Len returns the number of written elements.
 // The method is only valid when there is no pending element.
 func (b MessageListWriter[T]) Len() int {
@@ -44,4 +49,9 @@ func (b MessageListWriter[T]) Err() error {
 // End ends the list.
 func (b MessageListWriter[T]) End() error {
 	return b.w.End()
+}
+
+// Build builds the message list.
+func (b MessageListWriter[T]) Build() ([]byte, error) {
+	return b.w.Build()
 }
