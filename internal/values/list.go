@@ -39,7 +39,7 @@ func ParseList(b []byte) (l List, size int, err error) {
 	}
 
 	ln := l.Len()
-	for i := 0; i < ln; i++ {
+	for i := range ln {
 		b1 := l.GetBytes(i)
 		if len(b1) == 0 {
 			continue
@@ -48,20 +48,6 @@ func ParseList(b []byte) (l List, size int, err error) {
 		if _, _, err = ParseValue(b1); err != nil {
 			return
 		}
-	}
-	return l, size, nil
-}
-
-func decodeList(b []byte) (l List, size int, err error) {
-	table, size, err := decode.DecodeListTable(b)
-	if err != nil {
-		return List{}, 0, err
-	}
-	bytes := b[len(b)-size:]
-
-	l = List{
-		table: table,
-		bytes: bytes,
 	}
 	return l, size, nil
 }
@@ -131,4 +117,20 @@ func (l List) CloneTo(b []byte) List {
 
 	copy(b, l.bytes)
 	return OpenList(b)
+}
+
+// private
+
+func decodeList(b []byte) (l List, size int, err error) {
+	table, size, err := decode.DecodeListTable(b)
+	if err != nil {
+		return List{}, 0, err
+	}
+	bytes := b[len(b)-size:]
+
+	l = List{
+		table: table,
+		bytes: bytes,
+	}
+	return l, size, nil
 }
