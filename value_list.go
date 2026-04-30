@@ -49,12 +49,16 @@ func OpenMessageList[T any](b []byte, open func([]byte) (T, error)) MessageList[
 }
 
 // OpenMessageListErr opens and returns a message list, or an error.
-func OpenMessageListErr[T any](b []byte, open func([]byte) (T, error)) (_ MessageList[T], err error) {
+func OpenMessageListErr[T any](b []byte, open func([]byte) (T, error)) (
+	_ MessageList[T], err error) {
+
 	return values.OpenMessageListErr(b, open)
 }
 
 // ParseMessageList decodes, recursively validates and returns a list.
-func ParseMessageList[T any](b []byte, open func([]byte) (T, error)) (_ MessageList[T], size int, err error) {
+func ParseMessageList[T any](b []byte, open func([]byte) (T, error)) (
+	_ MessageList[T], size int, err error) {
+
 	return values.ParseMessageList(b, open)
 }
 
@@ -71,11 +75,15 @@ func OpenValueList[T any](b []byte, decode func([]byte) (T, int, error)) ValueLi
 }
 
 // OpenValueListErr opens and returns a value list, or an error.
-func OpenValueListErr[T any](b []byte, decode func([]byte) (T, int, error)) (_ ValueList[T], err error) {
+func OpenValueListErr[T any](b []byte, decode func([]byte) (T, int, error)) (
+	_ ValueList[T], err error) {
+
 	return values.OpenValueListErr(b, decode)
 }
 
 // ParseValueList decodes, recursively validates and returns a list.
-func ParseValueList[T any](b []byte, decode func([]byte) (T, int, error)) (_ ValueList[T], size int, err error) {
+func ParseValueList[T any](b []byte, decode func([]byte) (T, int, error)) (
+	_ ValueList[T], size int, err error) {
+
 	return values.ParseValueList(b, decode)
 }

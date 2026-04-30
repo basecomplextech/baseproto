@@ -2,18 +2,16 @@
 // Use of this software is governed by the MIT License
 // that can be found in the LICENSE file.
 
-package baseproto
-
-import "github.com/basecomplextech/baseproto/internal/writer"
+package writer
 
 // ValueListWriter writes a list of primitive values.
 type ValueListWriter[T any] struct {
 	w     ListWriter
-	write writer.WriteFunc[T]
+	write WriteFunc[T]
 }
 
 // NewValueListWriter returns a new value list writer.
-func NewValueListWriter[T any](w ListWriter, write writer.WriteFunc[T]) (_ ValueListWriter[T]) {
+func NewValueListWriter[T any](w ListWriter, write WriteFunc[T]) ValueListWriter[T] {
 	return ValueListWriter[T]{
 		w:     w,
 		write: write,
@@ -22,7 +20,7 @@ func NewValueListWriter[T any](w ListWriter, write writer.WriteFunc[T]) (_ Value
 
 // Add adds the next element.
 func (b ValueListWriter[T]) Add(value T) error {
-	return writer.WriteElement(b.w, value, b.write)
+	return WriteElement(b.w, value, b.write)
 }
 
 // Len returns the number of written elements.

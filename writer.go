@@ -9,7 +9,13 @@ import (
 	"github.com/basecomplextech/baseproto/internal/writer"
 )
 
-type Writer = writer.Writer
+type (
+	// Writer writes baseproto values.
+	Writer = writer.Writer
+
+	// WriteFunc specifies a generic function to write a value directly into a buffer.
+	WriteFunc[T any] = writer.WriteFunc[T]
+)
 
 // NewWriter returns a new writer with a new empty buffer.
 //

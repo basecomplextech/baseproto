@@ -2,7 +2,9 @@
 // Use of this software is governed by the MIT License
 // that can be found in the LICENSE file.
 
-package baseproto
+package writer
+
+import "github.com/basecomplextech/baseproto/internal/values"
 
 // MessageListWriter writes a list of messages.
 type MessageListWriter[T any] struct {
@@ -11,7 +13,7 @@ type MessageListWriter[T any] struct {
 }
 
 // NewMessageListWriter returns a new message list writer.
-func NewMessageListWriter[T any](w ListWriter, next func(w MessageWriter) T) (_ MessageListWriter[T]) {
+func NewMessageListWriter[T any](w ListWriter, next func(w MessageWriter) T) MessageListWriter[T] {
 	return MessageListWriter[T]{
 		w:    w,
 		next: next,
@@ -25,7 +27,7 @@ func (b MessageListWriter[T]) Add() (_ T) {
 }
 
 // Copy adds a message copy to the list.
-func (b MessageListWriter[T]) Copy(msg MessageType) error {
+func (b MessageListWriter[T]) Copy(msg values.MessageType) error {
 	raw := msg.Unwrap().Raw()
 	return b.w.Any(raw)
 }

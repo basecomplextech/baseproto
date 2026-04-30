@@ -15,7 +15,7 @@ import (
 	"github.com/basecomplextech/baseproto/internal/format"
 )
 
-// Writer writes baseproto objects.
+// Writer writes baseproto values.
 type Writer interface {
 	// Err returns the current write error or nil.
 	Err() error
