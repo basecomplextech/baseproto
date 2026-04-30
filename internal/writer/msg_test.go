@@ -10,7 +10,7 @@ import (
 
 	"github.com/basecomplextech/baselibrary/bin"
 	"github.com/basecomplextech/baseproto/internal/decode"
-	"github.com/basecomplextech/baseproto/internal/types"
+	"github.com/basecomplextech/baseproto/internal/values"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -66,7 +66,7 @@ func TestMessageWriter__should_write_message(t *testing.T) {
 }
 
 func TestMessageWriter_Copy__should_copy_message(t *testing.T) {
-	var msg types.Message
+	var msg values.Message
 	{
 		w := testWriter()
 		w1 := w.Message()
@@ -76,7 +76,7 @@ func TestMessageWriter_Copy__should_copy_message(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		msg, err = types.OpenMessageErr(b)
+		msg, err = values.OpenMessageErr(b)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -92,7 +92,7 @@ func TestMessageWriter_Copy__should_copy_message(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	msg1, err := types.OpenMessageErr(b)
+	msg1, err := values.OpenMessageErr(b)
 	if err != nil {
 		t.Fatal(err)
 	}

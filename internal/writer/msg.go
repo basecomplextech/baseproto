@@ -6,7 +6,7 @@ package writer
 
 import (
 	"github.com/basecomplextech/baselibrary/bin"
-	"github.com/basecomplextech/baseproto/internal/types"
+	"github.com/basecomplextech/baseproto/internal/values"
 )
 
 // MessageWriter writes a message.
@@ -26,7 +26,7 @@ func (m MessageWriter) HasField(field uint16) bool {
 }
 
 // Copy copies absent fields from the given message.
-func (m MessageWriter) Copy(src types.Message) error {
+func (m MessageWriter) Copy(src values.Message) error {
 	n := src.Fields()
 
 	for i := 0; i < n; i++ {
@@ -48,7 +48,7 @@ func (m MessageWriter) Copy(src types.Message) error {
 }
 
 // Merge copies absent fields from the given message.
-func (m MessageWriter) Merge(src types.Message) error {
+func (m MessageWriter) Merge(src values.Message) error {
 	return m.Copy(src)
 }
 

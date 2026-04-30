@@ -5,18 +5,18 @@
 package baseproto
 
 import (
-	"github.com/basecomplextech/baseproto/internal/types"
+	"github.com/basecomplextech/baseproto/internal/values"
 )
 
 // Value is a raw value.
-type Value = types.Value
+type Value = values.Value
 
 // OpenValue opens and returns a value from bytes, or nil on error.
 //
 // The method only checks the type, but does not recursively parse the value.
 // See [ParseValue] for recursive parsing.
 func OpenValue(b []byte) Value {
-	return types.OpenValue(b)
+	return values.OpenValue(b)
 }
 
 // OpenValueErr opens and returns a value from bytes, or an error.
@@ -24,10 +24,10 @@ func OpenValue(b []byte) Value {
 // The method only checks the type, but does not recursively parse the value.
 // See [ParseValue] for recursive parsing.
 func OpenValueErr(b []byte) (Value, error) {
-	return types.OpenValueErr(b)
+	return values.OpenValueErr(b)
 }
 
 // ParseValue recursively parses and returns a value.
 func ParseValue(b []byte) (_ Value, n int, err error) {
-	return types.ParseValue(b)
+	return values.ParseValue(b)
 }

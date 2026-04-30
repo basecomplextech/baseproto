@@ -4,29 +4,29 @@
 
 package baseproto
 
-import "github.com/basecomplextech/baseproto/internal/types"
+import "github.com/basecomplextech/baseproto/internal/values"
 
 type (
 	// Message is a raw message.
-	Message = types.Message
+	Message = values.Message
 
 	// MessageType is a type implemented by generated messages.
-	MessageType = types.MessageType
+	MessageType = values.MessageType
 )
 
 // OpenMessage opens and returns a message from bytes, or an empty message on error.
 // The method decodes the message table, but not the fields, see [ParseMessage].
 func OpenMessage(b []byte) Message {
-	return types.OpenMessage(b)
+	return values.OpenMessage(b)
 }
 
 // OpenMessageErr opens and returns a message from bytes, or an error.
 // The method decodes the message table, but not the fields, see [ParseMessage].
 func OpenMessageErr(b []byte) (Message, error) {
-	return types.OpenMessageErr(b)
+	return values.OpenMessageErr(b)
 }
 
 // ParseMessage recursively parses and returns a message.
 func ParseMessage(b []byte) (_ Message, size int, err error) {
-	return types.ParseMessage(b)
+	return values.ParseMessage(b)
 }

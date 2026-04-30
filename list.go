@@ -5,25 +5,25 @@
 package baseproto
 
 import (
-	"github.com/basecomplextech/baseproto/internal/types"
+	"github.com/basecomplextech/baseproto/internal/values"
 )
 
 // List is a raw list of elements.
-type List = types.List
+type List = values.List
 
 // OpenList opens and returns a list from bytes, or an empty list on error.
 // The method decodes the list table, but not the elements, see [ParseList].
 func OpenList(b []byte) List {
-	return types.OpenList(b)
+	return values.OpenList(b)
 }
 
 // OpenListErr opens and returns a list from bytes, or an error.
 // The method decodes the list table, but not the elements, see [ParseList].
 func OpenListErr(b []byte) (List, error) {
-	return types.OpenListErr(b)
+	return values.OpenListErr(b)
 }
 
 // ParseList recursively parses and returns a list.
 func ParseList(b []byte) (l List, size int, err error) {
-	return types.ParseList(b)
+	return values.ParseList(b)
 }
