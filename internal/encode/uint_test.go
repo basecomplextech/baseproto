@@ -2,23 +2,22 @@
 // Use of this software is governed by the MIT License
 // that can be found in the LICENSE file.
 
-package decode
+package encode
 
 import (
 	"math"
 	"testing"
 
 	"github.com/basecomplextech/baselibrary/buffer"
-	"github.com/basecomplextech/baseproto/internal/encode"
 	"github.com/basecomplextech/baseproto/internal/format"
 	"github.com/stretchr/testify/assert"
 )
 
 // Uint16
 
-func TestDecodeUint16__should_decode_int16(t *testing.T) {
+func TestUint16__should_encode_decode_int16(t *testing.T) {
 	b := buffer.New()
-	encode.EncodeUint16(b, math.MaxUint16)
+	EncodeUint16(b, math.MaxUint16)
 	p := b.Bytes()
 
 	v, n, err := DecodeUint16(p)
@@ -28,7 +27,7 @@ func TestDecodeUint16__should_decode_int16(t *testing.T) {
 	assert.Equal(t, n, b.Len())
 	assert.Equal(t, uint16(math.MaxUint16), v)
 
-	kind, size, err := DecodeTypeSize(p)
+	kind, size, err := DecodeKindSize(p)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -38,9 +37,9 @@ func TestDecodeUint16__should_decode_int16(t *testing.T) {
 
 // Uint32
 
-func TestDecodeUint32__should_decode_int32(t *testing.T) {
+func TestUint32__should_encode_decode_int32(t *testing.T) {
 	b := buffer.New()
-	encode.EncodeUint32(b, math.MaxUint32)
+	EncodeUint32(b, math.MaxUint32)
 	p := b.Bytes()
 
 	v, n, err := DecodeUint32(p)
@@ -50,7 +49,7 @@ func TestDecodeUint32__should_decode_int32(t *testing.T) {
 	assert.Equal(t, n, b.Len())
 	assert.Equal(t, uint32(math.MaxUint32), v)
 
-	kind, size, err := DecodeTypeSize(p)
+	kind, size, err := DecodeKindSize(p)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -60,9 +59,9 @@ func TestDecodeUint32__should_decode_int32(t *testing.T) {
 
 // Uint64
 
-func TestDecodeUint64__should_decode_int64(t *testing.T) {
+func TestUint64__should_encode_decode_int64(t *testing.T) {
 	b := buffer.New()
-	encode.EncodeUint64(b, math.MaxUint64)
+	EncodeUint64(b, math.MaxUint64)
 	p := b.Bytes()
 
 	v, n, err := DecodeUint64(p)
@@ -72,7 +71,7 @@ func TestDecodeUint64__should_decode_int64(t *testing.T) {
 	assert.Equal(t, n, b.Len())
 	assert.Equal(t, uint64(math.MaxUint64), v)
 
-	kind, size, err := DecodeTypeSize(p)
+	kind, size, err := DecodeKindSize(p)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -80,9 +79,9 @@ func TestDecodeUint64__should_decode_int64(t *testing.T) {
 	assert.Equal(t, size, len(p))
 }
 
-func TestDecodeUint64__should_decode_uint64_from_uint32(t *testing.T) {
+func TestUint64__should_encode_decode_uint64_from_uint32(t *testing.T) {
 	b := buffer.New()
-	encode.EncodeUint32(b, math.MaxUint32)
+	EncodeUint32(b, math.MaxUint32)
 	p := b.Bytes()
 
 	v, n, err := DecodeUint64(p)

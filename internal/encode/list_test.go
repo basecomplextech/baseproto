@@ -2,14 +2,13 @@
 // Use of this software is governed by the MIT License
 // that can be found in the LICENSE file.
 
-package decode
+package encode
 
 import (
 	"testing"
 
 	"github.com/basecomplextech/baselibrary/buffer"
 	"github.com/basecomplextech/baselibrary/tests"
-	"github.com/basecomplextech/baseproto/internal/encode"
 	"github.com/basecomplextech/baseproto/internal/format"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -19,7 +18,7 @@ func testEncodeListTable(t tests.T, dataSize int, elements []format.ListElement)
 	buf := buffer.New()
 	buf.Grow(dataSize)
 
-	_, err := encode.EncodeListTable(buf, dataSize, elements)
+	_, err := EncodeListTable(buf, dataSize, elements)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -28,7 +27,7 @@ func testEncodeListTable(t tests.T, dataSize int, elements []format.ListElement)
 
 // List
 
-func TestDecodeListTable__should_decode_list(t *testing.T) {
+func TestListTable__should_encode_decode_list(t *testing.T) {
 	elems := format.TestElements()
 	dataSize := 100
 	b := testEncodeListTable(t, dataSize, elems)
@@ -41,7 +40,7 @@ func TestDecodeListTable__should_decode_list(t *testing.T) {
 	assert.Equal(t, uint32(dataSize), table.DataSize())
 	assert.Equal(t, len(elems), table.Len())
 
-	kind, size, err := DecodeTypeSize(b)
+	kind, size, err := DecodeKindSize(b)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -49,14 +48,14 @@ func TestDecodeListTable__should_decode_list(t *testing.T) {
 	assert.Equal(t, size, len(b))
 }
 
-func TestDecodeListTable__should_decode_list_table(t *testing.T) {
+func TestListTable__should_encode_decode_list_table(t *testing.T) {
 	elems := format.TestElements()
 
 	for i := 0; i <= len(elems); i++ {
 		b := buffer.New()
 		elems1 := elems[i:]
 
-		_, err := encode.EncodeListTable(b, 0, elems1)
+		_, err := EncodeListTable(b, 0, elems1)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -72,7 +71,7 @@ func TestDecodeListTable__should_decode_list_table(t *testing.T) {
 	}
 }
 
-func TestDecodeListTable__should_return_error_when_invalid_type(t *testing.T) {
+func TestListTable__should_return_error_when_invalid_kind(t *testing.T) {
 	elems := format.TestElements()
 	dataSize := 100
 
@@ -81,10 +80,10 @@ func TestDecodeListTable__should_return_error_when_invalid_type(t *testing.T) {
 
 	_, _, err := DecodeListTable(b)
 	require.Error(t, err)
-	assert.Contains(t, err.Error(), "invalid type")
+	assert.Contains(t, err.Error(), "invalid kind")
 }
 
-func TestDecodeListTable__should_return_error_when_invalid_table_size(t *testing.T) {
+func TestListTable__should_return_error_when_invalid_table_size(t *testing.T) {
 	b := []byte{}
 	b = append(b, 0xff)
 	b = append(b, byte(format.KindList))
@@ -94,7 +93,7 @@ func TestDecodeListTable__should_return_error_when_invalid_table_size(t *testing
 	assert.Contains(t, err.Error(), "invalid table size")
 }
 
-func TestDecodeListTable__should_return_error_when_invalid_data_size(t *testing.T) {
+func TestListTable__should_return_error_when_invalid_data_size(t *testing.T) {
 	big := false
 	b := []byte{}
 	b = append(b, 0xff)
@@ -106,9 +105,9 @@ func TestDecodeListTable__should_return_error_when_invalid_data_size(t *testing.
 	assert.Contains(t, err.Error(), "invalid data size")
 }
 
-func TestDecodeListTable__should_return_error_when_invalid_table(t *testing.T) {
+func TestListTable__should_return_error_when_invalid_table(t *testing.T) {
 	buf := buffer.New()
-	_, err := encode.EncodeListTable(buf, 0, nil) // TODO: big(true)
+	_, err := EncodeListTable(buf, 0, nil) // TODO: big(true)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -124,9 +123,9 @@ func TestDecodeListTable__should_return_error_when_invalid_table(t *testing.T) {
 	assert.Contains(t, err.Error(), "invalid table")
 }
 
-func TestDecodeListTable__should_return_error_when_invalid_data(t *testing.T) {
+func TestListTable__should_return_error_when_invalid_data(t *testing.T) {
 	buf := buffer.New()
-	_, err := encode.EncodeListTable(buf, 0, nil) // TODO: big(true)
+	_, err := EncodeListTable(buf, 0, nil) // TODO: big(true)
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -2,24 +2,23 @@
 // Use of this software is governed by the MIT License
 // that can be found in the LICENSE file.
 
-package decode
+package encode
 
 import (
 	"testing"
 
 	"github.com/basecomplextech/baselibrary/bin"
 	"github.com/basecomplextech/baselibrary/buffer"
-	"github.com/basecomplextech/baseproto/internal/encode"
 	"github.com/basecomplextech/baseproto/internal/format"
 	"github.com/stretchr/testify/assert"
 )
 
 // Bin64/128/256
 
-func TestDecodeBin64__should_decode_bin64(t *testing.T) {
+func TestBin64__should_encode_decode_bin64(t *testing.T) {
 	b := buffer.New()
 	v := bin.Random64()
-	encode.EncodeBin64(b, v)
+	EncodeBin64(b, v)
 	p := b.Bytes()
 
 	v1, n, err := DecodeBin64(p)
@@ -29,7 +28,7 @@ func TestDecodeBin64__should_decode_bin64(t *testing.T) {
 	assert.Equal(t, n, b.Len())
 	assert.Equal(t, v, v1)
 
-	kind, size, err := DecodeTypeSize(p)
+	kind, size, err := DecodeKindSize(p)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -37,10 +36,10 @@ func TestDecodeBin64__should_decode_bin64(t *testing.T) {
 	assert.Equal(t, size, len(p))
 }
 
-func TestDecodeBin128__should_decode_bin128(t *testing.T) {
+func TestBin128__should_encode_decode_bin128(t *testing.T) {
 	b := buffer.New()
 	v := bin.Random128()
-	encode.EncodeBin128(b, v)
+	EncodeBin128(b, v)
 	p := b.Bytes()
 
 	v1, n, err := DecodeBin128(p)
@@ -50,7 +49,7 @@ func TestDecodeBin128__should_decode_bin128(t *testing.T) {
 	assert.Equal(t, n, b.Len())
 	assert.Equal(t, v, v1)
 
-	kind, size, err := DecodeTypeSize(p)
+	kind, size, err := DecodeKindSize(p)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -58,10 +57,10 @@ func TestDecodeBin128__should_decode_bin128(t *testing.T) {
 	assert.Equal(t, size, len(p))
 }
 
-func TestDecodeBin192__should_decode_bin192(t *testing.T) {
+func TestBin192__should_encode_decode_bin192(t *testing.T) {
 	b := buffer.New()
 	v := bin.Random192()
-	encode.EncodeBin192(b, v)
+	EncodeBin192(b, v)
 	p := b.Bytes()
 
 	v1, n, err := DecodeBin192(p)
@@ -71,7 +70,7 @@ func TestDecodeBin192__should_decode_bin192(t *testing.T) {
 	assert.Equal(t, n, b.Len())
 	assert.Equal(t, v, v1)
 
-	kind, size, err := DecodeTypeSize(p)
+	kind, size, err := DecodeKindSize(p)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -79,10 +78,10 @@ func TestDecodeBin192__should_decode_bin192(t *testing.T) {
 	assert.Equal(t, size, len(p))
 }
 
-func TestDecodeBin256__should_decode_bin256(t *testing.T) {
+func TestBin256__should_encode_decode_bin256(t *testing.T) {
 	b := buffer.New()
 	v := bin.Random256()
-	encode.EncodeBin256(b, v)
+	EncodeBin256(b, v)
 	p := b.Bytes()
 
 	v1, n, err := DecodeBin256(p)
@@ -92,7 +91,7 @@ func TestDecodeBin256__should_decode_bin256(t *testing.T) {
 	assert.Equal(t, n, b.Len())
 	assert.Equal(t, v, v1)
 
-	kind, size, err := DecodeTypeSize(p)
+	kind, size, err := DecodeKindSize(p)
 	if err != nil {
 		t.Fatal(err)
 	}

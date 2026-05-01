@@ -37,3 +37,37 @@ var (
 	EncodeUint32 = encode.EncodeUint32
 	EncodeUint64 = encode.EncodeUint64
 )
+
+var (
+	DecodeKind     = encode.DecodeKind
+	DecodeKindSize = encode.DecodeKindSize
+
+	DecodeBool = encode.DecodeBool
+	DecodeByte = encode.DecodeByte
+
+	DecodeBin64  = encode.DecodeBin64
+	DecodeBin128 = encode.DecodeBin128
+	DecodeBin192 = encode.DecodeBin192
+	DecodeBin256 = encode.DecodeBin256
+
+	DecodeBytes = encode.DecodeBytes
+
+	DecodeFloat32 = encode.DecodeFloat32
+	DecodeFloat64 = encode.DecodeFloat64
+
+	DecodeInt16 = encode.DecodeInt16
+	DecodeInt32 = encode.DecodeInt32
+	DecodeInt64 = encode.DecodeInt64
+
+	DecodeListTable    = encode.DecodeListTable
+	DecodeMessageTable = encode.DecodeMessageTable
+
+	DecodeString      = encode.DecodeString
+	DecodeStringClone = encode.DecodeStringClone
+
+	DecodeStruct = encode.DecodeStruct
+
+	DecodeUint16 = encode.DecodeUint16
+	DecodeUint32 = encode.DecodeUint32
+	DecodeUint64 = encode.DecodeUint64
+)

@@ -5,6 +5,9 @@
 package encode
 
 import (
+	"errors"
+	"fmt"
+
 	"github.com/basecomplextech/baselibrary/buffer"
 	"github.com/basecomplextech/baseproto/internal/format"
 )
@@ -24,4 +27,41 @@ func EncodeByte(b buffer.Buffer, v byte) (int, error) {
 	p[0] = v
 	p[1] = byte(format.KindByte)
 	return 2, nil
+}
+
+// Decode
+
+func DecodeByte(b []byte) (byte, int, error) {
+	if len(b) == 0 {
+		return 0, 0, nil
+	}
+
+	kind, n := decodeKind(b)
+	if n < 0 {
+		return 0, 0, errors.New("decode byte: invalid data")
+	}
+	if kind != format.KindByte {
+		return 0, 0, fmt.Errorf("decode byte: invalid kind, kind=%v", kind)
+	}
+
+	end := len(b) - 2
+	if end < 0 {
+		return 0, 0, errors.New("decode byte: invalid data")
+	}
+	return b[end], 2, nil
+}
+
+func DecodeBool(b []byte) (bool, int, error) {
+	if len(b) == 0 {
+		return false, 0, nil
+	}
+
+	kind, n := decodeKind(b)
+	if n < 0 {
+		return false, 0, errors.New("decode bool: invalid data")
+	}
+
+	v := kind == format.KindTrue
+	size := n
+	return v, size, nil
 }

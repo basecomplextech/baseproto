@@ -8,7 +8,7 @@ import (
 	"github.com/basecomplextech/baselibrary/alloc"
 	"github.com/basecomplextech/baselibrary/bin"
 	"github.com/basecomplextech/baselibrary/buffer"
-	"github.com/basecomplextech/baseproto/internal/decode"
+	"github.com/basecomplextech/baseproto/internal/encode"
 	"github.com/basecomplextech/baseproto/internal/format"
 )
 
@@ -26,7 +26,7 @@ type MessageType interface {
 // OpenMessage opens and returns a message from bytes, or an empty message on error.
 // The method decodes the message table, but not the fields.
 func OpenMessage(b []byte) Message {
-	table, n, err := decode.DecodeMessageTable(b)
+	table, n, err := encode.DecodeMessageTable(b)
 	if err != nil {
 		return Message{}
 	}
@@ -41,7 +41,7 @@ func OpenMessage(b []byte) Message {
 // OpenMessageErr opens and returns a message from bytes, or an error.
 // The method decodes the message table, but not the fields.
 func OpenMessageErr(b []byte) (Message, error) {
-	table, size, err := decode.DecodeMessageTable(b)
+	table, size, err := encode.DecodeMessageTable(b)
 	if err != nil {
 		return Message{}, err
 	}
@@ -56,7 +56,7 @@ func OpenMessageErr(b []byte) (Message, error) {
 
 // ParseMessage recursively parses and returns a message.
 func ParseMessage(b []byte) (_ Message, size int, err error) {
-	table, size, err := decode.DecodeMessageTable(b)
+	table, size, err := encode.DecodeMessageTable(b)
 	if err != nil {
 		return Message{}, 0, err
 	}
@@ -220,28 +220,28 @@ func (m Message) CloneToBuffer(buf buffer.Buffer) Message {
 // Bool decodes and returns a bool or false.
 func (m Message) Bool(tag uint16) bool {
 	b := m.field(tag)
-	v, _, _ := decode.DecodeBool(b)
+	v, _, _ := encode.DecodeBool(b)
 	return v
 }
 
 // Byte decodes and returns a byte or 0.
 func (m Message) Byte(tag uint16) byte {
 	b := m.field(tag)
-	v, _, _ := decode.DecodeByte(b)
+	v, _, _ := encode.DecodeByte(b)
 	return v
 }
 
 // BoolErr decodes and returns a bool or an error.
 func (m Message) BoolErr(tag uint16) (bool, error) {
 	b := m.field(tag)
-	v, _, err := decode.DecodeBool(b)
+	v, _, err := encode.DecodeBool(b)
 	return v, err
 }
 
 // ByteErr decodes and returns a byte or an error.
 func (m Message) ByteErr(tag uint16) (byte, error) {
 	b := m.field(tag)
-	v, _, err := decode.DecodeByte(b)
+	v, _, err := encode.DecodeByte(b)
 	return v, err
 }
 
@@ -250,42 +250,42 @@ func (m Message) ByteErr(tag uint16) (byte, error) {
 // Int16 decodes and returns an int16 or 0.
 func (m Message) Int16(tag uint16) int16 {
 	b := m.field(tag)
-	v, _, _ := decode.DecodeInt16(b)
+	v, _, _ := encode.DecodeInt16(b)
 	return v
 }
 
 // Int32 decodes and returns an int32 or 0.
 func (m Message) Int32(tag uint16) int32 {
 	b := m.field(tag)
-	v, _, _ := decode.DecodeInt32(b)
+	v, _, _ := encode.DecodeInt32(b)
 	return v
 }
 
 // Int64 decodes and returns an int64 or 0.
 func (m Message) Int64(tag uint16) int64 {
 	b := m.field(tag)
-	v, _, _ := decode.DecodeInt64(b)
+	v, _, _ := encode.DecodeInt64(b)
 	return v
 }
 
 // Int16Err decodes and returns an int16 or an error.
 func (m Message) Int16Err(tag uint16) (int16, error) {
 	b := m.field(tag)
-	v, _, err := decode.DecodeInt16(b)
+	v, _, err := encode.DecodeInt16(b)
 	return v, err
 }
 
 // Int32Err decodes and returns an int32 or an error.
 func (m Message) Int32Err(tag uint16) (int32, error) {
 	b := m.field(tag)
-	v, _, err := decode.DecodeInt32(b)
+	v, _, err := encode.DecodeInt32(b)
 	return v, err
 }
 
 // Int64Err decodes and returns an int64 or an error.
 func (m Message) Int64Err(tag uint16) (int64, error) {
 	b := m.field(tag)
-	v, _, err := decode.DecodeInt64(b)
+	v, _, err := encode.DecodeInt64(b)
 	return v, err
 }
 
@@ -294,42 +294,42 @@ func (m Message) Int64Err(tag uint16) (int64, error) {
 // Uint16 decodes and returns a uint16 or 0.
 func (m Message) Uint16(tag uint16) uint16 {
 	b := m.field(tag)
-	v, _, _ := decode.DecodeUint16(b)
+	v, _, _ := encode.DecodeUint16(b)
 	return v
 }
 
 // Uint32 decodes and returns a uint32 or 0.
 func (m Message) Uint32(tag uint16) uint32 {
 	b := m.field(tag)
-	v, _, _ := decode.DecodeUint32(b)
+	v, _, _ := encode.DecodeUint32(b)
 	return v
 }
 
 // Uint64 decodes and returns a uint64 or 0.
 func (m Message) Uint64(tag uint16) uint64 {
 	b := m.field(tag)
-	v, _, _ := decode.DecodeUint64(b)
+	v, _, _ := encode.DecodeUint64(b)
 	return v
 }
 
 // Uint16Err decodes and returns a uint16 or an error.
 func (m Message) Uint16Err(tag uint16) (uint16, error) {
 	b := m.field(tag)
-	v, _, err := decode.DecodeUint16(b)
+	v, _, err := encode.DecodeUint16(b)
 	return v, err
 }
 
 // Uint32Err decodes and returns a uint32 or an error.
 func (m Message) Uint32Err(tag uint16) (uint32, error) {
 	b := m.field(tag)
-	v, _, err := decode.DecodeUint32(b)
+	v, _, err := encode.DecodeUint32(b)
 	return v, err
 }
 
 // Uint64Err decodes and returns a uint64 or an error.
 func (m Message) Uint64Err(tag uint16) (uint64, error) {
 	b := m.field(tag)
-	v, _, err := decode.DecodeUint64(b)
+	v, _, err := encode.DecodeUint64(b)
 	return v, err
 }
 
@@ -338,28 +338,28 @@ func (m Message) Uint64Err(tag uint16) (uint64, error) {
 // Float32 decodes and returns a float32 or 0.
 func (m Message) Float32(tag uint16) float32 {
 	b := m.field(tag)
-	v, _, _ := decode.DecodeFloat32(b)
+	v, _, _ := encode.DecodeFloat32(b)
 	return v
 }
 
 // Float64 decodes and returns a float64 or 0.
 func (m Message) Float64(tag uint16) float64 {
 	b := m.field(tag)
-	v, _, _ := decode.DecodeFloat64(b)
+	v, _, _ := encode.DecodeFloat64(b)
 	return v
 }
 
 // Float32Err decodes and returns a float32 or an error.
 func (m Message) Float32Err(tag uint16) (float32, error) {
 	b := m.field(tag)
-	v, _, err := decode.DecodeFloat32(b)
+	v, _, err := encode.DecodeFloat32(b)
 	return v, err
 }
 
 // Float64Err decodes and returns a float64 or an error.
 func (m Message) Float64Err(tag uint16) (float64, error) {
 	b := m.field(tag)
-	v, _, err := decode.DecodeFloat64(b)
+	v, _, err := encode.DecodeFloat64(b)
 	return v, err
 }
 
@@ -368,49 +368,49 @@ func (m Message) Float64Err(tag uint16) (float64, error) {
 // Bin64 decodes and returns a bin64 or a zero value.
 func (m Message) Bin64(tag uint16) bin.Bin64 {
 	b := m.field(tag)
-	v, _, _ := decode.DecodeBin64(b)
+	v, _, _ := encode.DecodeBin64(b)
 	return v
 }
 
 // Bin128 decodes and returns a bin128 or a zero value.
 func (m Message) Bin128(tag uint16) bin.Bin128 {
 	b := m.field(tag)
-	v, _, _ := decode.DecodeBin128(b)
+	v, _, _ := encode.DecodeBin128(b)
 	return v
 }
 
 // Bin192 decodes and returns a bin192 or a zero value.
 func (m Message) Bin192(tag uint16) bin.Bin192 {
 	b := m.field(tag)
-	v, _, _ := decode.DecodeBin192(b)
+	v, _, _ := encode.DecodeBin192(b)
 	return v
 }
 
 // Bin256 decodes and returns a bin256 or a zero value.
 func (m Message) Bin256(tag uint16) bin.Bin256 {
 	b := m.field(tag)
-	v, _, _ := decode.DecodeBin256(b)
+	v, _, _ := encode.DecodeBin256(b)
 	return v
 }
 
 // Bin64Err decodes and returns a bin64 or an error.
 func (m Message) Bin64Err(tag uint16) (bin.Bin64, error) {
 	b := m.field(tag)
-	v, _, err := decode.DecodeBin64(b)
+	v, _, err := encode.DecodeBin64(b)
 	return v, err
 }
 
 // Bin128Err decodes and returns a bin128 or an error.
 func (m Message) Bin128Err(tag uint16) (bin.Bin128, error) {
 	b := m.field(tag)
-	v, _, err := decode.DecodeBin128(b)
+	v, _, err := encode.DecodeBin128(b)
 	return v, err
 }
 
 // Bin256Err decodes and returns a bin256 or an error.
 func (m Message) Bin256Err(tag uint16) (bin.Bin256, error) {
 	b := m.field(tag)
-	v, _, err := decode.DecodeBin256(b)
+	v, _, err := encode.DecodeBin256(b)
 	return v, err
 }
 
@@ -419,28 +419,28 @@ func (m Message) Bin256Err(tag uint16) (bin.Bin256, error) {
 // Bytes decodes and returns bytes or nil.
 func (m Message) Bytes(tag uint16) format.Bytes {
 	b := m.field(tag)
-	p, _, _ := decode.DecodeBytes(b)
+	p, _, _ := encode.DecodeBytes(b)
 	return p
 }
 
 // String decodes and returns a string or an empty string.
 func (m Message) String(tag uint16) format.String {
 	b := m.field(tag)
-	p, _, _ := decode.DecodeString(b)
+	p, _, _ := encode.DecodeString(b)
 	return format.String(p)
 }
 
 // BytesErr decodes and returns bytes or an error.
 func (m Message) BytesErr(tag uint16) (format.Bytes, error) {
 	b := m.field(tag)
-	p, _, err := decode.DecodeBytes(b)
+	p, _, err := encode.DecodeBytes(b)
 	return p, err
 }
 
 // StringErr decodes and returns a string or an error.
 func (m Message) StringErr(tag uint16) (format.String, error) {
 	b := m.field(tag)
-	p, _, err := decode.DecodeString(b)
+	p, _, err := encode.DecodeString(b)
 	return format.String(p), err
 }
 

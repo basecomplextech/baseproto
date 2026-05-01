@@ -2,24 +2,23 @@
 // Use of this software is governed by the MIT License
 // that can be found in the LICENSE file.
 
-package decode
+package encode
 
 import (
 	"testing"
 
 	"github.com/basecomplextech/baselibrary/buffer"
-	"github.com/basecomplextech/baseproto/internal/encode"
 	"github.com/basecomplextech/baseproto/internal/format"
 	"github.com/stretchr/testify/assert"
 )
 
 // Bytes
 
-func TestDecodeBytes__should_decode_bytes(t *testing.T) {
+func TestBytes__should_encode_decode_bytes(t *testing.T) {
 	v := []byte("hello, world")
 
 	b := buffer.New()
-	_, err := encode.EncodeBytes(b, v)
+	_, err := EncodeBytes(b, v)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -32,7 +31,7 @@ func TestDecodeBytes__should_decode_bytes(t *testing.T) {
 	assert.Equal(t, n, b.Len())
 	assert.Equal(t, v, v1.Unwrap())
 
-	kind, size, err := DecodeTypeSize(p)
+	kind, size, err := DecodeKindSize(p)
 	if err != nil {
 		t.Fatal(err)
 	}

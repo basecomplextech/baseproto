@@ -6,7 +6,6 @@ package writer
 
 import (
 	"github.com/basecomplextech/baselibrary/bin"
-	"github.com/basecomplextech/baseproto/internal/decode"
 	"github.com/basecomplextech/baseproto/internal/encode"
 )
 
@@ -28,7 +27,7 @@ func (w ValueWriter) Any(b []byte) error {
 		return w.w.err
 	}
 
-	_, _, err := decode.DecodeType(b)
+	_, _, err := encode.DecodeKind(b)
 	if err != nil {
 		return w.w.fail(err)
 	}

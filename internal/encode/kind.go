@@ -2,7 +2,7 @@
 // Use of this software is governed by the MIT License
 // that can be found in the LICENSE file.
 
-package decode
+package encode
 
 import (
 	"errors"
@@ -12,9 +12,9 @@ import (
 	"github.com/basecomplextech/baseproto/internal/format"
 )
 
-// DecodeType decodes a value type.
-func DecodeType(b []byte) (format.Kind, int, error) {
-	v, n := decodeType(b)
+// DecodeKind decodes a value kind.
+func DecodeKind(b []byte) (format.Kind, int, error) {
+	v, n := decodeKind(b)
 	if n < 0 {
 		return 0, 0, fmt.Errorf("decode type: invalid data")
 	}
@@ -23,13 +23,13 @@ func DecodeType(b []byte) (format.Kind, int, error) {
 	return format.Kind(v), size, nil
 }
 
-// DecodeTypeSize decodes a value type and its total size, returns 0, 0 on error.
-func DecodeTypeSize(b []byte) (format.Kind, int, error) {
+// DecodeKindSize decodes a value kind and its total size, returns 0, 0 on error.
+func DecodeKindSize(b []byte) (format.Kind, int, error) {
 	if len(b) == 0 {
 		return format.KindUndefined, 0, nil
 	}
 
-	t, n := decodeType(b)
+	t, n := decodeKind(b)
 	if n < 0 {
 		return 0, 0, fmt.Errorf("decode type: invalid data")
 	}
@@ -210,7 +210,7 @@ func DecodeTypeSize(b []byte) (format.Kind, int, error) {
 
 // internal
 
-func decodeType(b []byte) (format.Kind, int) {
+func decodeKind(b []byte) (format.Kind, int) {
 	if len(b) == 0 {
 		return format.KindUndefined, 0
 	}

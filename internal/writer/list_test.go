@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	"github.com/basecomplextech/baselibrary/bin"
-	"github.com/basecomplextech/baseproto/internal/decode"
+	"github.com/basecomplextech/baseproto/internal/encode"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -53,7 +53,7 @@ func TestListWriter__should_write_list(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	_, n, err := decode.DecodeListTable(b)
+	_, n, err := encode.DecodeListTable(b)
 	if err != nil {
 		t.Fatal(err)
 	}

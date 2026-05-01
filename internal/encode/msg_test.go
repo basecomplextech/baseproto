@@ -2,14 +2,13 @@
 // Use of this software is governed by the MIT License
 // that can be found in the LICENSE file.
 
-package decode
+package encode
 
 import (
 	"testing"
 
 	"github.com/basecomplextech/baselibrary/buffer"
 	"github.com/basecomplextech/baselibrary/tests"
-	"github.com/basecomplextech/baseproto/internal/encode"
 	"github.com/basecomplextech/baseproto/internal/format"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -19,7 +18,7 @@ func testEncodeMessageTable(t tests.T, dataSize int, fields []format.MessageFiel
 	buf := buffer.New()
 	buf.Grow(dataSize)
 
-	_, err := encode.EncodeMessageTable(buf, dataSize, fields)
+	_, err := EncodeMessageTable(buf, dataSize, fields)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -28,7 +27,7 @@ func testEncodeMessageTable(t tests.T, dataSize int, fields []format.MessageFiel
 
 // Message
 
-func TestDecodeMessageTable__should_decode_message_meta(t *testing.T) {
+func TestMessageTable__should_encode_decode_message_meta(t *testing.T) {
 	fields := format.TestFields()
 	dataSize := 100
 	b := testEncodeMessageTable(t, dataSize, fields)
@@ -41,7 +40,7 @@ func TestDecodeMessageTable__should_decode_message_meta(t *testing.T) {
 	assert.Equal(t, uint32(dataSize), meta.DataSize())
 	assert.Equal(t, len(fields), meta.Len())
 
-	kind, size, err := DecodeTypeSize(b)
+	kind, size, err := DecodeKindSize(b)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -49,14 +48,14 @@ func TestDecodeMessageTable__should_decode_message_meta(t *testing.T) {
 	assert.Equal(t, size, len(b))
 }
 
-func TestDecodeMessageTable__should_decode_message_table(t *testing.T) {
+func TestMessageTable__should_encode_decode_message_table(t *testing.T) {
 	fields := format.TestFields()
 
 	for i := 0; i <= len(fields); i++ {
 		buf := buffer.New()
 		fields0 := fields[i:]
 
-		_, err := encode.EncodeMessageTable(buf, 0, fields0)
+		_, err := EncodeMessageTable(buf, 0, fields0)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -71,7 +70,7 @@ func TestDecodeMessageTable__should_decode_message_table(t *testing.T) {
 	}
 }
 
-func TestDecodeMessageTable__should_return_error_when_invalid_type(t *testing.T) {
+func TestMessageTable__should_return_error_when_invalid_kind(t *testing.T) {
 	fields := format.TestFields()
 	dataSize := 100
 
@@ -80,10 +79,10 @@ func TestDecodeMessageTable__should_return_error_when_invalid_type(t *testing.T)
 
 	_, _, err := DecodeMessageTable(b)
 	require.Error(t, err)
-	assert.Contains(t, err.Error(), "invalid type")
+	assert.Contains(t, err.Error(), "invalid kind")
 }
 
-func TestDecodeMessageTable__should_return_error_when_invalid_table_size(t *testing.T) {
+func TestMessageTable__should_return_error_when_invalid_table_size(t *testing.T) {
 	b := []byte{}
 	b = append(b, 0xff)
 	b = append(b, byte(format.KindMessage))
@@ -93,7 +92,7 @@ func TestDecodeMessageTable__should_return_error_when_invalid_table_size(t *test
 	assert.Contains(t, err.Error(), "invalid table size")
 }
 
-func TestDecodeMessageTable__should_return_error_when_invalid_data_size(t *testing.T) {
+func TestMessageTable__should_return_error_when_invalid_data_size(t *testing.T) {
 	big := false
 	b := []byte{}
 	b = append(b, 0xff)
@@ -105,9 +104,9 @@ func TestDecodeMessageTable__should_return_error_when_invalid_data_size(t *testi
 	assert.Contains(t, err.Error(), "invalid data size")
 }
 
-func TestDecodeMessageTable__should_return_error_when_invalid_table(t *testing.T) {
+func TestMessageTable__should_return_error_when_invalid_table(t *testing.T) {
 	buf := buffer.New()
-	_, err := encode.EncodeMessageTable(buf, 0, nil) // TODO: big(true)
+	_, err := EncodeMessageTable(buf, 0, nil) // TODO: big(true)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -123,10 +122,10 @@ func TestDecodeMessageTable__should_return_error_when_invalid_table(t *testing.T
 	assert.Contains(t, err.Error(), "invalid table")
 }
 
-func TestDecodeMessageTable__should_return_error_when_invalid_data(t *testing.T) {
+func TestMessageTable__should_return_error_when_invalid_data(t *testing.T) {
 	buf := buffer.New()
 
-	_, err := encode.EncodeMessageTable(buf, 0, nil) // TODO: big(true)
+	_, err := EncodeMessageTable(buf, 0, nil) // TODO: big(true)
 	if err != nil {
 		t.Fatal(err)
 	}

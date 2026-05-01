@@ -10,7 +10,6 @@ import (
 
 	"github.com/basecomplextech/baselibrary/buffer"
 	"github.com/basecomplextech/baselibrary/pools"
-	"github.com/basecomplextech/baseproto/internal/decode"
 	"github.com/basecomplextech/baseproto/internal/encode"
 	"github.com/basecomplextech/baseproto/internal/format"
 )
@@ -440,7 +439,7 @@ func (w *writer) fieldAny(tag uint16, data []byte) error {
 		return w.err
 	}
 
-	_, _, err := decode.DecodeType(data)
+	_, _, err := encode.DecodeKind(data)
 	if err != nil {
 		return w.fail(err)
 	}

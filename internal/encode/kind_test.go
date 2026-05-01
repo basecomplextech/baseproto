@@ -2,7 +2,7 @@
 // Use of this software is governed by the MIT License
 // that can be found in the LICENSE file.
 
-package decode
+package encode
 
 import (
 	"testing"
@@ -12,11 +12,11 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestDecodeType__should_return_type(t *testing.T) {
+func TestType__should_return_type(t *testing.T) {
 	b := []byte{}
 	b = append(b, byte(format.KindString))
 
-	v, n, err := DecodeType(b)
+	v, n, err := DecodeKind(b)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -25,10 +25,10 @@ func TestDecodeType__should_return_type(t *testing.T) {
 	assert.Equal(t, v, format.KindString)
 }
 
-func TestDecodeType__should_return_undefined_when_empty(t *testing.T) {
+func TestType__should_return_undefined_when_empty(t *testing.T) {
 	b := []byte{}
 
-	v, n, err := DecodeType(b)
+	v, n, err := DecodeKind(b)
 	if err != nil {
 		t.Fatal(err)
 	}

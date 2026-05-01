@@ -7,7 +7,7 @@ package writer
 import (
 	"testing"
 
-	"github.com/basecomplextech/baseproto/internal/decode"
+	"github.com/basecomplextech/baseproto/internal/encode"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -23,7 +23,7 @@ func TestValueWriter_End__should_return_root_value_bytes(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	s, _, err := decode.DecodeString(b)
+	s, _, err := encode.DecodeString(b)
 	if err != nil {
 		t.Fatal(err)
 	}

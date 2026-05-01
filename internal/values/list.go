@@ -7,7 +7,7 @@ package values
 import (
 	"fmt"
 
-	"github.com/basecomplextech/baseproto/internal/decode"
+	"github.com/basecomplextech/baseproto/internal/encode"
 	"github.com/basecomplextech/baseproto/internal/format"
 )
 
@@ -122,7 +122,7 @@ func (l List) CloneTo(b []byte) List {
 // private
 
 func decodeList(b []byte) (l List, size int, err error) {
-	table, size, err := decode.DecodeListTable(b)
+	table, size, err := encode.DecodeListTable(b)
 	if err != nil {
 		return List{}, 0, err
 	}
