@@ -34,4 +34,9 @@ type TypeDyn interface {
 
 	// VerifyRaw verifies a raw, possibly untruncated, value against the type.
 	VerifyRaw(b []byte) error
+
+	// Internal
+
+	// Resolve resolves internal type references.
+	Resolve()
 }

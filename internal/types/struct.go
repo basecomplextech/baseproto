@@ -137,3 +137,12 @@ func (s *structType[T]) VerifyRaw(b []byte) error {
 	_, _, err := s.decode(b)
 	return err
 }
+
+// Internal
+
+// Resolve resolves internal field type references.
+func (s *structType[T]) Resolve() {
+	for _, field := range s.fields {
+		field.Resolve()
+	}
+}

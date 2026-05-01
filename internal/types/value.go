@@ -63,6 +63,10 @@ var (
 		kind:   format.KindBin128,
 		decode: encode.DecodeBin128,
 	}
+	Bin192 = &valueType[bin.Bin192]{
+		kind:   format.KindBin192,
+		decode: encode.DecodeBin192,
+	}
 	Bin256 = &valueType[bin.Bin256]{
 		kind:   format.KindBin256,
 		decode: encode.DecodeBin256,
@@ -122,3 +126,8 @@ func (t *valueType[T]) VerifyRaw(b []byte) error {
 	_, _, err := t.decode(b)
 	return err
 }
+
+// Internal
+
+// Resolve resolves internal field type references.
+func (t *valueType[T]) Resolve() {}

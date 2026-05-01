@@ -89,6 +89,7 @@ var (
 
 	TypeBin64  = types.Bin64
 	TypeBin128 = types.Bin128
+	TypeBin192 = types.Bin192
 	TypeBin256 = types.Bin256
 
 	TypeBytes  = types.Bytes
@@ -109,12 +110,12 @@ func NewListType[T any](new NewListFunc[T], elem Type[T]) ListType[T] {
 	return types.NewListType(new, elem)
 }
 
-// Message
-
-// NewMessageField returns a new message field.
-func NewMessageField[T any](tag uint16, name string, typ Type[T]) MessageField[T] {
-	return types.NewMessageField(tag, name, typ)
+// NewListTypePtr returns a new list type with an element type pointer.
+func NewListTypePtr[T any](new NewListFunc[T], elem *Type[T]) ListType[T] {
+	return types.NewListTypePtr(new, elem)
 }
+
+// Message
 
 // NewMessageType returns a new message type with the given fields.
 func NewMessageType[T MessageType](new NewMessageFunc[T],
@@ -123,14 +124,29 @@ func NewMessageType[T MessageType](new NewMessageFunc[T],
 	return types.NewMessageType(new, fields...)
 }
 
+// NewMessageField returns a new message field.
+func NewMessageField[T any](tag uint16, name string, typ Type[T]) MessageField[T] {
+	return types.NewMessageField(tag, name, typ)
+}
+
+// NewMessageFieldPtr returns a new message field with a type pointer.
+func NewMessageFieldPtr[T any](tag uint16, name string, typ *Type[T]) MessageField[T] {
+	return types.NewMessageFieldPtr(tag, name, typ)
+}
+
 // Struct
+
+// NewStructType returns a new struct type with the given fields.
+func NewStructType[T any](decode DecodeStructFunc[T], fields ...StructFieldDyn) StructType[T] {
+	return types.NewStructType(decode, fields...)
+}
 
 // NewStructField returns a new struct field.
 func NewStructField[T any](index uint16, name string, typ Type[T]) StructField[T] {
 	return types.NewStructField(index, name, typ)
 }
 
-// NewStructType returns a new struct type with the given fields.
-func NewStructType[T any](decode DecodeStructFunc[T], fields ...StructFieldDyn) StructType[T] {
-	return types.NewStructType(decode, fields...)
+// NewStructFieldPtr returns a new struct field with a type pointer.
+func NewStructFieldPtr[T any](index uint16, name string, typ *Type[T]) StructField[T] {
+	return types.NewStructFieldPtr(index, name, typ)
 }

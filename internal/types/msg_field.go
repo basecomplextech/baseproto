@@ -32,11 +32,21 @@ type MessageFieldDyn interface {
 
 	// VerifyRaw verifies a raw, possibly untruncated, value against the field.
 	VerifyRaw(b []byte) error
+
+	// Internal
+
+	// Resolve resolves internal field type references.
+	Resolve()
 }
 
 // NewMessageField returns a new message field with the given tag, name and type.
 func NewMessageField[T any](tag uint16, name string, typ Type[T]) MessageField[T] {
-	return newMessageField(tag, name, typ)
+	return newMessageField(tag, name, typ, nil)
+}
+
+// NewMessageFieldPtr returns a new message field with the given tag, name and type pointer.
+func NewMessageFieldPtr[T any](tag uint16, name string, typ *Type[T]) MessageField[T] {
+	return newMessageField(tag, name, nil, typ)
 }
 
 // internal
@@ -44,16 +54,20 @@ func NewMessageField[T any](tag uint16, name string, typ Type[T]) MessageField[T
 var _ MessageField[any] = (*messageField[any])(nil)
 
 type messageField[T any] struct {
-	tag  uint16
-	name string
-	typ  Type[T]
+	tag    uint16
+	name   string
+	typ    Type[T]
+	typPtr *Type[T]
 }
 
-func newMessageField[T any](tag uint16, name string, typ Type[T]) *messageField[T] {
+func newMessageField[T any](tag uint16, name string, typ Type[T],
+	typPtr *Type[T]) *messageField[T] {
+
 	return &messageField[T]{
-		tag:  tag,
-		name: name,
-		typ:  typ,
+		tag:    tag,
+		name:   name,
+		typ:    typ,
+		typPtr: typPtr,
 	}
 }
 
@@ -93,4 +107,15 @@ func (f *messageField[T]) VerifyRaw(b []byte) error {
 		return fmt.Errorf("invalid field %q:%d: %w", f.name, f.tag, err)
 	}
 	return nil
+}
+
+// Internal
+
+// Resolve resolves internal field type references.
+func (f *messageField[T]) Resolve() {
+	if f.typ != nil {
+		return
+	}
+
+	f.typ = *f.typPtr
 }

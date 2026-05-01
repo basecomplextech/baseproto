@@ -22,11 +22,21 @@ type StructFieldDyn interface {
 
 	// TypeDyn returns the field type.
 	TypeDyn() TypeDyn
+
+	// Internal
+
+	// Resolve resolves internal field type references.
+	Resolve()
 }
 
 // NewStructField returns a new struct field.
 func NewStructField[T any](index uint16, name string, typ Type[T]) StructField[T] {
-	return newStructField(index, name, typ)
+	return newStructField(index, name, typ, nil)
+}
+
+// NewStructFieldPtr returns a new struct field with a type pointer.
+func NewStructFieldPtr[T any](index uint16, name string, typ *Type[T]) StructField[T] {
+	return newStructField(index, name, nil, typ)
 }
 
 // internal
@@ -34,16 +44,18 @@ func NewStructField[T any](index uint16, name string, typ Type[T]) StructField[T
 var _ StructField[any] = (*structField[any])(nil)
 
 type structField[T any] struct {
-	index uint16
-	name  string
-	typ   Type[T]
+	index  uint16
+	name   string
+	typ    Type[T]
+	typPtr *Type[T]
 }
 
-func newStructField[T any](index uint16, name string, typ Type[T]) *structField[T] {
+func newStructField[T any](index uint16, name string, typ Type[T], typPtr *Type[T]) *structField[T] {
 	return &structField[T]{
-		index: index,
-		name:  name,
-		typ:   typ,
+		index:  index,
+		name:   name,
+		typ:    typ,
+		typPtr: typPtr,
 	}
 }
 
@@ -65,4 +77,15 @@ func (f *structField[T]) Type() Type[T] {
 // TypeDyn returns the field type.
 func (f *structField[T]) TypeDyn() TypeDyn {
 	return f.typ
+}
+
+// Internal
+
+// Resolve resolves internal field type references.
+func (f *structField[T]) Resolve() {
+	if f.typ != nil {
+		return
+	}
+
+	f.typ = *f.typPtr
 }

@@ -74,3 +74,8 @@ func (t *enumType[T]) VerifyRaw(b []byte) error {
 	_, _, err := t.decode(b)
 	return err
 }
+
+// Internal
+
+// Resolve resolves internal type references.
+func (t *enumType[T]) Resolve() {}

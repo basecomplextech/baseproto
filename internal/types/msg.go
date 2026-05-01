@@ -191,6 +191,15 @@ func (t *messageType[T]) VerifyMessage(msg values.Message) error {
 	return t.verify(msg)
 }
 
+// Internal
+
+// Resolve resolves internal type references.
+func (t *messageType[T]) Resolve() {
+	for _, field := range t.fields {
+		field.Resolve()
+	}
+}
+
 // private
 
 func (t *messageType[T]) verify(msg values.Message) error {
