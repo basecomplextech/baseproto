@@ -17,13 +17,13 @@ func DecodeStruct(b []byte) (dataSize int, size int, err error) {
 	}
 
 	// Decode type
-	typ, n := decodeType(b)
+	kind, n := decodeType(b)
 	if n < 0 {
 		err = errors.New("decode struct: invalid type")
 		return
 	}
-	if typ != format.TypeStruct {
-		err = fmt.Errorf("decode struct: invalid type, type=%v", typ)
+	if kind != format.KindStruct {
+		err = fmt.Errorf("decode struct: invalid kind, kind=%v", kind)
 		return
 	}
 

@@ -16,6 +16,6 @@ func EncodeStruct(b buffer.Buffer, dataSize int) (int, error) {
 		return 0, fmt.Errorf("encode: struct too large, max size=%d, actual size=%d", format.MaxSize, dataSize)
 	}
 
-	n := encodeSizeType(b, uint32(dataSize), format.TypeStruct)
+	n := encodeSizeType(b, uint32(dataSize), format.KindStruct)
 	return n, nil
 }

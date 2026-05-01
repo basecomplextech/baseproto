@@ -8,41 +8,41 @@ import (
 	"github.com/basecomplextech/baseproto/internal/format"
 )
 
-// Type specifies a value type.
-type Type = format.Type
+// Kind specifies a value kind.
+type Kind = format.Kind
 
 const (
-	TypeUndefined = format.TypeUndefined
+	KindUndefined = format.KindUndefined
 
-	TypeTrue  = format.TypeTrue
-	TypeFalse = format.TypeFalse
-	TypeByte  = format.TypeByte
+	KindTrue  = format.KindTrue
+	KindFalse = format.KindFalse
+	KindByte  = format.KindByte
 
-	TypeInt16 = format.TypeInt16
-	TypeInt32 = format.TypeInt32
-	TypeInt64 = format.TypeInt64
+	KindInt16 = format.KindInt16
+	KindInt32 = format.KindInt32
+	KindInt64 = format.KindInt64
 
-	TypeUint16 = format.TypeUint16
-	TypeUint32 = format.TypeUint32
-	TypeUint64 = format.TypeUint64
+	KindUint16 = format.KindUint16
+	KindUint32 = format.KindUint32
+	KindUint64 = format.KindUint64
 
-	TypeFloat32 = format.TypeFloat32
-	TypeFloat64 = format.TypeFloat64
+	KindFloat32 = format.KindFloat32
+	KindFloat64 = format.KindFloat64
 
-	TypeBin64  = format.TypeBin64
-	TypeBin128 = format.TypeBin128
-	TypeBin256 = format.TypeBin256
+	KindBin64  = format.KindBin64
+	KindBin128 = format.KindBin128
+	KindBin256 = format.KindBin256
 
-	TypeBytes  = format.TypeBytes
-	TypeString = format.TypeString
+	KindBytes  = format.KindBytes
+	KindString = format.KindString
 
-	TypeList    = format.TypeList
-	TypeBigList = format.TypeBigList
+	KindList    = format.KindList
+	KindListBig = format.KindListBig
 
-	TypeMessage    = format.TypeMessage
-	TypeBigMessage = format.TypeBigMessage
+	KindMessage    = format.KindMessage
+	KindMessageBig = format.KindMessageBig
 
-	TypeStruct = format.TypeStruct
+	KindStruct = format.KindStruct
 )
 
 type (

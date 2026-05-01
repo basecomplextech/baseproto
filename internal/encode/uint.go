@@ -17,7 +17,7 @@ func EncodeUint16(b buffer.Buffer, v uint16) (int, error) {
 
 	buf := b.Grow(n + 1)
 	copy(buf[:n], p[off:])
-	buf[n] = byte(format.TypeUint16)
+	buf[n] = byte(format.KindUint16)
 
 	return n + 1, nil
 }
@@ -29,7 +29,7 @@ func EncodeUint32(b buffer.Buffer, v uint32) (int, error) {
 
 	buf := b.Grow(n + 1)
 	copy(buf[:n], p[off:])
-	buf[n] = byte(format.TypeUint32)
+	buf[n] = byte(format.KindUint32)
 
 	return n + 1, nil
 }
@@ -41,7 +41,7 @@ func EncodeUint64(b buffer.Buffer, v uint64) (int, error) {
 
 	buf := b.Grow(n + 1)
 	copy(buf[:n], p[off:])
-	buf[n] = byte(format.TypeUint64)
+	buf[n] = byte(format.KindUint64)
 
 	return n + 1, nil
 }

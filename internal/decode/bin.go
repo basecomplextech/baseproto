@@ -17,13 +17,13 @@ func DecodeBin64(b []byte) (_ bin.Bin64, size int, err error) {
 		return bin.Bin64{}, 0, nil
 	}
 
-	typ, n := decodeType(b)
+	kind, n := decodeType(b)
 	if n < 0 {
 		err = errors.New("decode bin64: invalid data")
 		return
 	}
-	if typ != format.TypeBin64 {
-		err = fmt.Errorf("decode bin64: invalid type, type=%v", typ)
+	if kind != format.KindBin64 {
+		err = fmt.Errorf("decode bin64: invalid kind, kind=%v", kind)
 		return
 	}
 
@@ -50,13 +50,13 @@ func DecodeBin128(b []byte) (_ bin.Bin128, size int, err error) {
 		return bin.Bin128{}, 0, nil
 	}
 
-	typ, n := decodeType(b)
+	kind, n := decodeType(b)
 	if n < 0 {
 		err = errors.New("decode bin128: invalid data")
 		return
 	}
-	if typ != format.TypeBin128 {
-		err = fmt.Errorf("decode bin128: invalid type, type=%v", typ)
+	if kind != format.KindBin128 {
+		err = fmt.Errorf("decode bin128: invalid kind, kind=%v", kind)
 		return
 	}
 
@@ -83,13 +83,13 @@ func DecodeBin192(b []byte) (_ bin.Bin192, size int, err error) {
 		return bin.Bin192{}, 0, nil
 	}
 
-	typ, n := decodeType(b)
+	kind, n := decodeType(b)
 	if n < 0 {
 		err = errors.New("decode bin192: invalid data")
 		return
 	}
-	if typ != format.TypeBin192 {
-		err = fmt.Errorf("decode bin192: invalid type, type=%v", typ)
+	if kind != format.KindBin192 {
+		err = fmt.Errorf("decode bin192: invalid kind, kind=%v", kind)
 		return
 	}
 
@@ -116,13 +116,13 @@ func DecodeBin256(b []byte) (_ bin.Bin256, size int, err error) {
 		return bin.Bin256{}, 0, nil
 	}
 
-	typ, n := decodeType(b)
+	kind, n := decodeType(b)
 	if n < 0 {
 		err = errors.New("decode bin256: invalid data")
 		return
 	}
-	if typ != format.TypeBin256 {
-		err = fmt.Errorf("decode bin256: invalid type, type=%v", typ)
+	if kind != format.KindBin256 {
+		err = fmt.Errorf("decode bin256: invalid kind, kind=%v", kind)
 		return
 	}
 

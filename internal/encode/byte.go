@@ -12,9 +12,9 @@ import (
 func EncodeBool(b buffer.Buffer, v bool) (int, error) {
 	p := b.Grow(1)
 	if v {
-		p[0] = byte(format.TypeTrue)
+		p[0] = byte(format.KindTrue)
 	} else {
-		p[0] = byte(format.TypeFalse)
+		p[0] = byte(format.KindFalse)
 	}
 	return 1, nil
 }
@@ -22,6 +22,6 @@ func EncodeBool(b buffer.Buffer, v bool) (int, error) {
 func EncodeByte(b buffer.Buffer, v byte) (int, error) {
 	p := b.Grow(2)
 	p[0] = v
-	p[1] = byte(format.TypeByte)
+	p[1] = byte(format.KindByte)
 	return 2, nil
 }

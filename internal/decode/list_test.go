@@ -41,11 +41,11 @@ func TestDecodeListTable__should_decode_list(t *testing.T) {
 	assert.Equal(t, uint32(dataSize), table.DataSize())
 	assert.Equal(t, len(elems), table.Len())
 
-	typ, size, err := DecodeTypeSize(b)
+	kind, size, err := DecodeTypeSize(b)
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, format.TypeList, typ)
+	assert.Equal(t, format.KindList, kind)
 	assert.Equal(t, size, len(b))
 }
 
@@ -77,7 +77,7 @@ func TestDecodeListTable__should_return_error_when_invalid_type(t *testing.T) {
 	dataSize := 100
 
 	b := testEncodeListTable(t, dataSize, elems)
-	b[len(b)-1] = byte(format.TypeMessage)
+	b[len(b)-1] = byte(format.KindMessage)
 
 	_, _, err := DecodeListTable(b)
 	require.Error(t, err)
@@ -87,7 +87,7 @@ func TestDecodeListTable__should_return_error_when_invalid_type(t *testing.T) {
 func TestDecodeListTable__should_return_error_when_invalid_table_size(t *testing.T) {
 	b := []byte{}
 	b = append(b, 0xff)
-	b = append(b, byte(format.TypeList))
+	b = append(b, byte(format.KindList))
 
 	_, _, err := DecodeListTable(b)
 	require.Error(t, err)
@@ -99,7 +99,7 @@ func TestDecodeListTable__should_return_error_when_invalid_data_size(t *testing.
 	b := []byte{}
 	b = append(b, 0xff)
 	b = appendSize(b, big, 1000)
-	b = append(b, byte(format.TypeList))
+	b = append(b, byte(format.KindList))
 
 	_, _, err := DecodeListTable(b)
 	require.Error(t, err)
@@ -117,7 +117,7 @@ func TestDecodeListTable__should_return_error_when_invalid_table(t *testing.T) {
 	b := buf.Bytes()
 	b = appendSize(b, big, 0)    // data size
 	b = appendSize(b, big, 1000) // table size
-	b = append(b, byte(format.TypeList))
+	b = append(b, byte(format.KindList))
 
 	_, _, err = DecodeListTable(b)
 	require.Error(t, err)
@@ -135,7 +135,7 @@ func TestDecodeListTable__should_return_error_when_invalid_data(t *testing.T) {
 	b := buf.Bytes()
 	b = appendSize(b, big, 1000) // data size
 	b = appendSize(b, big, 0)    // table size
-	b = append(b, byte(format.TypeList))
+	b = append(b, byte(format.KindList))
 
 	_, _, err = DecodeListTable(b)
 	require.Error(t, err)

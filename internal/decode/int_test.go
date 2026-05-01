@@ -29,11 +29,11 @@ func TestDecodeInt16__should_decode_int16(t *testing.T) {
 	assert.Equal(t, n, b.Len())
 	assert.Equal(t, int16(math.MaxInt16), v)
 
-	typ, size, err := DecodeTypeSize(p)
+	kind, size, err := DecodeTypeSize(p)
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, format.TypeInt16, typ)
+	assert.Equal(t, format.KindInt16, kind)
 	assert.Equal(t, size, len(p))
 }
 
@@ -51,11 +51,11 @@ func TestDecodeInt32__should_decode_int32(t *testing.T) {
 	assert.Equal(t, n, b.Len())
 	assert.Equal(t, int32(math.MaxInt32), v)
 
-	typ, size, err := DecodeTypeSize(p)
+	kind, size, err := DecodeTypeSize(p)
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, format.TypeInt32, typ)
+	assert.Equal(t, format.KindInt32, kind)
 	assert.Equal(t, size, len(p))
 }
 
@@ -73,11 +73,11 @@ func TestDecodeInt64__should_decode_int64(t *testing.T) {
 	assert.Equal(t, n, b.Len())
 	assert.Equal(t, int64(math.MaxInt64), v)
 
-	typ, size, err := DecodeTypeSize(p)
+	kind, size, err := DecodeTypeSize(p)
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, format.TypeInt64, typ)
+	assert.Equal(t, format.KindInt64, kind)
 	assert.Equal(t, size, len(p))
 }
 

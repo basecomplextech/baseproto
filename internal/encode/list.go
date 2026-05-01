@@ -17,11 +17,11 @@ func EncodeListTable(b buffer.Buffer, dataSize int, table []format.ListElement) 
 		return 0, fmt.Errorf("encode: list too large, max size=%d, actual size=%d", format.MaxSize, dataSize)
 	}
 
-	// format.Type
+	// format.Kind
 	big := format.IsBigList(table)
-	type_ := format.TypeList
+	kind := format.KindList
 	if big {
-		type_ = format.TypeBigList
+		kind = format.KindListBig
 	}
 
 	// Write table
@@ -34,8 +34,8 @@ func EncodeListTable(b buffer.Buffer, dataSize int, table []format.ListElement) 
 	// Write data size
 	n += encodeSize(b, uint32(dataSize))
 
-	// Write table size and type
-	n += encodeSizeType(b, uint32(tableSize), type_)
+	// Write table size and kind
+	n += encodeSizeType(b, uint32(tableSize), kind)
 	return n, nil
 }
 

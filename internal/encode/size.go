@@ -21,14 +21,14 @@ func encodeSize(b buffer.Buffer, size uint32) int {
 	return n
 }
 
-func encodeSizeType(b buffer.Buffer, size uint32, type_ format.Type) int {
+func encodeSizeType(b buffer.Buffer, size uint32, kind format.Kind) int {
 	p := [compactint.MaxLen32]byte{}
 	n := compactint.PutReverseUint32(p[:], size)
 	off := compactint.MaxLen32 - n
 
 	buf := b.Grow(n + 1)
 	copy(buf[:n], p[off:])
-	buf[n] = byte(type_)
+	buf[n] = byte(kind)
 
 	return n + 1
 }

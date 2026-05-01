@@ -13,20 +13,20 @@ import (
 )
 
 // DecodeType decodes a value type.
-func DecodeType(b []byte) (format.Type, int, error) {
+func DecodeType(b []byte) (format.Kind, int, error) {
 	v, n := decodeType(b)
 	if n < 0 {
 		return 0, 0, fmt.Errorf("decode type: invalid data")
 	}
 
 	size := n
-	return format.Type(v), size, nil
+	return format.Kind(v), size, nil
 }
 
 // DecodeTypeSize decodes a value type and its total size, returns 0, 0 on error.
-func DecodeTypeSize(b []byte) (format.Type, int, error) {
+func DecodeTypeSize(b []byte) (format.Kind, int, error) {
 	if len(b) == 0 {
-		return format.TypeUndefined, 0, nil
+		return format.KindUndefined, 0, nil
 	}
 
 	t, n := decodeType(b)
@@ -38,10 +38,10 @@ func DecodeTypeSize(b []byte) (format.Type, int, error) {
 	v := b[:end]
 
 	switch t {
-	case format.TypeTrue, format.TypeFalse:
+	case format.KindTrue, format.KindFalse:
 		return t, n, nil
 
-	case format.TypeByte:
+	case format.KindByte:
 		if len(v) < 1 {
 			return 0, 0, fmt.Errorf("decode byte: invalid data")
 		}
@@ -49,7 +49,7 @@ func DecodeTypeSize(b []byte) (format.Type, int, error) {
 
 	// Int
 
-	case format.TypeInt16, format.TypeInt32, format.TypeInt64:
+	case format.KindInt16, format.KindInt32, format.KindInt64:
 		m := compactint.ReverseSize(v)
 		if m <= 0 {
 			return 0, 0, fmt.Errorf("decode int: invalid data")
@@ -58,7 +58,7 @@ func DecodeTypeSize(b []byte) (format.Type, int, error) {
 
 	// Uint
 
-	case format.TypeUint16, format.TypeUint32, format.TypeUint64:
+	case format.KindUint16, format.KindUint32, format.KindUint64:
 		m := compactint.ReverseSize(v)
 		if m <= 0 {
 			return 0, 0, fmt.Errorf("decode uint: invalid data")
@@ -67,14 +67,14 @@ func DecodeTypeSize(b []byte) (format.Type, int, error) {
 
 	// Float
 
-	case format.TypeFloat32:
+	case format.KindFloat32:
 		m := 4
 		if len(v) < m {
 			return 0, 0, fmt.Errorf("decode float32: invalid data")
 		}
 		return t, n + m, nil
 
-	case format.TypeFloat64:
+	case format.KindFloat64:
 		m := 8
 		if len(v) < m {
 			return 0, 0, fmt.Errorf("decode float64: invalid data")
@@ -83,28 +83,28 @@ func DecodeTypeSize(b []byte) (format.Type, int, error) {
 
 	// Bin
 
-	case format.TypeBin64:
+	case format.KindBin64:
 		m := 8
 		if len(v) < m {
 			return 0, 0, fmt.Errorf("decode bin64: invalid data")
 		}
 		return t, n + m, nil
 
-	case format.TypeBin128:
+	case format.KindBin128:
 		m := 16
 		if len(v) < m {
 			return 0, 0, fmt.Errorf("decode bin128: invalid data")
 		}
 		return t, n + m, nil
 
-	case format.TypeBin192:
+	case format.KindBin192:
 		m := 24
 		if len(v) < m {
 			return 0, 0, fmt.Errorf("decode bin192: invalid data")
 		}
 		return t, n + m, nil
 
-	case format.TypeBin256:
+	case format.KindBin256:
 		m := 32
 		if len(v) < m {
 			return 0, 0, fmt.Errorf("decode bin256: invalid data")
@@ -113,7 +113,7 @@ func DecodeTypeSize(b []byte) (format.Type, int, error) {
 
 	// Bytes/string
 
-	case format.TypeBytes:
+	case format.KindBytes:
 		dataSize, m := decodeSize(v)
 		if m < 0 {
 			return 0, 0, errors.New("decode bytes: invalid data size")
@@ -124,7 +124,7 @@ func DecodeTypeSize(b []byte) (format.Type, int, error) {
 		}
 		return t, size, nil
 
-	case format.TypeString:
+	case format.KindString:
 		dataSize, m := decodeSize(v)
 		if m < 0 {
 			return 0, 0, errors.New("decode string: invalid data size")
@@ -137,7 +137,7 @@ func DecodeTypeSize(b []byte) (format.Type, int, error) {
 
 	// List
 
-	case format.TypeList, format.TypeBigList:
+	case format.KindList, format.KindListBig:
 		size := n
 
 		// Table size
@@ -163,7 +163,7 @@ func DecodeTypeSize(b []byte) (format.Type, int, error) {
 
 	// Message
 
-	case format.TypeMessage, format.TypeBigMessage:
+	case format.KindMessage, format.KindMessageBig:
 		size := n
 
 		// Table size
@@ -189,7 +189,7 @@ func DecodeTypeSize(b []byte) (format.Type, int, error) {
 
 	// Struct
 
-	case format.TypeStruct:
+	case format.KindStruct:
 		size := n
 
 		// Data size
@@ -205,18 +205,18 @@ func DecodeTypeSize(b []byte) (format.Type, int, error) {
 		return t, size, nil
 	}
 
-	return 0, 0, fmt.Errorf("decode: invalid type, type=%d", t)
+	return 0, 0, fmt.Errorf("decode: invalid kind, kind=%d", t)
 }
 
 // internal
 
-func decodeType(b []byte) (format.Type, int) {
+func decodeType(b []byte) (format.Kind, int) {
 	if len(b) == 0 {
-		return format.TypeUndefined, 0
+		return format.KindUndefined, 0
 	}
 
 	v := b[len(b)-1]
-	return format.Type(v), 1
+	return format.Kind(v), 1
 }
 
 func decodeSize(b []byte) (uint32, int) {

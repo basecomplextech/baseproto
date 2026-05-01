@@ -14,7 +14,7 @@ import (
 
 func TestDecodeType__should_return_type(t *testing.T) {
 	b := []byte{}
-	b = append(b, byte(format.TypeString))
+	b = append(b, byte(format.KindString))
 
 	v, n, err := DecodeType(b)
 	if err != nil {
@@ -22,7 +22,7 @@ func TestDecodeType__should_return_type(t *testing.T) {
 	}
 
 	assert.Equal(t, n, len(b))
-	assert.Equal(t, v, format.TypeString)
+	assert.Equal(t, v, format.KindString)
 }
 
 func TestDecodeType__should_return_undefined_when_empty(t *testing.T) {
@@ -34,7 +34,7 @@ func TestDecodeType__should_return_undefined_when_empty(t *testing.T) {
 	}
 
 	assert.Zero(t, n)
-	assert.Equal(t, v, format.TypeUndefined)
+	assert.Equal(t, v, format.KindUndefined)
 }
 
 // util

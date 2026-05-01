@@ -16,7 +16,7 @@ import (
 // DecodeBool
 
 func TestDecodeBool__should_decode_bool_value(t *testing.T) {
-	b := []byte{byte(format.TypeTrue)}
+	b := []byte{byte(format.KindTrue)}
 	v, n, err := DecodeBool(b)
 	if err != nil {
 		t.Fatal(err)
@@ -25,7 +25,7 @@ func TestDecodeBool__should_decode_bool_value(t *testing.T) {
 	assert.Equal(t, n, len(b))
 	assert.Equal(t, true, v)
 
-	b = []byte{byte(format.TypeFalse)}
+	b = []byte{byte(format.KindFalse)}
 	v, n, err = DecodeBool(b)
 	if err != nil {
 		t.Fatal(err)
@@ -34,11 +34,11 @@ func TestDecodeBool__should_decode_bool_value(t *testing.T) {
 	assert.Equal(t, n, len(b))
 	assert.Equal(t, false, v)
 
-	typ, size, err := DecodeTypeSize(b)
+	kind, size, err := DecodeTypeSize(b)
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, format.TypeFalse, typ)
+	assert.Equal(t, format.KindFalse, kind)
 	assert.Equal(t, size, len(b))
 }
 
@@ -56,10 +56,10 @@ func TestDecodeByte__should_decode_byte(t *testing.T) {
 	assert.Equal(t, n, b.Len())
 	assert.Equal(t, byte(1), v)
 
-	typ, size, err := DecodeTypeSize(p)
+	kind, size, err := DecodeTypeSize(p)
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, format.TypeByte, typ)
+	assert.Equal(t, format.KindByte, kind)
 	assert.Equal(t, size, len(p))
 }

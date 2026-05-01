@@ -21,6 +21,6 @@ func EncodeBytes(b buffer.Buffer, v []byte) (int, error) {
 	copy(p, v)
 	n := size
 
-	n += encodeSizeType(b, uint32(size), format.TypeBytes)
+	n += encodeSizeType(b, uint32(size), format.KindBytes)
 	return n, nil
 }

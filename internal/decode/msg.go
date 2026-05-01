@@ -17,22 +17,22 @@ func DecodeMessageTable(b []byte) (_ format.MessageTable, size int, err error) {
 	}
 
 	// Decode type
-	typ, n := decodeType(b)
+	kind, n := decodeType(b)
 	if n < 0 {
 		err = errors.New("decode message: invalid type")
 		return
 	}
-	switch typ {
-	case format.TypeMessage, format.TypeBigMessage:
+	switch kind {
+	case format.KindMessage, format.KindMessageBig:
 	default:
-		err = fmt.Errorf("decode message: invalid type, type=%v", typ)
+		err = fmt.Errorf("decode message: invalid kind, kind=%v", kind)
 		return
 	}
 
 	// Start
 	size = n
 	end := len(b) - size
-	big := typ == format.TypeBigMessage
+	big := kind == format.KindMessageBig
 
 	// Table size
 	tableSize, m := decodeSize(b[:end])

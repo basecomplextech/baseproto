@@ -32,10 +32,10 @@ func TestDecodeString__should_decode_string(t *testing.T) {
 	assert.Equal(t, n, b.Len())
 	assert.Equal(t, v, v1.Unwrap())
 
-	typ, size, err := DecodeTypeSize(p)
+	kind, size, err := DecodeTypeSize(p)
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, format.TypeString, typ)
+	assert.Equal(t, format.KindString, kind)
 	assert.Equal(t, size, len(p))
 }

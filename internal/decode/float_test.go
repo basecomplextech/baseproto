@@ -28,11 +28,11 @@ func TestDecodeFloat32__should_decode_float32(t *testing.T) {
 	assert.Equal(t, n, b.Len())
 	assert.Equal(t, float32(math.MaxFloat32), v)
 
-	typ, size, err := DecodeTypeSize(p)
+	kind, size, err := DecodeTypeSize(p)
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, format.TypeFloat32, typ)
+	assert.Equal(t, format.KindFloat32, kind)
 	assert.Equal(t, size, len(p))
 }
 
@@ -63,11 +63,11 @@ func TestDecodeFloat64__should_decode_float64(t *testing.T) {
 	assert.Equal(t, n, b.Len())
 	assert.Equal(t, float64(math.MaxFloat64), v)
 
-	typ, size, err := DecodeTypeSize(p)
+	kind, size, err := DecodeTypeSize(p)
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, format.TypeFloat64, typ)
+	assert.Equal(t, format.KindFloat64, kind)
 	assert.Equal(t, size, len(p))
 }
 

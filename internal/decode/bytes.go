@@ -16,14 +16,14 @@ func DecodeBytes(b []byte) (_ format.Bytes, size int, err error) {
 		return nil, 0, nil
 	}
 
-	// format.Type
-	typ, n := decodeType(b)
+	// format.Kind
+	kind, n := decodeType(b)
 	if n < 0 {
 		err = errors.New("decode bytes: invalid data")
 		return
 	}
-	if typ != format.TypeBytes {
-		err = fmt.Errorf("decode bytes: invalid type, type=%v", typ)
+	if kind != format.KindBytes {
+		err = fmt.Errorf("decode bytes: invalid kind, kind=%v", kind)
 		return
 	}
 

@@ -18,12 +18,12 @@ func DecodeByte(b []byte) (byte, int, error) {
 		return 0, 0, nil
 	}
 
-	typ, n := decodeType(b)
+	kind, n := decodeType(b)
 	if n < 0 {
 		return 0, 0, errors.New("decode byte: invalid data")
 	}
-	if typ != format.TypeByte {
-		return 0, 0, fmt.Errorf("decode byte: invalid type, type=%v", typ)
+	if kind != format.KindByte {
+		return 0, 0, fmt.Errorf("decode byte: invalid kind, kind=%v", kind)
 	}
 
 	end := len(b) - 2
@@ -40,12 +40,12 @@ func DecodeBool(b []byte) (bool, int, error) {
 		return false, 0, nil
 	}
 
-	typ, n := decodeType(b)
+	kind, n := decodeType(b)
 	if n < 0 {
 		return false, 0, errors.New("decode bool: invalid data")
 	}
 
-	v := typ == format.TypeTrue
+	v := kind == format.KindTrue
 	size := n
 	return v, size, nil
 }

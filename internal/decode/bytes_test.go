@@ -32,10 +32,10 @@ func TestDecodeBytes__should_decode_bytes(t *testing.T) {
 	assert.Equal(t, n, b.Len())
 	assert.Equal(t, v, v1.Unwrap())
 
-	typ, size, err := DecodeTypeSize(p)
+	kind, size, err := DecodeTypeSize(p)
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, format.TypeBytes, typ)
+	assert.Equal(t, format.KindBytes, kind)
 	assert.Equal(t, size, len(p))
 }

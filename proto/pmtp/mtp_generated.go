@@ -8,18 +8,18 @@ import (
 	"github.com/basecomplextech/baselibrary/pools"
 	"github.com/basecomplextech/baselibrary/ref"
 	"github.com/basecomplextech/baselibrary/status"
-	baseproto "github.com/basecomplextech/baseproto"
+	"github.com/basecomplextech/baseproto"
 )
 
 var (
 	_ alloc.Buffer
 	_ async.Context
+	_ baseproto.MessageTable
+	_ baseproto.Kind
 	_ bin.Bin128
 	_ buffer.Buffer
-	_ baseproto.MessageTable
 	_ pools.Pool[any]
 	_ ref.Ref
-	_ baseproto.Type
 	_ status.Status
 )
 

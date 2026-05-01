@@ -17,21 +17,21 @@ func DecodeListTable(b []byte) (_ format.ListTable, size int, err error) {
 	}
 
 	// Decode type
-	typ, n := decodeType(b)
+	kind, n := decodeType(b)
 	if n < 0 {
 		n = 0
 		err = errors.New("decode list: invalid data")
 		return
 	}
-	if typ != format.TypeList && typ != format.TypeBigList {
-		err = fmt.Errorf("decode list: invalid type, type=%v", typ)
+	if kind != format.KindList && kind != format.KindListBig {
+		err = fmt.Errorf("decode list: invalid kind, kind=%v", kind)
 		return
 	}
 
 	// Start
 	size = n
 	end := len(b) - n
-	big := typ == format.TypeBigList
+	big := kind == format.KindListBig
 
 	// Table size
 	tableSize, n := decodeSize(b[:end])

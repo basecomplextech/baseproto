@@ -17,11 +17,11 @@ func EncodeMessageTable(b buffer.Buffer, dataSize int, table []format.MessageFie
 		return 0, fmt.Errorf("encode: message too large, max size=%d, actual size=%d", format.MaxSize, dataSize)
 	}
 
-	// format.Type
+	// format.Kind
 	big := format.IsBigMessage(table)
-	type_ := format.TypeMessage
+	kind := format.KindMessage
 	if big {
-		type_ = format.TypeBigMessage
+		kind = format.KindMessageBig
 	}
 
 	// Write table
@@ -34,8 +34,8 @@ func EncodeMessageTable(b buffer.Buffer, dataSize int, table []format.MessageFie
 	// Write data size
 	n += encodeSize(b, uint32(dataSize))
 
-	// Write table size and type
-	n += encodeSizeType(b, uint32(tableSize), type_)
+	// Write table size and
+	n += encodeSizeType(b, uint32(tableSize), kind)
 	return n, nil
 }
 

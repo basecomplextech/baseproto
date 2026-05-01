@@ -53,52 +53,52 @@ func ParseValue(b []byte) (_ Value, n int, err error) {
 	}
 
 	switch typ {
-	case format.TypeTrue, format.TypeFalse:
+	case format.KindTrue, format.KindFalse:
 		// Pass
 
-	case format.TypeByte:
+	case format.KindByte:
 		_, n, err = decode.DecodeByte(b)
 
-	case format.TypeInt16:
+	case format.KindInt16:
 		_, n, err = decode.DecodeInt16(b)
-	case format.TypeInt32:
+	case format.KindInt32:
 		_, n, err = decode.DecodeInt32(b)
-	case format.TypeInt64:
+	case format.KindInt64:
 		_, n, err = decode.DecodeInt64(b)
 
-	case format.TypeUint16:
+	case format.KindUint16:
 		_, n, err = decode.DecodeUint16(b)
-	case format.TypeUint32:
+	case format.KindUint32:
 		_, n, err = decode.DecodeUint32(b)
-	case format.TypeUint64:
+	case format.KindUint64:
 		_, n, err = decode.DecodeUint64(b)
 
-	case format.TypeBin64:
+	case format.KindBin64:
 		_, n, err = decode.DecodeBin64(b)
-	case format.TypeBin128:
+	case format.KindBin128:
 		_, n, err = decode.DecodeBin128(b)
-	case format.TypeBin192:
+	case format.KindBin192:
 		_, n, err = decode.DecodeBin192(b)
-	case format.TypeBin256:
+	case format.KindBin256:
 		_, n, err = decode.DecodeBin256(b)
 
-	case format.TypeFloat32:
+	case format.KindFloat32:
 		_, n, err = decode.DecodeFloat32(b)
-	case format.TypeFloat64:
+	case format.KindFloat64:
 		_, n, err = decode.DecodeFloat64(b)
 
-	case format.TypeBytes:
+	case format.KindBytes:
 		_, n, err = decode.DecodeBytes(b)
-	case format.TypeString:
+	case format.KindString:
 		_, n, err = decode.DecodeString(b)
 
-	case format.TypeList, format.TypeBigList:
+	case format.KindList, format.KindListBig:
 		_, n, err = ParseList(b)
 
-	case format.TypeMessage, format.TypeBigMessage:
+	case format.KindMessage, format.KindMessageBig:
 		_, n, err = ParseMessage(b)
 
-	case format.TypeStruct:
+	case format.KindStruct:
 		_, n, err = decode.DecodeStruct(b)
 
 	default:
@@ -121,7 +121,7 @@ func (v Value) Clone() Value {
 // Types
 
 // Type decodes and returns a type or undefined.
-func (v Value) Type() format.Type {
+func (v Value) Type() format.Kind {
 	p, _, _ := decode.DecodeType(v)
 	return p
 }

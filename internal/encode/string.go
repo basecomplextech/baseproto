@@ -22,7 +22,7 @@ func EncodeString(b buffer.Buffer, s string) (int, error) {
 	p := b.Grow(n)
 	copy(p, s)
 
-	n += encodeSizeType(b, uint32(size), format.TypeString)
+	n += encodeSizeType(b, uint32(size), format.KindString)
 	return n, nil
 }
 
@@ -37,6 +37,6 @@ func EncodeStringBytes(b buffer.Buffer, s []byte) (int, error) {
 	p := b.Grow(n)
 	copy(p, s)
 
-	n += encodeSizeType(b, uint32(size), format.TypeString)
+	n += encodeSizeType(b, uint32(size), format.KindString)
 	return n, nil
 }

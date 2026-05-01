@@ -53,7 +53,7 @@ func decodeFloat64(b []byte) (float64, int) {
 	}
 
 	switch t {
-	case format.TypeFloat32:
+	case format.KindFloat32:
 		start := len(b) - 5
 		if start < 0 {
 			return 0, -1
@@ -63,7 +63,7 @@ func decodeFloat64(b []byte) (float64, int) {
 		f := math.Float32frombits(v)
 		return float64(f), 5
 
-	case format.TypeFloat64:
+	case format.KindFloat64:
 		start := len(b) - 9
 		if start < 0 {
 			return 0, -1

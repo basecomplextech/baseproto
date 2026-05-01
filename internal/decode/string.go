@@ -17,14 +17,14 @@ func DecodeString(b []byte) (_ format.String, size int, err error) {
 		return "", 0, nil
 	}
 
-	// format.Type
-	typ, n := decodeType(b)
+	// format.Kind
+	kind, n := decodeType(b)
 	if n < 0 {
 		err = errors.New("decode string: invalid data")
 		return
 	}
-	if typ != format.TypeString {
-		err = fmt.Errorf("decode string: invalid type, type=%v", typ)
+	if kind != format.KindString {
+		err = fmt.Errorf("decode string: invalid kind, kind=%v", kind)
 		return
 	}
 

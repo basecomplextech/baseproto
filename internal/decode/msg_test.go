@@ -41,11 +41,11 @@ func TestDecodeMessageTable__should_decode_message_meta(t *testing.T) {
 	assert.Equal(t, uint32(dataSize), meta.DataSize())
 	assert.Equal(t, len(fields), meta.Len())
 
-	typ, size, err := DecodeTypeSize(b)
+	kind, size, err := DecodeTypeSize(b)
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, format.TypeMessage, typ)
+	assert.Equal(t, format.KindMessage, kind)
 	assert.Equal(t, size, len(b))
 }
 
@@ -76,7 +76,7 @@ func TestDecodeMessageTable__should_return_error_when_invalid_type(t *testing.T)
 	dataSize := 100
 
 	b := testEncodeMessageTable(t, dataSize, fields)
-	b[len(b)-1] = byte(format.TypeList)
+	b[len(b)-1] = byte(format.KindList)
 
 	_, _, err := DecodeMessageTable(b)
 	require.Error(t, err)
@@ -86,7 +86,7 @@ func TestDecodeMessageTable__should_return_error_when_invalid_type(t *testing.T)
 func TestDecodeMessageTable__should_return_error_when_invalid_table_size(t *testing.T) {
 	b := []byte{}
 	b = append(b, 0xff)
-	b = append(b, byte(format.TypeMessage))
+	b = append(b, byte(format.KindMessage))
 
 	_, _, err := DecodeMessageTable(b)
 	require.Error(t, err)
@@ -98,7 +98,7 @@ func TestDecodeMessageTable__should_return_error_when_invalid_data_size(t *testi
 	b := []byte{}
 	b = append(b, 0xff)
 	b = appendSize(b, big, 1000)
-	b = append(b, byte(format.TypeMessage))
+	b = append(b, byte(format.KindMessage))
 
 	_, _, err := DecodeMessageTable(b)
 	require.Error(t, err)
@@ -116,7 +116,7 @@ func TestDecodeMessageTable__should_return_error_when_invalid_table(t *testing.T
 	b := buf.Bytes()
 	b = appendSize(b, big, 0)    // data size
 	b = appendSize(b, big, 1000) // table size
-	b = append(b, byte(format.TypeMessage))
+	b = append(b, byte(format.KindMessage))
 
 	_, _, err = DecodeMessageTable(b)
 	require.Error(t, err)
@@ -135,7 +135,7 @@ func TestDecodeMessageTable__should_return_error_when_invalid_data(t *testing.T)
 	b := buf.Bytes()
 	b = appendSize(b, big, 1000)
 	b = appendSize(b, big, 0)
-	b = append(b, byte(format.TypeMessage))
+	b = append(b, byte(format.KindMessage))
 
 	_, _, err = DecodeMessageTable(b)
 	require.Error(t, err)

@@ -14,12 +14,12 @@ import (
 var (
 	_ alloc.Buffer
 	_ async.Context
+	_ baseproto.MessageTable
+	_ baseproto.Kind
 	_ bin.Bin128
 	_ buffer.Buffer
-	_ baseproto.MessageTable
 	_ pools.Pool[any]
 	_ ref.Ref
-	_ baseproto.Type
 	_ status.Status
 )
 
