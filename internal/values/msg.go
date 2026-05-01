@@ -5,6 +5,8 @@
 package values
 
 import (
+	"errors"
+
 	"github.com/basecomplextech/baselibrary/alloc"
 	"github.com/basecomplextech/baselibrary/bin"
 	"github.com/basecomplextech/baselibrary/buffer"
@@ -125,6 +127,19 @@ func (m Message) Field(tag uint16) Value {
 	return OpenValue(b)
 }
 
+// FieldErr returns a truncated field data as a value or an error.
+func (m Message) FieldErr(tag uint16) (Value, error) {
+	end := m.table.Offset(tag)
+	size := m.table.DataSize()
+
+	if end < 0 || end > int(size) {
+		return nil, errors.New("decode field: invalid message field")
+	}
+
+	b := m.bytes[:end]
+	return OpenValueErr(b)
+}
+
 // FieldAt returns field data at an index or nil.
 func (m Message) FieldAt(i int) Value {
 	end := m.table.OffsetByIndex(i)
@@ -149,6 +164,19 @@ func (m Message) FieldRaw(tag uint16) []byte {
 	}
 
 	return m.bytes[:end]
+}
+
+// FieldRawErr returns a raw untruncated field data by a tag or an error.
+// The data is larger than the field value, when not the first field.
+func (m Message) FieldRawErr(tag uint16) ([]byte, error) {
+	end := m.table.Offset(tag)
+	size := m.table.DataSize()
+
+	if end < 0 || end > int(size) {
+		return nil, errors.New("decode field: invalid message field")
+	}
+
+	return m.bytes[:end], nil
 }
 
 // Tags
