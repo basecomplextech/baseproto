@@ -2,7 +2,7 @@
 .PHONY: proto
 
 install:
-	@ go install ./cmd/basec
+	@ go install ./cmd/baseprotoc
 
 generate:
 	@ go generate ./...

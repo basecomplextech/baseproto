@@ -1,0 +1,71 @@
+// Copyright 2021 Ivan Korobkov. All rights reserved.
+// Use of this software is governed by the MIT License
+// that can be found in the LICENSE file.
+
+package main
+
+import (
+	"fmt"
+	"log"
+	"os"
+	"strings"
+
+	"github.com/basecomplextech/baseproto/compiler"
+	"github.com/urfave/cli/v2"
+)
+
+func main() {
+	app := &cli.App{
+		Name:  "baseproto",
+		Usage: "baseProto code generator",
+		Commands: []*cli.Command{
+			{
+				Name:        "generate",
+				Description: "Generate a Go package from a baseProto package",
+				UsageText:   "baseproto generate [-i import-paths] [--skip-rpc] [src-dir] [dst-dir]",
+				Args:        true,
+				Flags: []cli.Flag{
+					&cli.StringSliceFlag{
+						Name:    "import",
+						Aliases: []string{"i"},
+						Usage:   "import paths",
+					},
+					&cli.BoolFlag{
+						Name:  "skip-rpc",
+						Usage: "skip generating RPC code",
+					},
+				},
+				Action: func(x *cli.Context) error {
+					// Source/dest args
+					src := ""
+					dst := ""
+
+					args := x.Args().Slice()
+					switch len(args) {
+					case 0:
+						src = "."
+					case 1:
+						src = strings.TrimSpace(x.Args().Get(0))
+					case 2:
+						src = strings.TrimSpace(x.Args().Get(0))
+						dst = strings.TrimSpace(x.Args().Get(1))
+					default:
+						return fmt.Errorf("invalid src/dst args: %v", args)
+					}
+
+					// Flags
+					imports := x.StringSlice("import")
+					skipRPC := x.Bool("skip-rpc")
+
+					// Generate
+					compiler := compiler.New(imports, skipRPC)
+					return compiler.Generate(src, dst)
+				},
+			},
+		},
+	}
+
+	if err := app.Run(os.Args); err != nil {
+		log.Fatal(err)
+	}
+}
