@@ -24,7 +24,7 @@ type Method struct {
 //	| Reference
 //	| Fields
 //	| nil
-type MethodInput interface{}
+type MethodInput any
 
 // MethodOutput is a union type for method outputs.
 //
@@ -32,7 +32,7 @@ type MethodInput interface{}
 //	| Reference
 //	| Fields
 //	| nil
-type MethodOutput interface{}
+type MethodOutput any
 
 // MethodChannel defines method in/out messages, at lesyntax one field must be set.
 type MethodChannel struct {

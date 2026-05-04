@@ -31,7 +31,7 @@ func (w *writer) line(args ...string) {
 	w.b.WriteString("\n")
 }
 
-func (w *writer) linef(format string, args ...interface{}) {
+func (w *writer) linef(format string, args ...any) {
 	w.writef(format, args...)
 	w.b.WriteString("\n")
 }
@@ -42,7 +42,7 @@ func (w *writer) write(args ...string) {
 	}
 }
 
-func (w *writer) writef(format string, args ...interface{}) {
+func (w *writer) writef(format string, args ...any) {
 	if len(args) == 0 {
 		w.write(format)
 		return
