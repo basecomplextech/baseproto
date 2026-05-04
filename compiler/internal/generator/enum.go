@@ -20,7 +20,7 @@ func newEnumWriter(w writer.Writer) *enumWriter {
 	return &enumWriter{w}
 }
 
-func (w *enumWriter) enum(def *model.Definition) error {
+func (w *enumWriter) write(def *model.Definition) error {
 	if err := w.def(def); err != nil {
 		return err
 	}

@@ -20,7 +20,7 @@ func newClientImplWriter(w writer.Writer) *clientImplWriter {
 	return &clientImplWriter{w}
 }
 
-func (w *clientImplWriter) clientImpl(def *model.Definition) error {
+func (w *clientImplWriter) write(def *model.Definition) error {
 	if err := w.def(def); err != nil {
 		return err
 	}

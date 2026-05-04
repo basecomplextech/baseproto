@@ -137,33 +137,33 @@ func (w *fileWriter) definitions(file *model.File) error {
 }
 
 func (w *fileWriter) enum(def *model.Definition) error {
-	return newEnumWriter(w.Writer).enum(def)
+	return newEnumWriter(w.Writer).write(def)
 }
 
 func (w *fileWriter) message(def *model.Definition) error {
-	return newMessageWriter(w.Writer).message(def)
+	return newMessageWriter(w.Writer).write(def)
 }
 
 func (w *fileWriter) messageWriter(def *model.Definition) error {
-	return newMessageWriter(w.Writer).messageWriter(def)
+	return newMessageWriterWriter(w.Writer).write(def)
 }
 
 func (w *fileWriter) struct_(def *model.Definition) error {
-	return newStructWriter(w.Writer).struct_(def)
+	return newStructWriter(w.Writer).write(def)
 }
 
 func (w *fileWriter) client(def *model.Definition) error {
-	return newClientWriter(w.Writer).client(def)
+	return newClientWriter(w.Writer).write(def)
 }
 
 func (w *fileWriter) clientImpl(def *model.Definition) error {
-	return newClientImplWriter(w.Writer).clientImpl(def)
+	return newClientImplWriter(w.Writer).write(def)
 }
 
 func (w *fileWriter) service(def *model.Definition) error {
-	return newServiceWriter(w.Writer).service(def)
+	return newServiceWriter(w.Writer).write(def)
 }
 
 func (w *fileWriter) serviceImpl(def *model.Definition) error {
-	return newServiceImplWriter(w.Writer).serviceImpl(def)
+	return newServiceImplWriter(w.Writer).write(def)
 }

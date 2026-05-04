@@ -19,7 +19,7 @@ func newServiceWriter(w writer.Writer) *serviceWriter {
 	return &serviceWriter{w}
 }
 
-func (w *serviceWriter) service(def *model.Definition) error {
+func (w *serviceWriter) write(def *model.Definition) error {
 	if err := w.iface(def); err != nil {
 		return err
 	}

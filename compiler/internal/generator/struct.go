@@ -19,7 +19,7 @@ func newStructWriter(w writer.Writer) *structWriter {
 	return &structWriter{w}
 }
 
-func (w *structWriter) struct_(def *model.Definition) error {
+func (w *structWriter) write(def *model.Definition) error {
 	if err := w.def(def); err != nil {
 		return err
 	}

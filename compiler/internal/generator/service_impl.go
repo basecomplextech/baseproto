@@ -20,7 +20,7 @@ func newServiceImplWriter(w writer.Writer) *serviceImplWriter {
 	return &serviceImplWriter{w}
 }
 
-func (w *serviceImplWriter) serviceImpl(def *model.Definition) error {
+func (w *serviceImplWriter) write(def *model.Definition) error {
 	if err := w.def(def); err != nil {
 		return err
 	}

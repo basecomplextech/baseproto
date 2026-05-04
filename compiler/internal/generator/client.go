@@ -19,7 +19,7 @@ func newClientWriter(w writer.Writer) *clientWriter {
 	return &clientWriter{w}
 }
 
-func (w *clientWriter) client(def *model.Definition) error {
+func (w *clientWriter) write(def *model.Definition) error {
 	if err := w.iface(def); err != nil {
 		return err
 	}
