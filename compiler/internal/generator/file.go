@@ -6,62 +6,68 @@ package generator
 
 import (
 	"github.com/basecomplextech/baseproto/compiler/internal/model"
+	"github.com/basecomplextech/baseproto/compiler/internal/writer"
 )
 
 type fileWriter struct {
-	*writer
+	writer.Writer
+
+	skipRPC bool
 }
 
-func newFileWriter(w *writer) *fileWriter {
-	return &fileWriter{w}
+func newFileWriter(w writer.Writer, skipRPC bool) *fileWriter {
+	return &fileWriter{
+		Writer:  w,
+		skipRPC: skipRPC,
+	}
 }
 
 func (w *fileWriter) file(file *model.File) error {
 	// Package
-	w.line("package ", file.Package.Name)
-	w.line()
+	w.Line("package ", file.Package.Name)
+	w.Line()
 
 	// Imports
-	w.line("import (")
-	w.line(`"github.com/basecomplextech/baselibrary/alloc"`)
-	w.line(`"github.com/basecomplextech/baselibrary/async"`)
-	w.line(`"github.com/basecomplextech/baselibrary/bin"`)
-	w.line(`"github.com/basecomplextech/baselibrary/buffer"`)
-	w.line(`"github.com/basecomplextech/baselibrary/pools"`)
-	w.line(`"github.com/basecomplextech/baselibrary/ref"`)
-	w.line(`"github.com/basecomplextech/baselibrary/status"`)
-	w.line(`"github.com/basecomplextech/baseproto"`)
+	w.Line("import (")
+	w.Line(`"github.com/basecomplextech/baselibrary/alloc"`)
+	w.Line(`"github.com/basecomplextech/baselibrary/async"`)
+	w.Line(`"github.com/basecomplextech/baselibrary/bin"`)
+	w.Line(`"github.com/basecomplextech/baselibrary/buffer"`)
+	w.Line(`"github.com/basecomplextech/baselibrary/pools"`)
+	w.Line(`"github.com/basecomplextech/baselibrary/ref"`)
+	w.Line(`"github.com/basecomplextech/baselibrary/status"`)
+	w.Line(`"github.com/basecomplextech/baseproto"`)
 
 	if !w.skipRPC {
-		w.line(`"github.com/basecomplextech/baseproto/baserpc"`)
-		w.line(`"github.com/basecomplextech/baseproto/proto/prpc"`)
+		w.Line(`"github.com/basecomplextech/baseproto/baserpc"`)
+		w.Line(`"github.com/basecomplextech/baseproto/proto/prpc"`)
 	}
 
 	for _, imp := range file.Imports {
 		pkg := importPackage(imp)
-		w.linef(`"%v"`, pkg)
+		w.Linef(`"%v"`, pkg)
 	}
-	w.line(")")
-	w.line()
+	w.Line(")")
+	w.Line()
 
 	// Empty values for imports
-	w.line(`var (`)
-	w.line(`_ alloc.Buffer`)
-	w.line(`_ async.Context`)
-	w.line(`_ bin.Bin128`)
-	w.line(`_ buffer.Buffer`)
-	w.line(`_ baseproto.MessageTable`)
-	w.line(`_ pools.Pool[any]`)
-	w.line(`_ ref.Ref`)
+	w.Line(`var (`)
+	w.Line(`_ alloc.Buffer`)
+	w.Line(`_ async.Context`)
+	w.Line(`_ bin.Bin128`)
+	w.Line(`_ buffer.Buffer`)
+	w.Line(`_ baseproto.MessageTable`)
+	w.Line(`_ pools.Pool[any]`)
+	w.Line(`_ ref.Ref`)
 
 	if !w.skipRPC {
-		w.line(`_ rpc.Client`)
-		w.line(`_ prpc.Request`)
+		w.Line(`_ rpc.Client`)
+		w.Line(`_ prpc.Request`)
 	}
 
-	w.line(`_ baseproto.Type`)
-	w.line(`_ status.Status`)
-	w.line(`)`)
+	w.Line(`_ baseproto.Type`)
+	w.Line(`_ status.Status`)
+	w.Line(`)`)
 
 	// Definitions
 	return w.definitions(file)
@@ -131,33 +137,33 @@ func (w *fileWriter) definitions(file *model.File) error {
 }
 
 func (w *fileWriter) enum(def *model.Definition) error {
-	return newEnumWriter(w.writer).enum(def)
+	return newEnumWriter(w.Writer).enum(def)
 }
 
 func (w *fileWriter) message(def *model.Definition) error {
-	return newMessageWriter(w.writer).message(def)
+	return newMessageWriter(w.Writer).message(def)
 }
 
 func (w *fileWriter) messageWriter(def *model.Definition) error {
-	return newMessageWriter(w.writer).messageWriter(def)
+	return newMessageWriter(w.Writer).messageWriter(def)
 }
 
 func (w *fileWriter) struct_(def *model.Definition) error {
-	return newStructWriter(w.writer).struct_(def)
+	return newStructWriter(w.Writer).struct_(def)
 }
 
 func (w *fileWriter) client(def *model.Definition) error {
-	return newClientWriter(w.writer).client(def)
+	return newClientWriter(w.Writer).client(def)
 }
 
 func (w *fileWriter) clientImpl(def *model.Definition) error {
-	return newClientImplWriter(w.writer).clientImpl(def)
+	return newClientImplWriter(w.Writer).clientImpl(def)
 }
 
 func (w *fileWriter) service(def *model.Definition) error {
-	return newServiceWriter(w.writer).service(def)
+	return newServiceWriter(w.Writer).service(def)
 }
 
 func (w *fileWriter) serviceImpl(def *model.Definition) error {
-	return newServiceImplWriter(w.writer).serviceImpl(def)
+	return newServiceImplWriter(w.Writer).serviceImpl(def)
 }

@@ -5,58 +5,10 @@
 package generator
 
 import (
-	"bytes"
-	"fmt"
 	"strings"
 
 	"github.com/basecomplextech/baseproto/compiler/internal/model"
 )
-
-type writer struct {
-	b bytes.Buffer
-
-	skipRPC bool
-}
-
-func newWriter(skipRPC bool) *writer {
-	return &writer{
-		b: bytes.Buffer{},
-
-		skipRPC: skipRPC,
-	}
-}
-
-func (w *writer) line(args ...string) {
-	w.write(args...)
-	w.b.WriteString("\n")
-}
-
-func (w *writer) linef(format string, args ...any) {
-	w.writef(format, args...)
-	w.b.WriteString("\n")
-}
-
-func (w *writer) write(args ...string) {
-	for _, s := range args {
-		w.b.WriteString(s)
-	}
-}
-
-func (w *writer) writef(format string, args ...any) {
-	if len(args) == 0 {
-		w.write(format)
-		return
-	}
-
-	s := fmt.Sprintf(format, args...)
-	w.b.WriteString(s)
-}
-
-func (w *writer) file(file *model.File) error {
-	return newFileWriter(w).file(file)
-}
-
-// internal
 
 func importPackage(imp *model.Import) string {
 	pkg, ok := imp.Package.OptionNames[OptionPackage]

@@ -8,13 +8,14 @@ import (
 	"fmt"
 
 	"github.com/basecomplextech/baseproto/compiler/internal/model"
+	"github.com/basecomplextech/baseproto/compiler/internal/writer"
 )
 
 type structWriter struct {
-	*writer
+	writer.Writer
 }
 
-func newStructWriter(w *writer) *structWriter {
+func newStructWriter(w writer.Writer) *structWriter {
 	return &structWriter{w}
 }
 
@@ -35,59 +36,59 @@ func (w *structWriter) struct_(def *model.Definition) error {
 }
 
 func (w *structWriter) def(def *model.Definition) error {
-	w.linef(`// %v`, def.Name)
-	w.line()
-	w.linef("type %v struct {", def.Name)
+	w.Linef(`// %v`, def.Name)
+	w.Line()
+	w.Linef("type %v struct {", def.Name)
 
 	fields := def.Struct.Fields.Values()
 	for _, field := range fields {
 		name := structFieldName(field)
 		typ := typeName(field.Type)
 		goTag := fmt.Sprintf("`json:\"%v\"`", field.Name)
-		w.linef("%v %v %v", name, typ, goTag)
+		w.Linef("%v %v %v", name, typ, goTag)
 	}
 
-	w.line("}")
-	w.line()
+	w.Line("}")
+	w.Line()
 	return nil
 }
 
 func (w *structWriter) open(def *model.Definition) error {
-	w.linef(`func Open%v(b []byte) %v {`, def.Name, def.Name)
-	w.linef(`s, _, _ := Decode%v(b)`, def.Name)
-	w.line(`return s`)
-	w.line(`}`)
-	w.line()
+	w.Linef(`func Open%v(b []byte) %v {`, def.Name, def.Name)
+	w.Linef(`s, _, _ := Decode%v(b)`, def.Name)
+	w.Line(`return s`)
+	w.Line(`}`)
+	w.Line()
 
-	w.linef(`func Decode%v(b []byte) (s %v, size int, err error) {`, def.Name, def.Name)
-	w.line(`size, err = s.Decode(b)`)
-	w.line(`return s, size, err`)
-	w.line(`}`)
-	w.line()
+	w.Linef(`func Decode%v(b []byte) (s %v, size int, err error) {`, def.Name, def.Name)
+	w.Line(`size, err = s.Decode(b)`)
+	w.Line(`return s, size, err`)
+	w.Line(`}`)
+	w.Line()
 
-	w.linef(`func Encode%vTo(b buffer.Buffer, s %v) (int, error) {`, def.Name, def.Name)
-	w.line(`return s.EncodeTo(b)`)
-	w.line(`}`)
-	w.line()
+	w.Linef(`func Encode%vTo(b buffer.Buffer, s %v) (int, error) {`, def.Name, def.Name)
+	w.Line(`return s.EncodeTo(b)`)
+	w.Line(`}`)
+	w.Line()
 	return nil
 }
 
 func (w *structWriter) decode_method(def *model.Definition) error {
-	w.linef(`func (s *%v) Decode(b []byte) (size int, err error) {`, def.Name)
-	w.line(`dataSize, size, err := baseproto.DecodeStruct(b)`)
-	w.line(`if err != nil || size == 0 {
+	w.Linef(`func (s *%v) Decode(b []byte) (size int, err error) {`, def.Name)
+	w.Line(`dataSize, size, err := baseproto.DecodeStruct(b)`)
+	w.Line(`if err != nil || size == 0 {
 		return
 	}`)
-	w.line()
+	w.Line()
 
-	w.line(`b = b[len(b)-size:]
+	w.Line(`b = b[len(b)-size:]
 	n := size - dataSize
 	off := len(b) - n
 	`)
-	w.line()
+	w.Line()
 
-	w.line(`// Decode in reverse order`)
-	w.line()
+	w.Line(`// Decode in reverse order`)
+	w.Line()
 
 	fields := def.Struct.Fields.Values()
 	for i := len(fields) - 1; i >= 0; i-- {
@@ -98,46 +99,46 @@ func (w *structWriter) decode_method(def *model.Definition) error {
 			decodeName = "baseproto.DecodeStringClone"
 		}
 
-		w.linef(`s.%v, n, err = %v(b[:off])`, fieldName, decodeName)
-		w.line(`if err != nil {
+		w.Linef(`s.%v, n, err = %v(b[:off])`, fieldName, decodeName)
+		w.Line(`if err != nil {
 			return
 		}`)
-		w.line(`off -= n`)
-		w.line()
+		w.Line(`off -= n`)
+		w.Line()
 	}
 
-	w.line(`return size, err`)
-	w.line(`}`)
-	w.line()
+	w.Line(`return size, err`)
+	w.Line(`}`)
+	w.Line()
 	return nil
 }
 
 func (w *structWriter) encode_method(def *model.Definition) error {
-	w.linef(`func (s %v) EncodeTo(b buffer.Buffer) (int, error) {`, def.Name)
-	w.line(`var dataSize, n int`)
-	w.line(`var err error`)
-	w.line()
+	w.Linef(`func (s %v) EncodeTo(b buffer.Buffer) (int, error) {`, def.Name)
+	w.Line(`var dataSize, n int`)
+	w.Line(`var err error`)
+	w.Line()
 
 	fields := def.Struct.Fields.Values()
 	for _, field := range fields {
 		fieldName := structFieldName(field)
 		writeFunc := typeWriteFunc(field.Type)
 
-		w.linef(`n, err = %v(b, s.%v)`, writeFunc, fieldName)
-		w.line(`if err != nil {
+		w.Linef(`n, err = %v(b, s.%v)`, writeFunc, fieldName)
+		w.Line(`if err != nil {
 			return 0, err
 		}`)
-		w.line(`dataSize += n`)
-		w.line()
+		w.Line(`dataSize += n`)
+		w.Line()
 	}
 
-	w.line(`n, err = baseproto.EncodeStruct(b, dataSize)`)
-	w.line(`if err != nil {
+	w.Line(`n, err = baseproto.EncodeStruct(b, dataSize)`)
+	w.Line(`if err != nil {
 			return 0, err
 		}`)
-	w.line(`return dataSize + n, nil`)
-	w.line(`}`)
-	w.line()
+	w.Line(`return dataSize + n, nil`)
+	w.Line(`}`)
+	w.Line()
 	return nil
 }
 

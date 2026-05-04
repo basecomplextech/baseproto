@@ -9,13 +9,14 @@ import (
 	"strings"
 
 	"github.com/basecomplextech/baseproto/compiler/internal/model"
+	"github.com/basecomplextech/baseproto/compiler/internal/writer"
 )
 
 type enumWriter struct {
-	*writer
+	writer.Writer
 }
 
-func newEnumWriter(w *writer) *enumWriter {
+func newEnumWriter(w writer.Writer) *enumWriter {
 	return &enumWriter{w}
 }
 
@@ -42,73 +43,73 @@ func (w *enumWriter) enum(def *model.Definition) error {
 }
 
 func (w *enumWriter) def(def *model.Definition) error {
-	w.linef(`// %v`, def.Name)
-	w.line()
-	w.linef("type %v int32", def.Name)
-	w.line()
+	w.Linef(`// %v`, def.Name)
+	w.Line()
+	w.Linef("type %v int32", def.Name)
+	w.Line()
 	return nil
 }
 
 func (w *enumWriter) values(def *model.Definition) error {
-	w.line("const (")
+	w.Line("const (")
 
 	for _, val := range def.Enum.Values {
 		// EnumValue Enum = 1
 		name := enumValueName(val)
-		w.linef("%v %v = %d", name, def.Name, val.Number)
+		w.Linef("%v %v = %d", name, def.Name, val.Number)
 	}
 
-	w.line(")")
-	w.line()
+	w.Line(")")
+	w.Line()
 	return nil
 }
 
 func (w *enumWriter) open_method(def *model.Definition) error {
 	name := def.Name
-	w.linef(`func Open%v(b []byte) %v {`, name, name)
-	w.linef(`v, _, _ := baseproto.DecodeInt32(b)`)
-	w.linef(`return %v(v)`, name)
-	w.linef(`}`)
-	w.line()
+	w.Linef(`func Open%v(b []byte) %v {`, name, name)
+	w.Linef(`v, _, _ := baseproto.DecodeInt32(b)`)
+	w.Linef(`return %v(v)`, name)
+	w.Linef(`}`)
+	w.Line()
 	return nil
 }
 
 func (w *enumWriter) decode_method(def *model.Definition) error {
 	name := def.Name
-	w.linef(`func Decode%v(b []byte) (result %v, size int, err error) {`, name, name)
-	w.linef(`v, size, err := baseproto.DecodeInt32(b)`)
-	w.linef(`if err != nil || size == 0 {
+	w.Linef(`func Decode%v(b []byte) (result %v, size int, err error) {`, name, name)
+	w.Linef(`v, size, err := baseproto.DecodeInt32(b)`)
+	w.Linef(`if err != nil || size == 0 {
 		return
 	}`)
-	w.linef(`result = %v(v)`, name)
-	w.line(`return`)
-	w.linef(`}`)
-	w.line()
+	w.Linef(`result = %v(v)`, name)
+	w.Line(`return`)
+	w.Linef(`}`)
+	w.Line()
 	return nil
 }
 
 func (w *enumWriter) encode_method(def *model.Definition) error {
-	w.linef(`func Encode%vTo(b buffer.Buffer, v %v) (int, error) {`, def.Name, def.Name)
-	w.linef(`return baseproto.EncodeInt32(b, int32(v))`)
-	w.linef(`}`)
-	w.line()
+	w.Linef(`func Encode%vTo(b buffer.Buffer, v %v) (int, error) {`, def.Name, def.Name)
+	w.Linef(`return baseproto.EncodeInt32(b, int32(v))`)
+	w.Linef(`}`)
+	w.Line()
 	return nil
 }
 
 func (w *enumWriter) string_method(def *model.Definition) error {
-	w.linef("func (e %v) String() string {", def.Name)
-	w.line("switch e {")
+	w.Linef("func (e %v) String() string {", def.Name)
+	w.Line("switch e {")
 
 	for _, val := range def.Enum.Values {
 		name := enumValueName(val)
-		w.linef("case %v:", name)
-		w.linef(`return "%v"`, strings.ToLower(val.Name))
+		w.Linef("case %v:", name)
+		w.Linef(`return "%v"`, strings.ToLower(val.Name))
 	}
 
-	w.line("}")
-	w.line(`return ""`)
-	w.line("}")
-	w.line()
+	w.Line("}")
+	w.Line(`return ""`)
+	w.Line("}")
+	w.Line()
 	return nil
 }
 

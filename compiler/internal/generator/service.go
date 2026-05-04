@@ -8,13 +8,14 @@ import (
 	"fmt"
 
 	"github.com/basecomplextech/baseproto/compiler/internal/model"
+	"github.com/basecomplextech/baseproto/compiler/internal/writer"
 )
 
 type serviceWriter struct {
-	*writer
+	writer.Writer
 }
 
-func newServiceWriter(w *writer) *serviceWriter {
+func newServiceWriter(w writer.Writer) *serviceWriter {
 	return &serviceWriter{w}
 }
 
@@ -32,9 +33,9 @@ func (w *serviceWriter) service(def *model.Definition) error {
 }
 
 func (w *serviceWriter) iface(def *model.Definition) error {
-	w.linef(`// %v`, def.Name)
-	w.line()
-	w.linef(`type %v interface {`, def.Name)
+	w.Linef(`// %v`, def.Name)
+	w.Line()
+	w.Linef(`type %v interface {`, def.Name)
 
 	for _, m := range def.Service.Methods {
 		if err := w.method(def, m); err != nil {
@@ -42,8 +43,8 @@ func (w *serviceWriter) iface(def *model.Definition) error {
 		}
 	}
 
-	w.linef(`}`)
-	w.line()
+	w.Linef(`}`)
+	w.Line()
 	return nil
 }
 
@@ -54,45 +55,45 @@ func (w *serviceWriter) method(def *model.Definition, m *model.Method) error {
 	if err := w.method_output(def, m); err != nil {
 		return err
 	}
-	w.line()
+	w.Line()
 	return nil
 }
 
 func (w *serviceWriter) method_input(def *model.Definition, m *model.Method) error {
 	name := toUpperCamelCase(m.Name)
-	w.writef(`%v`, name)
+	w.Writef(`%v`, name)
 
 	if m.Oneway {
-		w.write(`(ctx rpc.ConnContext`)
+		w.Write(`(ctx rpc.ConnContext`)
 	} else {
-		w.write(`(ctx rpc.Context`)
+		w.Write(`(ctx rpc.Context`)
 	}
 
 	switch {
 	case m.Type == model.MethodType_Channel:
 		channel := serviceChannel_name(m)
-		w.writef(`, ch %v`, channel)
+		w.Writef(`, ch %v`, channel)
 	case m.Request != nil:
 		typeName := typeName(m.Request)
-		w.writef(`, req %v`, typeName)
+		w.Writef(`, req %v`, typeName)
 	}
 
 	if m.Type == model.MethodType_Subservice {
 		sub := m.Subservice
 		typeName := typeName(sub)
-		w.writef(`, next rpc.NextHandler[%v]`, typeName)
+		w.Writef(`, next rpc.NextHandler[%v]`, typeName)
 	}
 
-	w.write(`) `)
+	w.Write(`) `)
 	return nil
 }
 
 func (w *serviceWriter) method_output(def *model.Definition, m *model.Method) error {
 	if m.Response != nil {
 		typeName := typeName(m.Response)
-		w.writef(`(ref.R[%v], status.Status)`, typeName)
+		w.Writef(`(ref.R[%v], status.Status)`, typeName)
 	} else {
-		w.write(`status.Status`)
+		w.Write(`status.Status`)
 	}
 	return nil
 }
@@ -103,17 +104,17 @@ func (w *serviceWriter) new_handler(def *model.Definition) error {
 	name := handler_name(def)
 
 	if def.Service.Sub {
-		w.linef(`func New%vHandler(ctx rpc.Context, channel rpc.ServerChannel, index int) rpc.Subhandler1[%v] {`,
+		w.Linef(`func New%vHandler(ctx rpc.Context, channel rpc.ServerChannel, index int) rpc.Subhandler1[%v] {`,
 			def.Name, def.Name)
-		w.linef(`return new%vHandler(ctx, channel, index)`, def.Name)
-		w.linef(`}`)
+		w.Linef(`return new%vHandler(ctx, channel, index)`, def.Name)
+		w.Linef(`}`)
 	} else {
-		w.linef(`func New%vHandler(s %v) rpc.Handler {`, def.Name, def.Name)
-		w.linef(`return &%v{service: s}`, name)
-		w.linef(`}`)
+		w.Linef(`func New%vHandler(s %v) rpc.Handler {`, def.Name, def.Name)
+		w.Linef(`return &%v{service: s}`, name)
+		w.Linef(`}`)
 	}
 
-	w.line()
+	w.Line()
 	return nil
 }
 
@@ -134,32 +135,32 @@ func (w *serviceWriter) channels(def *model.Definition) error {
 
 func (w *serviceWriter) channel(def *model.Definition, m *model.Method) error {
 	name := serviceChannel_name(m)
-	w.linef(`type %v interface {`, name)
+	w.Linef(`type %v interface {`, name)
 
 	// Request method
 	switch {
 	case m.Request != nil:
 		typeName := typeName(m.Request)
-		w.linef(`Request() (%v, status.Status)`, typeName)
+		w.Linef(`Request() (%v, status.Status)`, typeName)
 	}
 
 	// Receive methods
 	if in := m.Channel.In; in != nil {
 		typeName := typeName(in)
-		w.linef(`Receive(ctx async.Context) (%v, status.Status)`, typeName)
-		w.linef(`ReceiveAsync(ctx async.Context) (%v, bool, status.Status)`, typeName)
-		w.line(`ReceiveWait() <-chan struct{}`)
+		w.Linef(`Receive(ctx async.Context) (%v, status.Status)`, typeName)
+		w.Linef(`ReceiveAsync(ctx async.Context) (%v, bool, status.Status)`, typeName)
+		w.Line(`ReceiveWait() <-chan struct{}`)
 	}
 
 	// Send methods
 	if out := m.Channel.Out; out != nil {
 		typeName := typeName(out)
-		w.linef(`Send(ctx async.Context, msg %v) status.Status`, typeName)
-		w.line(`SendEnd(ctx async.Context) status.Status`)
+		w.Linef(`Send(ctx async.Context, msg %v) status.Status`, typeName)
+		w.Line(`SendEnd(ctx async.Context) status.Status`)
 	}
 
-	w.linef(`}`)
-	w.line()
+	w.Linef(`}`)
+	w.Line()
 	return nil
 }
 

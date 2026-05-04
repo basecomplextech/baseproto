@@ -9,13 +9,14 @@ import (
 	"strings"
 
 	"github.com/basecomplextech/baseproto/compiler/internal/model"
+	"github.com/basecomplextech/baseproto/compiler/internal/writer"
 )
 
 type serviceImplWriter struct {
-	*writer
+	writer.Writer
 }
 
-func newServiceImplWriter(w *writer) *serviceImplWriter {
+func newServiceImplWriter(w writer.Writer) *serviceImplWriter {
 	return &serviceImplWriter{w}
 }
 
@@ -43,39 +44,39 @@ func (w *serviceImplWriter) serviceImpl(def *model.Definition) error {
 
 func (w *serviceImplWriter) def(def *model.Definition) error {
 	name := handler_name(def)
-	w.linef(`// %v`, name)
-	w.line()
+	w.Linef(`// %v`, name)
+	w.Line()
 
 	if def.Service.Sub {
-		w.linef(`var %vPool = pools.NewPoolFunc(`, name)
-		w.linef(`func() *%v {`, name)
-		w.linef(`return &%v{}`, name)
-		w.line(`},`)
-		w.line(`)`)
-		w.line()
-		w.linef(`type %v struct {`, name)
-		w.linef(`ctx rpc.Context`)
-		w.linef(`channel rpc.ServerChannel`)
-		w.linef(`index int`)
-		w.linef(`service %v`, def.Name)
-		w.linef(`result ref.R[[]byte]`)
-		w.line(`}`)
-		w.line()
-		w.linef(`func new%vHandler(ctx rpc.Context, channel rpc.ServerChannel, index int) rpc.Subhandler1[%v] {`,
+		w.Linef(`var %vPool = pools.NewPoolFunc(`, name)
+		w.Linef(`func() *%v {`, name)
+		w.Linef(`return &%v{}`, name)
+		w.Line(`},`)
+		w.Line(`)`)
+		w.Line()
+		w.Linef(`type %v struct {`, name)
+		w.Linef(`ctx rpc.Context`)
+		w.Linef(`channel rpc.ServerChannel`)
+		w.Linef(`index int`)
+		w.Linef(`service %v`, def.Name)
+		w.Linef(`result ref.R[[]byte]`)
+		w.Line(`}`)
+		w.Line()
+		w.Linef(`func new%vHandler(ctx rpc.Context, channel rpc.ServerChannel, index int) rpc.Subhandler1[%v] {`,
 			def.Name, def.Name)
-		w.linef(`h := %vPool.New()`, name)
-		w.line(`h.ctx = ctx`)
-		w.line(`h.channel = channel`)
-		w.line(`h.index = index`)
-		w.line(`return h`)
-		w.line(`}`)
-		w.line()
+		w.Linef(`h := %vPool.New()`, name)
+		w.Line(`h.ctx = ctx`)
+		w.Line(`h.channel = channel`)
+		w.Line(`h.index = index`)
+		w.Line(`return h`)
+		w.Line(`}`)
+		w.Line()
 
 	} else {
-		w.linef(`type %v struct {`, name)
-		w.linef(`service %v`, def.Name)
-		w.line(`}`)
-		w.line()
+		w.Linef(`type %v struct {`, name)
+		w.Linef(`service %v`, def.Name)
+		w.Line(`}`)
+		w.Line()
 	}
 
 	return nil
@@ -87,11 +88,11 @@ func (w *serviceImplWriter) free(def *model.Definition) error {
 	}
 
 	name := handler_name(def)
-	w.linef(`func (h *%v) Free() {`, name)
-	w.linef(`*h = %v{}`, name)
-	w.linef(`%vPool.Put(h)`, name)
-	w.line(`}`)
-	w.line()
+	w.Linef(`func (h *%v) Free() {`, name)
+	w.Linef(`*h = %v{}`, name)
+	w.Linef(`%vPool.Put(h)`, name)
+	w.Line(`}`)
+	w.Line()
 	return nil
 }
 
@@ -101,10 +102,10 @@ func (w *serviceImplWriter) result(def *model.Definition) error {
 	}
 
 	name := handler_name(def)
-	w.linef(`func (h *%v) Result() ref.R[[]byte] {`, name)
-	w.line(`return h.result`)
-	w.line(`}`)
-	w.line()
+	w.Linef(`func (h *%v) Result() ref.R[[]byte] {`, name)
+	w.Line(`return h.result`)
+	w.Line(`}`)
+	w.Line()
 	return nil
 }
 
@@ -112,59 +113,59 @@ func (w *serviceImplWriter) handle(def *model.Definition) error {
 	name := handler_name(def)
 
 	if def.Service.Sub {
-		w.linef(`func (h *%v) Handle(service %v) status.Status {`, name, def.Name)
-		w.line(`ctx := h.ctx`)
-		w.line(`ch := h.channel`)
-		w.line(`index := h.index`)
-		w.line(`h.service = service`)
-		w.line()
+		w.Linef(`func (h *%v) Handle(service %v) status.Status {`, name, def.Name)
+		w.Line(`ctx := h.ctx`)
+		w.Line(`ch := h.channel`)
+		w.Line(`index := h.index`)
+		w.Line(`h.service = service`)
+		w.Line()
 	} else {
-		w.linef(`func (h *%v) Handle(ctx rpc.Context, ch rpc.ServerChannel) (ref.R[[]byte], status.Status) {`,
+		w.Linef(`func (h *%v) Handle(ctx rpc.Context, ch rpc.ServerChannel) (ref.R[[]byte], status.Status) {`,
 			name)
-		w.line(`index := 0`)
+		w.Line(`index := 0`)
 	}
 
-	w.line(`req, st := ch.Request(ctx)`)
-	w.line(`if !st.OK() {`)
+	w.Line(`req, st := ch.Request(ctx)`)
+	w.Line(`if !st.OK() {`)
 	if def.Service.Sub {
-		w.line(`return st`)
+		w.Line(`return st`)
 	} else {
-		w.line(`return nil, st`)
+		w.Line(`return nil, st`)
 	}
-	w.line(`}`)
-	w.line()
+	w.Line(`}`)
+	w.Line()
 
-	w.line(`call, err := req.Calls().GetErr(index)`)
-	w.line(`if err != nil {`)
+	w.Line(`call, err := req.Calls().GetErr(index)`)
+	w.Line(`if err != nil {`)
 	if def.Service.Sub {
-		w.line(`return rpc.WrapError(err)`)
+		w.Line(`return rpc.WrapError(err)`)
 	} else {
-		w.line(`return nil, rpc.WrapError(err)`)
+		w.Line(`return nil, rpc.WrapError(err)`)
 	}
-	w.line(`}`)
-	w.line()
+	w.Line(`}`)
+	w.Line()
 
-	w.line(`method := call.Method()`)
-	w.line(`switch method {`)
+	w.Line(`method := call.Method()`)
+	w.Line(`switch method {`)
 	for _, m := range def.Service.Methods {
-		w.linef(`case %q:`, m.Name)
+		w.Linef(`case %q:`, m.Name)
 		if def.Service.Sub {
-			w.linef(`h.result, st = h._%v(ctx, ch, call, index)`, toLowerCameCase(m.Name))
-			w.line(`return st`)
+			w.Linef(`h.result, st = h._%v(ctx, ch, call, index)`, toLowerCameCase(m.Name))
+			w.Line(`return st`)
 		} else {
-			w.linef(`return h._%v(ctx, ch, call, index)`, toLowerCameCase(m.Name))
+			w.Linef(`return h._%v(ctx, ch, call, index)`, toLowerCameCase(m.Name))
 		}
 	}
-	w.line(`}`)
-	w.line()
+	w.Line(`}`)
+	w.Line()
 
 	if def.Service.Sub {
-		w.linef(`return rpc.Errorf("unknown %v method %%q", method)`, def.Name)
+		w.Linef(`return rpc.Errorf("unknown %v method %%q", method)`, def.Name)
 	} else {
-		w.linef(`return nil, rpc.Errorf("unknown %v method %%q", method)`, def.Name)
+		w.Linef(`return nil, rpc.Errorf("unknown %v method %%q", method)`, def.Name)
 	}
-	w.line(`}`)
-	w.line()
+	w.Line(`}`)
+	w.Line()
 	return nil
 }
 
@@ -180,99 +181,99 @@ func (w *serviceImplWriter) methods(def *model.Definition) error {
 func (w *serviceImplWriter) method(def *model.Definition, m *model.Method) error {
 	// Declare method
 	name := handler_name(def)
-	w.linef(`func (h *%v) _%v(ctx rpc.Context, ch rpc.ServerChannel, call prpc.Call, index int) (`,
+	w.Linef(`func (h *%v) _%v(ctx rpc.Context, ch rpc.ServerChannel, call prpc.Call, index int) (`,
 		name, toLowerCameCase(m.Name))
-	w.line(`ref.R[[]byte], status.Status) {`)
+	w.Line(`ref.R[[]byte], status.Status) {`)
 
 	// Parse input
 	switch {
 	case m.Channel != nil:
 		channelName := handlerChannel_name(m)
-		w.line(`// Make channel`)
-		w.linef(`ch1 := new%v(ch, call.Input())`, strings.Title(channelName))
-		w.line()
+		w.Line(`// Make channel`)
+		w.Linef(`ch1 := new%v(ch, call.Input())`, strings.Title(channelName))
+		w.Line()
 
 	case m.Request != nil:
 		makeFunc := typeMakeMessageFunc(m.Request)
-		w.line(`// Parse input`)
-		w.linef(`in := %v(call.Input())`, makeFunc)
-		w.line()
+		w.Line(`// Parse input`)
+		w.Linef(`in := %v(call.Input())`, makeFunc)
+		w.Line()
 	}
 
 	// Next handler
 	if m.Subservice != nil {
 		newFunc := handler_new(m.Subservice)
 
-		w.line(`// Next handler`)
-		w.linef(`next := %v(ctx, ch, index+1 /* next call */)`, newFunc)
-		w.line(`defer next.Free()`)
-		w.line()
+		w.Line(`// Next handler`)
+		w.Linef(`next := %v(ctx, ch, index+1 /* next call */)`, newFunc)
+		w.Line(`defer next.Free()`)
+		w.Line()
 	}
 
 	// Call context
-	w.line(`// Call method`)
+	w.Line(`// Call method`)
 	ctx := "ctx"
 	if m.Oneway {
 		ctx = "ctx1"
-		w.line("ctx1 := ctx.Conn()")
+		w.Line("ctx1 := ctx.Conn()")
 	}
 
 	// Declare result
 	switch {
 	case m.Oneway:
-		w.write(`_ = `)
+		w.Write(`_ = `)
 	case m.Subservice != nil:
-		w.write(`st := `)
+		w.Write(`st := `)
 	case m.Response != nil:
-		w.write(`result, st := `)
+		w.Write(`result, st := `)
 	default:
-		w.write(`st := `)
+		w.Write(`st := `)
 	}
 
 	// Call method
 	switch {
 	case m.Channel != nil:
-		w.linef(`h.service.%v(%v, ch1)`, toUpperCamelCase(m.Name), ctx)
+		w.Linef(`h.service.%v(%v, ch1)`, toUpperCamelCase(m.Name), ctx)
 	case m.Request != nil:
-		w.writef(`h.service.%v(%v, in`, toUpperCamelCase(m.Name), ctx)
+		w.Writef(`h.service.%v(%v, in`, toUpperCamelCase(m.Name), ctx)
 		if m.Subservice != nil {
-			w.write(`, next`)
+			w.Write(`, next`)
 		}
-		w.line(`)`)
+		w.Line(`)`)
 	default:
-		w.writef(`h.service.%v(%v`, toUpperCamelCase(m.Name), ctx)
+		w.Writef(`h.service.%v(%v`, toUpperCamelCase(m.Name), ctx)
 		if m.Subservice != nil {
-			w.write(`, next`)
+			w.Write(`, next`)
 		}
-		w.line(`)`)
+		w.Line(`)`)
 	}
 
 	// Handle output
 	switch {
 	case m.Oneway:
-		w.line(`return nil, rpc.SkipResponse`)
+		w.Line(`return nil, rpc.SkipResponse`)
 
 	case m.Subservice != nil:
-		w.line(`return next.Result(), st`)
+		w.Line(`return next.Result(), st`)
 
 	case m.Response != nil:
-		w.line(`if result != nil { `)
-		w.line(`defer result.Release() `)
-		w.line(`}`)
-		w.line(`if !st.OK() {`)
-		w.line(`return nil, st`)
-		w.line(`}`)
-		w.line()
-		w.line(`// Return bytes`)
-		w.line(`bytes := result.Unwrap().Unwrap().Raw()`)
-		w.line(`return ref.NextRetain(bytes, result), status.OK`)
+		w.Line(`if result != nil { `)
+		w.Line(`defer result.Release() `)
+		w.Line(`}`)
+		w.Line(`if !st.OK() {`)
+		w.Line(`return nil, st`)
+		w.Line(`}`)
+		w.Line()
+		w.Line(`// Return bytes`)
+		w.Line(`bytes := result.Unwrap().Unwrap().Raw()`)
+		w.Line(`return ref.NextRetain(bytes, result), status.OK`)
 
 	default:
-		w.line(`return nil, st`)
+		w.Line(`return nil, st`)
 	}
 
-	w.line(`}`)
-	w.line()
+	w.Line(`}`)
+	w.Line()
 	return nil
 }
 
@@ -310,17 +311,17 @@ func (w *serviceImplWriter) channel(def *model.Definition, m *model.Method) erro
 func (w *serviceImplWriter) channel_def(def *model.Definition, m *model.Method) error {
 	name := handlerChannel_name(m)
 
-	w.linef(`// %v`, name)
-	w.line()
-	w.linef(`type %v struct {`, name)
-	w.line(`ch rpc.ServerChannel`)
-	w.line(`req baseproto.Message`)
-	w.line(`}`)
-	w.line()
-	w.linef(`func new%v(ch rpc.ServerChannel, req baseproto.Message) *%v {`, strings.Title(name), name)
-	w.linef(`return &%v{ch: ch, req: req}`, name)
-	w.linef(`}`)
-	w.line()
+	w.Linef(`// %v`, name)
+	w.Line()
+	w.Linef(`type %v struct {`, name)
+	w.Line(`ch rpc.ServerChannel`)
+	w.Line(`req baseproto.Message`)
+	w.Line(`}`)
+	w.Line()
+	w.Linef(`func new%v(ch rpc.ServerChannel, req baseproto.Message) *%v {`, strings.Title(name), name)
+	w.Linef(`return &%v{ch: ch, req: req}`, name)
+	w.Linef(`}`)
+	w.Line()
 	return nil
 }
 
@@ -332,12 +333,12 @@ func (w *serviceImplWriter) channel_request(def *model.Definition, m *model.Meth
 		typeName := typeName(m.Request)
 		makeFunc := typeMakeMessageFunc(m.Request)
 
-		w.linef(`func (c *%v) Request() (%v, status.Status) {`, name, typeName)
-		w.linef(`req := %v(c.req)`, makeFunc)
-		w.line(`c.req = baseproto.Message{}`)
-		w.line(`return req, status.OK`)
-		w.line(`}`)
-		w.line()
+		w.Linef(`func (c *%v) Request() (%v, status.Status) {`, name, typeName)
+		w.Linef(`req := %v(c.req)`, makeFunc)
+		w.Line(`c.req = baseproto.Message{}`)
+		w.Line(`return req, status.OK`)
+		w.Line(`}`)
+		w.Line()
 	}
 	return nil
 }
@@ -353,41 +354,41 @@ func (w *serviceImplWriter) channel_receive(def *model.Definition, m *model.Meth
 	parseFunc := typeParseFunc(in)
 
 	// Receive
-	w.linef(`func (c *%v) Receive(ctx async.Context) (%v, status.Status) {`, name, typeName)
-	w.line(`b, st := c.ch.Receive(ctx)`)
-	w.line(`if !st.OK() {`)
-	w.linef(`return %v{}, st`, typeName)
-	w.line(`}`)
-	w.linef(`msg, _, err := %v(b)`, parseFunc)
-	w.line(`if err != nil {`)
-	w.linef(`return %v{}, status.WrapError(err)`, typeName)
-	w.line(`}`)
-	w.line(`return msg, status.OK`)
-	w.line(`}`)
-	w.line()
+	w.Linef(`func (c *%v) Receive(ctx async.Context) (%v, status.Status) {`, name, typeName)
+	w.Line(`b, st := c.ch.Receive(ctx)`)
+	w.Line(`if !st.OK() {`)
+	w.Linef(`return %v{}, st`, typeName)
+	w.Line(`}`)
+	w.Linef(`msg, _, err := %v(b)`, parseFunc)
+	w.Line(`if err != nil {`)
+	w.Linef(`return %v{}, status.WrapError(err)`, typeName)
+	w.Line(`}`)
+	w.Line(`return msg, status.OK`)
+	w.Line(`}`)
+	w.Line()
 
 	// ReceiveAsync
-	w.linef(`func (c *%v) ReceiveAsync(ctx async.Context) (%v, bool, status.Status) {`, name, typeName)
-	w.line(`b, ok, st := c.ch.ReceiveAsync(ctx)`)
-	w.line(`switch {`)
-	w.line(`case !st.OK():`)
-	w.linef(`return %v{}, false, st`, typeName)
-	w.line(`case !ok:`)
-	w.linef(`return %v{}, false, status.OK`, typeName)
-	w.line(`}`)
-	w.linef(`msg, _, err := %v(b)`, parseFunc)
-	w.line(`if err != nil {`)
-	w.linef(`return %v{}, false, status.WrapError(err)`, typeName)
-	w.line(`}`)
-	w.line(`return msg, true, status.OK`)
-	w.line(`}`)
-	w.line()
+	w.Linef(`func (c *%v) ReceiveAsync(ctx async.Context) (%v, bool, status.Status) {`, name, typeName)
+	w.Line(`b, ok, st := c.ch.ReceiveAsync(ctx)`)
+	w.Line(`switch {`)
+	w.Line(`case !st.OK():`)
+	w.Linef(`return %v{}, false, st`, typeName)
+	w.Line(`case !ok:`)
+	w.Linef(`return %v{}, false, status.OK`, typeName)
+	w.Line(`}`)
+	w.Linef(`msg, _, err := %v(b)`, parseFunc)
+	w.Line(`if err != nil {`)
+	w.Linef(`return %v{}, false, status.WrapError(err)`, typeName)
+	w.Line(`}`)
+	w.Line(`return msg, true, status.OK`)
+	w.Line(`}`)
+	w.Line()
 
 	// ReceiveWait
-	w.linef(`func (c *%v) ReceiveWait() <-chan struct{} {`, name)
-	w.line(`return c.ch.ReceiveWait()`)
-	w.line(`}`)
-	w.line()
+	w.Linef(`func (c *%v) ReceiveWait() <-chan struct{} {`, name)
+	w.Line(`return c.ch.ReceiveWait()`)
+	w.Line(`}`)
+	w.Line()
 	return nil
 }
 
@@ -401,31 +402,31 @@ func (w *serviceImplWriter) channel_send(def *model.Definition, m *model.Method)
 	typeName := typeName(out)
 
 	// Send
-	w.linef(`func (c *%v) Send(ctx async.Context, msg %v) status.Status {`, name, typeName)
+	w.Linef(`func (c *%v) Send(ctx async.Context, msg %v) status.Status {`, name, typeName)
 	switch out.Kind {
 	case model.KindList, model.KindMessage:
-		w.line(`return c.ch.Send(ctx, msg.Unwrap().Raw())`)
+		w.Line(`return c.ch.Send(ctx, msg.Unwrap().Raw())`)
 
 	case model.KindStruct:
 		writeFunc := typeWriteFunc(out)
-		w.line(`buf := alloc.AcquireBuffer()`)
-		w.line(`defer buf.Free()`)
-		w.linef(`if _, err := %v(buf, msg); err != nil {`, writeFunc)
-		w.line(`return status.WrapError(err)`)
-		w.line(`}`)
-		w.line(`return c.ch.Send(ctx, buf.Bytes())`)
+		w.Line(`buf := alloc.AcquireBuffer()`)
+		w.Line(`defer buf.Free()`)
+		w.Linef(`if _, err := %v(buf, msg); err != nil {`, writeFunc)
+		w.Line(`return status.WrapError(err)`)
+		w.Line(`}`)
+		w.Line(`return c.ch.Send(ctx, buf.Bytes())`)
 
 	default:
-		w.line(`return c.ch.Send(ctx, msg)`)
+		w.Line(`return c.ch.Send(ctx, msg)`)
 	}
-	w.line(`}`)
-	w.line()
+	w.Line(`}`)
+	w.Line()
 
 	// SendEnd
-	w.linef(`func (c *%v) SendEnd(ctx async.Context) status.Status {`, name)
-	w.line(`return c.ch.SendEnd(ctx)`)
-	w.line(`}`)
-	w.line()
+	w.Linef(`func (c *%v) SendEnd(ctx async.Context) status.Status {`, name)
+	w.Line(`return c.ch.SendEnd(ctx)`)
+	w.Line(`}`)
+	w.Line()
 	return nil
 }
 

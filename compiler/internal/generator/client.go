@@ -8,13 +8,14 @@ import (
 	"fmt"
 
 	"github.com/basecomplextech/baseproto/compiler/internal/model"
+	"github.com/basecomplextech/baseproto/compiler/internal/writer"
 )
 
 type clientWriter struct {
-	*writer
+	writer.Writer
 }
 
-func newClientWriter(w *writer) *clientWriter {
+func newClientWriter(w writer.Writer) *clientWriter {
 	return &clientWriter{w}
 }
 
@@ -41,15 +42,15 @@ func (w *clientWriter) client(def *model.Definition) error {
 
 func (w *clientWriter) iface(def *model.Definition) error {
 	if def.Service.Sub {
-		w.linef(`// %vCall`, def.Name)
-		w.line()
-		w.linef(`type %vCall interface {`, def.Name)
-		w.line()
+		w.Linef(`// %vCall`, def.Name)
+		w.Line()
+		w.Linef(`type %vCall interface {`, def.Name)
+		w.Line()
 	} else {
-		w.linef(`// %vClient`, def.Name)
-		w.line()
-		w.linef(`type %vClient interface {`, def.Name)
-		w.line()
+		w.Linef(`// %vClient`, def.Name)
+		w.Line()
+		w.Linef(`type %vClient interface {`, def.Name)
+		w.Line()
 	}
 	return nil
 }
@@ -60,19 +61,19 @@ func (w *clientWriter) new_client(def *model.Definition) error {
 	name := clientImplName(def)
 
 	if def.Service.Sub {
-		w.linef(`func New%vCall(client rpc.Client, req *rpc.Request) %vCall {`, def.Name, def.Name)
-		w.linef(`return new%vCall(client, req)`, def.Name)
-		w.line(`}`)
-		w.line()
-		w.linef(`func New%vCallErr(st status.Status) %vCall {`, def.Name, def.Name)
-		w.linef(`return &%v{st: st}`, name)
-		w.linef(`}`)
-		w.line()
+		w.Linef(`func New%vCall(client rpc.Client, req *rpc.Request) %vCall {`, def.Name, def.Name)
+		w.Linef(`return new%vCall(client, req)`, def.Name)
+		w.Line(`}`)
+		w.Line()
+		w.Linef(`func New%vCallErr(st status.Status) %vCall {`, def.Name, def.Name)
+		w.Linef(`return &%v{st: st}`, name)
+		w.Linef(`}`)
+		w.Line()
 	} else {
-		w.linef(`func New%vClient(client rpc.Client) %vClient {`, def.Name, def.Name)
-		w.linef(`return &%v{client: client}`, name)
-		w.linef(`}`)
-		w.line()
+		w.Linef(`func New%vClient(client rpc.Client) %vClient {`, def.Name, def.Name)
+		w.Linef(`return &%v{client: client}`, name)
+		w.Linef(`}`)
+		w.Line()
 	}
 
 	return nil
@@ -91,7 +92,7 @@ func (w *clientWriter) methods(def *model.Definition) error {
 
 func (w *clientWriter) method(def *model.Definition, m *model.Method) error {
 	methodName := toUpperCamelCase(m.Name)
-	w.write(methodName)
+	w.Write(methodName)
 
 	if err := w.method_input(def, m); err != nil {
 		return err
@@ -111,11 +112,11 @@ func (w *clientWriter) method_input(def *model.Definition, m *model.Method) erro
 
 	switch {
 	default:
-		w.writef(`(%v) `, ctx)
+		w.Writef(`(%v) `, ctx)
 
 	case m.Request != nil:
 		typeName := typeName(m.Request)
-		w.writef(`(%v req_ %v) `, ctx, typeName)
+		w.Writef(`(%v req_ %v) `, ctx, typeName)
 	}
 	return nil
 }
@@ -123,19 +124,19 @@ func (w *clientWriter) method_input(def *model.Definition, m *model.Method) erro
 func (w *clientWriter) method_output(def *model.Definition, m *model.Method) error {
 	switch {
 	default:
-		w.line(`status.Status`)
+		w.Line(`status.Status`)
 
 	case m.Subservice != nil:
 		typeName := typeName(m.Subservice)
-		w.linef(`%vCall`, typeName)
+		w.Linef(`%vCall`, typeName)
 
 	case m.Channel != nil:
 		name := clientChannel_name(m)
-		w.linef(`(%v, status.Status)`, name)
+		w.Linef(`(%v, status.Status)`, name)
 
 	case m.Response != nil:
 		typeName := typeName(m.Response)
-		w.linef(`(ref.R[%v], status.Status)`, typeName)
+		w.Linef(`(ref.R[%v], status.Status)`, typeName)
 	}
 	return nil
 }
@@ -143,9 +144,9 @@ func (w *clientWriter) method_output(def *model.Definition, m *model.Method) err
 // ifaceEnd
 
 func (w *clientWriter) ifaceEnd(def *model.Definition) error {
-	w.linef(`Unwrap() rpc.Client`)
-	w.line(`}`)
-	w.line()
+	w.Linef(`Unwrap() rpc.Client`)
+	w.Line(`}`)
+	w.Line()
 	return nil
 }
 
@@ -166,39 +167,39 @@ func (w *clientWriter) channels(def *model.Definition) error {
 
 func (w *clientWriter) channel(def *model.Definition, m *model.Method) error {
 	name := clientChannel_name(m)
-	w.linef(`type %v interface {`, name)
+	w.Linef(`type %v interface {`, name)
 
 	// Send methods
 	if in := m.Channel.In; in != nil {
 		typeName := typeName(in)
-		w.linef(`Send(ctx async.Context, msg %v) status.Status `, typeName)
-		w.line(`SendEnd(ctx async.Context) status.Status `)
+		w.Linef(`Send(ctx async.Context, msg %v) status.Status `, typeName)
+		w.Line(`SendEnd(ctx async.Context) status.Status `)
 	}
 
 	// Receive methods
 	if out := m.Channel.Out; out != nil {
 		typeName := typeName(out)
-		w.linef(`Receive(ctx async.Context) (%v, status.Status)`, typeName)
-		w.linef(`ReceiveAsync(ctx async.Context) (%v, bool, status.Status)`, typeName)
-		w.line(`ReceiveWait() <-chan struct{}`)
+		w.Linef(`Receive(ctx async.Context) (%v, status.Status)`, typeName)
+		w.Linef(`ReceiveAsync(ctx async.Context) (%v, bool, status.Status)`, typeName)
+		w.Line(`ReceiveWait() <-chan struct{}`)
 	}
 
 	// Response method
 	{
-		w.write(`Response(ctx async.Context) `)
+		w.Write(`Response(ctx async.Context) `)
 
 		if m.Response != nil {
 			typeName := typeName(m.Response)
-			w.linef(`(%v, status.Status)`, typeName)
+			w.Linef(`(%v, status.Status)`, typeName)
 		} else {
-			w.line(`status.Status`)
+			w.Line(`status.Status`)
 		}
 	}
 
 	// Free method
-	w.line(`Free()`)
-	w.line(`}`)
-	w.line()
+	w.Line(`Free()`)
+	w.Line(`}`)
+	w.Line()
 	return nil
 }
 

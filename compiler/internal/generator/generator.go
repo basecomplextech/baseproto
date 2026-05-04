@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/basecomplextech/baseproto/compiler/internal/model"
+	"github.com/basecomplextech/baseproto/compiler/internal/writer"
 )
 
 const (
@@ -46,12 +47,14 @@ func (g *generator) Package(pkg *model.Package, out string) error {
 }
 
 func (g *generator) file(file *model.File, out string) error {
+	dst := writer.New()
+
 	// Generate file
-	w := newWriter(g.skipRPC)
+	w := newFileWriter(dst, g.skipRPC)
 	if err := w.file(file); err != nil {
 		return err
 	}
-	bytes := w.b.Bytes()
+	bytes := dst.Bytes()
 
 	// Format file
 	bytes, err := format.Source(bytes)
