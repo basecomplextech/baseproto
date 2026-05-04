@@ -61,11 +61,11 @@ func (w *fileWriter) file(file *model.File) error {
 	w.Line(`_ ref.Ref`)
 
 	if !w.skipRPC {
-		w.Line(`_ rpc.Client`)
+		w.Line(`_ baserpc.Client`)
 		w.Line(`_ prpc.Request`)
 	}
 
-	w.Line(`_ baseproto.Type`)
+	w.Line(`_ baseproto.Kind`)
 	w.Line(`_ status.Status`)
 	w.Line(`)`)
 

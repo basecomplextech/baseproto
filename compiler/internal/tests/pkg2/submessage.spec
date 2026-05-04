@@ -3,7 +3,7 @@ import (
 )
 
 options (
-    go_package="github.com/basecomplextech/baseproto/internal/tests/pkg2"
+    go_package="github.com/basecomplextech/baseproto/compiler/internal/tests/pkg2"
 )
 
 message Submessage {

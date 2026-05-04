@@ -4,7 +4,7 @@ import (
 )
 
 options (
-    go_package="github.com/basecomplextech/baseproto/internal/tests/pkg4"
+    go_package="github.com/basecomplextech/baseproto/compiler/internal/tests/pkg4"
 )
 
 service Service {

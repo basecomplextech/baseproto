@@ -92,6 +92,10 @@ func newFields(pfields []*syntax.Field) (*Fields, error) {
 	return fields, nil
 }
 
+func (f *Fields) Len() int {
+	return len(f.List)
+}
+
 func (f *Fields) Get(name string) *Field {
 	return f.Names[name]
 }

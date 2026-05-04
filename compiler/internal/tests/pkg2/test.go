@@ -6,7 +6,7 @@ package pkg2
 
 import (
 	"github.com/basecomplextech/baselibrary/tests"
-	"github.com/basecomplextech/baseproto/internal/tests/pkg3/pkg3a"
+	"github.com/basecomplextech/baseproto/compiler/internal/tests/pkg3/pkg3a"
 )
 
 func TestSubmessage(t tests.T, w SubmessageWriter) Submessage {

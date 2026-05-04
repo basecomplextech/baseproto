@@ -58,6 +58,7 @@ var primitive = map[Kind]struct{}{
 	KindBin256: {},
 }
 
+// Type references a value type or a user-defined message/struct/enum/service.
 type Type struct {
 	Kind       Kind
 	Name       string
