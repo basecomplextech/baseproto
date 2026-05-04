@@ -26,7 +26,9 @@ type Method struct {
 
 // MethodChannel defines in/out channel messages.
 type MethodChannel struct {
-	Name    string
+	Name string
+
+	Client  string
 	Handler string
 
 	In  Type
@@ -79,7 +81,9 @@ func newMethod(srv *model.Service, m *model.Method) (_ *Method, err error) {
 
 func newMethodChannel(srv *model.Service, m *model.Method, ch *model.MethodChannel) (
 	_ *MethodChannel, err error) {
+
 	name := fmt.Sprintf("%v%vChannel", srv.Def.Name, toUpperCamelCase(m.Name))
+	client := fmt.Sprintf("%v%vClientChannel", m.Service.Def.Name, toUpperCamelCase(m.Name))
 	handler := fmt.Sprintf("%v%vChannel", toLowerCamelCase(srv.Def.Name), toUpperCamelCase(m.Name))
 
 	var in Type
@@ -100,6 +104,7 @@ func newMethodChannel(srv *model.Service, m *model.Method, ch *model.MethodChann
 
 	ch1 := &MethodChannel{
 		Name:    name,
+		Client:  client,
 		Handler: handler,
 
 		In:  in,

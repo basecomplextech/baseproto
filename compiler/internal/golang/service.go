@@ -14,6 +14,9 @@ type Service struct {
 	Name string
 	Sub  bool // subservice
 
+	Client     string
+	ClientImpl string
+
 	Handler     string
 	HandlerImpl string
 
@@ -22,6 +25,10 @@ type Service struct {
 
 func NewService(def *model.Definition) (*Service, error) {
 	srv := def.Service
+
+	client := newClientName(def)
+	clientImpl := newClientImplName(def)
+
 	handler := fmt.Sprintf("%vHandler", toUpperCamelCase(def.Name))
 	handlerImpl := fmt.Sprintf("%vHandler", toLowerCamelCase(def.Name))
 
@@ -29,6 +36,9 @@ func NewService(def *model.Definition) (*Service, error) {
 	s := &Service{
 		Name: def.Name,
 		Sub:  srv.Sub,
+
+		Client:     client,
+		ClientImpl: clientImpl,
 
 		Handler:     handler,
 		HandlerImpl: handlerImpl,
@@ -43,4 +53,18 @@ func NewService(def *model.Definition) (*Service, error) {
 		s.Methods = append(s.Methods, method)
 	}
 	return s, nil
+}
+
+func newClientName(def *model.Definition) string {
+	if def.Service.Sub {
+		return fmt.Sprintf("%vCall", toUpperCamelCase(def.Name))
+	}
+	return fmt.Sprintf("%vClient", toUpperCamelCase(def.Name))
+}
+
+func newClientImplName(def *model.Definition) string {
+	if def.Service.Sub {
+		return fmt.Sprintf("%vCall", toLowerCamelCase(def.Name))
+	}
+	return fmt.Sprintf("%vClient", toLowerCamelCase(def.Name))
 }
