@@ -5,9 +5,9 @@
 package generator
 
 import (
-	"fmt"
 	"strings"
 
+	"github.com/basecomplextech/baseproto/compiler/internal/golang"
 	"github.com/basecomplextech/baseproto/compiler/internal/model"
 	"github.com/basecomplextech/baseproto/compiler/internal/writer"
 )
@@ -21,60 +21,66 @@ func newServiceImplWriter(w writer.Writer) *serviceImplWriter {
 }
 
 func (w *serviceImplWriter) write(def *model.Definition) error {
-	if err := w.def(def); err != nil {
+	srv, err := golang.NewService(def)
+	if err != nil {
 		return err
 	}
-	if err := w.free(def); err != nil {
+
+	if err := w.def(srv); err != nil {
 		return err
 	}
-	if err := w.result(def); err != nil {
+	if err := w.free(srv); err != nil {
 		return err
 	}
-	if err := w.handle(def); err != nil {
+	if err := w.result(srv); err != nil {
 		return err
 	}
-	if err := w.methods(def); err != nil {
+	if err := w.handle(srv); err != nil {
 		return err
 	}
-	if err := w.channels(def); err != nil {
+	if err := w.methods(srv); err != nil {
+		return err
+	}
+	if err := w.channels(srv); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (w *serviceImplWriter) def(def *model.Definition) error {
-	name := handler_name(def)
-	w.Linef(`// %v`, name)
+func (w *serviceImplWriter) def(srv *golang.Service) error {
+	handler := srv.HandlerImpl
+
+	w.Linef(`// %v`, handler)
 	w.Line()
 
-	if def.Service.Sub {
-		w.Linef(`var %vPool = pools.NewPoolFunc(`, name)
-		w.Linef(`func() *%v {`, name)
-		w.Linef(`return &%v{}`, name)
+	if srv.Sub {
+		w.Linef(`var %vPool = pools.NewPoolFunc(`, handler)
+		w.Linef(`func() *%v {`, handler)
+		w.Linef(`return &%v{}`, handler)
 		w.Line(`},`)
 		w.Line(`)`)
 		w.Line()
-		w.Linef(`type %v struct {`, name)
+		w.Linef(`type %v struct {`, handler)
 		w.Linef(`ctx baserpc.Context`)
 		w.Linef(`channel baserpc.ServerChannel`)
 		w.Linef(`index int`)
-		w.Linef(`service %v`, def.Name)
+		w.Linef(`service %v`, srv.Name)
 		w.Linef(`result ref.R[[]byte]`)
 		w.Line(`}`)
 		w.Line()
-		w.Linef(`func new%vHandler(ctx baserpc.Context, channel baserpc.ServerChannel, index int) baserpc.Subhandler1[%v] {`,
-			def.Name, def.Name)
-		w.Linef(`h := %vPool.New()`, name)
+		w.Linef(`func new%v(ctx baserpc.Context, ch baserpc.ServerChannel, `, srv.Handler)
+		w.Linef(`index int) baserpc.Subhandler1[%v] {`, srv.Name)
+		w.Linef(`h := %vPool.New()`, handler)
 		w.Line(`h.ctx = ctx`)
-		w.Line(`h.channel = channel`)
+		w.Line(`h.channel = ch`)
 		w.Line(`h.index = index`)
 		w.Line(`return h`)
 		w.Line(`}`)
 		w.Line()
 
 	} else {
-		w.Linef(`type %v struct {`, name)
-		w.Linef(`service %v`, def.Name)
+		w.Linef(`type %v struct {`, handler)
+		w.Linef(`service %v`, srv.Name)
 		w.Line(`}`)
 		w.Line()
 	}
@@ -82,52 +88,52 @@ func (w *serviceImplWriter) def(def *model.Definition) error {
 	return nil
 }
 
-func (w *serviceImplWriter) free(def *model.Definition) error {
-	if !def.Service.Sub {
+func (w *serviceImplWriter) free(srv *golang.Service) error {
+	if !srv.Sub {
 		return nil
 	}
 
-	name := handler_name(def)
-	w.Linef(`func (h *%v) Free() {`, name)
-	w.Linef(`*h = %v{}`, name)
-	w.Linef(`%vPool.Put(h)`, name)
+	handler := srv.HandlerImpl
+	w.Linef(`func (h *%v) Free() {`, handler)
+	w.Linef(`*h = %v{}`, handler)
+	w.Linef(`%vPool.Put(h)`, handler)
 	w.Line(`}`)
 	w.Line()
 	return nil
 }
 
-func (w *serviceImplWriter) result(def *model.Definition) error {
-	if !def.Service.Sub {
+func (w *serviceImplWriter) result(srv *golang.Service) error {
+	if !srv.Sub {
 		return nil
 	}
 
-	name := handler_name(def)
-	w.Linef(`func (h *%v) Result() ref.R[[]byte] {`, name)
+	handler := srv.HandlerImpl
+	w.Linef(`func (h *%v) Result() ref.R[[]byte] {`, handler)
 	w.Line(`return h.result`)
 	w.Line(`}`)
 	w.Line()
 	return nil
 }
 
-func (w *serviceImplWriter) handle(def *model.Definition) error {
-	name := handler_name(def)
+func (w *serviceImplWriter) handle(srv *golang.Service) error {
+	handler := srv.HandlerImpl
 
-	if def.Service.Sub {
-		w.Linef(`func (h *%v) Handle(service %v) status.Status {`, name, def.Name)
+	if srv.Sub {
+		w.Linef(`func (h *%v) Handle(service %v) status.Status {`, handler, srv.Name)
 		w.Line(`ctx := h.ctx`)
 		w.Line(`ch := h.channel`)
 		w.Line(`index := h.index`)
 		w.Line(`h.service = service`)
 		w.Line()
 	} else {
-		w.Linef(`func (h *%v) Handle(ctx baserpc.Context, ch baserpc.ServerChannel) (ref.R[[]byte], status.Status) {`,
-			name)
+		w.Linef(`func (h *%v) Handle(ctx baserpc.Context, ch baserpc.ServerChannel) (`, handler)
+		w.Line(`ref.R[[]byte], status.Status) {`)
 		w.Line(`index := 0`)
 	}
 
 	w.Line(`req, st := ch.Request(ctx)`)
 	w.Line(`if !st.OK() {`)
-	if def.Service.Sub {
+	if srv.Sub {
 		w.Line(`return st`)
 	} else {
 		w.Line(`return nil, st`)
@@ -137,7 +143,7 @@ func (w *serviceImplWriter) handle(def *model.Definition) error {
 
 	w.Line(`call, err := req.Calls().GetErr(index)`)
 	w.Line(`if err != nil {`)
-	if def.Service.Sub {
+	if srv.Sub {
 		w.Line(`return baserpc.WrapError(err)`)
 	} else {
 		w.Line(`return nil, baserpc.WrapError(err)`)
@@ -147,62 +153,62 @@ func (w *serviceImplWriter) handle(def *model.Definition) error {
 
 	w.Line(`method := call.Method()`)
 	w.Line(`switch method {`)
-	for _, m := range def.Service.Methods {
-		w.Linef(`case %q:`, m.Name)
-		if def.Service.Sub {
-			w.Linef(`h.result, st = h._%v(ctx, ch, call, index)`, toLowerCameCase(m.Name))
+	for _, m := range srv.Methods {
+		w.Linef(`case %q:`, m.Path)
+		if srv.Sub {
+			w.Linef(`h.result, st = h._%v(ctx, ch, call, index)`, m.Private)
 			w.Line(`return st`)
 		} else {
-			w.Linef(`return h._%v(ctx, ch, call, index)`, toLowerCameCase(m.Name))
+			w.Linef(`return h._%v(ctx, ch, call, index)`, m.Private)
 		}
 	}
 	w.Line(`}`)
 	w.Line()
 
-	if def.Service.Sub {
-		w.Linef(`return baserpc.Errorf("unknown %v method %%q", method)`, def.Name)
+	if srv.Sub {
+		w.Linef(`return baserpc.Errorf("unknown %v method %%q", method)`, srv.Name)
 	} else {
-		w.Linef(`return nil, baserpc.Errorf("unknown %v method %%q", method)`, def.Name)
+		w.Linef(`return nil, baserpc.Errorf("unknown %v method %%q", method)`, srv.Name)
 	}
 	w.Line(`}`)
 	w.Line()
 	return nil
 }
 
-func (w *serviceImplWriter) methods(def *model.Definition) error {
-	for _, m := range def.Service.Methods {
-		if err := w.method(def, m); err != nil {
+func (w *serviceImplWriter) methods(srv *golang.Service) error {
+	for _, m := range srv.Methods {
+		if err := w.method(srv, m); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func (w *serviceImplWriter) method(def *model.Definition, m *model.Method) error {
+func (w *serviceImplWriter) method(srv *golang.Service, m *golang.Method) error {
+	handler := srv.HandlerImpl
+
 	// Declare method
-	name := handler_name(def)
-	w.Linef(`func (h *%v) _%v(ctx baserpc.Context, ch baserpc.ServerChannel, call prpc.Call, index int) (`,
-		name, toLowerCameCase(m.Name))
-	w.Line(`ref.R[[]byte], status.Status) {`)
+	w.Linef(`func (h *%v) _%v(ctx baserpc.Context, ch baserpc.ServerChannel, `, handler, m.Private)
+	w.Line(`call prpc.Call, index int) (ref.R[[]byte], status.Status) {`)
 
 	// Parse input
 	switch {
 	case m.Channel != nil:
-		channelName := handlerChannel_name(m)
+		channelHandler := m.Channel.Handler
 		w.Line(`// Make channel`)
-		w.Linef(`ch1 := new%v(ch, call.Input())`, strings.Title(channelName))
+		w.Linef(`ch1 := new%v(ch, call.Input())`, strings.Title(channelHandler))
 		w.Line()
 
 	case m.Request != nil:
-		makeFunc := typeMakeMessageFunc(m.Request)
+		newFunc := m.Request.NewFunc()
 		w.Line(`// Parse input`)
-		w.Linef(`in := %v(call.Input())`, makeFunc)
+		w.Linef(`in := %v(call.Input())`, newFunc)
 		w.Line()
 	}
 
 	// Next handler
 	if m.Subservice != nil {
-		newFunc := handler_new(m.Subservice)
+		newFunc := m.Subservice.NewHandlerFunc()
 
 		w.Line(`// Next handler`)
 		w.Linef(`next := %v(ctx, ch, index+1 /* next call */)`, newFunc)
@@ -233,15 +239,15 @@ func (w *serviceImplWriter) method(def *model.Definition, m *model.Method) error
 	// Call method
 	switch {
 	case m.Channel != nil:
-		w.Linef(`h.service.%v(%v, ch1)`, toUpperCamelCase(m.Name), ctx)
+		w.Linef(`h.service.%v(%v, ch1)`, m.Public, ctx)
 	case m.Request != nil:
-		w.Writef(`h.service.%v(%v, in`, toUpperCamelCase(m.Name), ctx)
+		w.Writef(`h.service.%v(%v, in`, m.Public, ctx)
 		if m.Subservice != nil {
 			w.Write(`, next`)
 		}
 		w.Line(`)`)
 	default:
-		w.Writef(`h.service.%v(%v`, toUpperCamelCase(m.Name), ctx)
+		w.Writef(`h.service.%v(%v`, m.Public, ctx)
 		if m.Subservice != nil {
 			w.Write(`, next`)
 		}
@@ -279,62 +285,63 @@ func (w *serviceImplWriter) method(def *model.Definition, m *model.Method) error
 
 // channels
 
-func (w *serviceImplWriter) channels(def *model.Definition) error {
-	for _, m := range def.Service.Methods {
+func (w *serviceImplWriter) channels(srv *golang.Service) error {
+	for _, m := range srv.Methods {
 		if m.Channel == nil {
 			continue
 		}
 
-		if err := w.channel(def, m); err != nil {
+		if err := w.channel(srv, m); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func (w *serviceImplWriter) channel(def *model.Definition, m *model.Method) error {
-	if err := w.channel_def(def, m); err != nil {
+func (w *serviceImplWriter) channel(srv *golang.Service, m *golang.Method) error {
+	if err := w.channelDef(srv, m); err != nil {
 		return err
 	}
-	if err := w.channel_request(def, m); err != nil {
+	if err := w.channelRequest(srv, m); err != nil {
 		return err
 	}
-	if err := w.channel_receive(def, m); err != nil {
+	if err := w.channelReceive(srv, m); err != nil {
 		return err
 	}
-	if err := w.channel_send(def, m); err != nil {
+	if err := w.channelSend(srv, m); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (w *serviceImplWriter) channel_def(def *model.Definition, m *model.Method) error {
-	name := handlerChannel_name(m)
+func (w *serviceImplWriter) channelDef(srv *golang.Service, m *golang.Method) error {
+	handler := m.Channel.Handler
 
-	w.Linef(`// %v`, name)
+	w.Linef(`// %v`, handler)
 	w.Line()
-	w.Linef(`type %v struct {`, name)
+	w.Linef(`type %v struct {`, handler)
 	w.Line(`ch baserpc.ServerChannel`)
 	w.Line(`req baseproto.Message`)
 	w.Line(`}`)
 	w.Line()
-	w.Linef(`func new%v(ch baserpc.ServerChannel, req baseproto.Message) *%v {`, strings.Title(name), name)
-	w.Linef(`return &%v{ch: ch, req: req}`, name)
+	w.Linef(`func new%v(ch baserpc.ServerChannel, req baseproto.Message) *%v {`,
+		strings.Title(handler), handler)
+	w.Linef(`return &%v{ch: ch, req: req}`, handler)
 	w.Line(`}`)
 	w.Line()
 	return nil
 }
 
-func (w *serviceImplWriter) channel_request(def *model.Definition, m *model.Method) error {
-	name := handlerChannel_name(m)
+func (w *serviceImplWriter) channelRequest(srv *golang.Service, m *golang.Method) error {
+	handler := m.Channel.Handler
 
 	switch {
 	case m.Request != nil:
-		typeName := typeName(m.Request)
-		makeFunc := typeMakeMessageFunc(m.Request)
+		typeName := m.Request.Name()
+		newFunc := m.Request.NewFunc()
 
-		w.Linef(`func (c *%v) Request() (%v, status.Status) {`, name, typeName)
-		w.Linef(`req := %v(c.req)`, makeFunc)
+		w.Linef(`func (c *%v) Request() (%v, status.Status) {`, handler, typeName)
+		w.Linef(`req := %v(c.req)`, newFunc)
 		w.Line(`c.req = baseproto.Message{}`)
 		w.Line(`return req, status.OK`)
 		w.Line(`}`)
@@ -343,18 +350,18 @@ func (w *serviceImplWriter) channel_request(def *model.Definition, m *model.Meth
 	return nil
 }
 
-func (w *serviceImplWriter) channel_receive(def *model.Definition, m *model.Method) error {
+func (w *serviceImplWriter) channelReceive(srv *golang.Service, m *golang.Method) error {
 	in := m.Channel.In
 	if in == nil {
 		return nil
 	}
 
-	name := handlerChannel_name(m)
-	typeName := typeName(in)
-	parseFunc := typeParseFunc(in)
+	handler := m.Channel.Handler
+	typeName := in.Name()
+	parseFunc := in.ParseFunc()
 
 	// Receive
-	w.Linef(`func (c *%v) Receive(ctx async.Context) (%v, status.Status) {`, name, typeName)
+	w.Linef(`func (c *%v) Receive(ctx async.Context) (%v, status.Status) {`, handler, typeName)
 	w.Line(`b, st := c.ch.Receive(ctx)`)
 	w.Line(`if !st.OK() {`)
 	w.Linef(`return %v{}, st`, typeName)
@@ -368,7 +375,8 @@ func (w *serviceImplWriter) channel_receive(def *model.Definition, m *model.Meth
 	w.Line()
 
 	// ReceiveAsync
-	w.Linef(`func (c *%v) ReceiveAsync(ctx async.Context) (%v, bool, status.Status) {`, name, typeName)
+	w.Linef(`func (c *%v) ReceiveAsync(ctx async.Context) (%v, bool, status.Status) {`,
+		handler, typeName)
 	w.Line(`b, ok, st := c.ch.ReceiveAsync(ctx)`)
 	w.Line(`switch {`)
 	w.Line(`case !st.OK():`)
@@ -385,33 +393,33 @@ func (w *serviceImplWriter) channel_receive(def *model.Definition, m *model.Meth
 	w.Line()
 
 	// ReceiveWait
-	w.Linef(`func (c *%v) ReceiveWait() <-chan struct{} {`, name)
+	w.Linef(`func (c *%v) ReceiveWait() <-chan struct{} {`, handler)
 	w.Line(`return c.ch.ReceiveWait()`)
 	w.Line(`}`)
 	w.Line()
 	return nil
 }
 
-func (w *serviceImplWriter) channel_send(def *model.Definition, m *model.Method) error {
+func (w *serviceImplWriter) channelSend(srv *golang.Service, m *golang.Method) error {
 	out := m.Channel.Out
 	if out == nil {
 		return nil
 	}
 
-	name := handlerChannel_name(m)
-	typeName := typeName(out)
+	name := m.Channel.Handler
+	typeName := out.InputName()
 
 	// Send
 	w.Linef(`func (c *%v) Send(ctx async.Context, msg %v) status.Status {`, name, typeName)
-	switch out.Kind {
-	case model.KindList, model.KindMessage:
+	switch out := out.(type) {
+	case golang.ListType, golang.MessageType:
 		w.Line(`return c.ch.Send(ctx, msg.Unwrap().Raw())`)
 
-	case model.KindStruct:
-		writeFunc := typeWriteFunc(out)
+	case golang.StructType:
+		encodeFunc := out.EncodeFunc()
 		w.Line(`buf := alloc.AcquireBuffer()`)
 		w.Line(`defer buf.Free()`)
-		w.Linef(`if _, err := %v(buf, msg); err != nil {`, writeFunc)
+		w.Linef(`if _, err := %v(buf, msg); err != nil {`, encodeFunc)
 		w.Line(`return status.WrapError(err)`)
 		w.Line(`}`)
 		w.Line(`return c.ch.Send(ctx, buf.Bytes())`)
@@ -428,19 +436,4 @@ func (w *serviceImplWriter) channel_send(def *model.Definition, m *model.Method)
 	w.Line(`}`)
 	w.Line()
 	return nil
-}
-
-func handler_name(def *model.Definition) string {
-	return fmt.Sprintf(`%vHandler`, toLowerCameCase(def.Name))
-}
-
-func handler_new(typ *model.Type) string {
-	if typ.Import != nil {
-		return fmt.Sprintf(`%v.New%vHandler`, typ.ImportName, typ.Name)
-	}
-	return fmt.Sprintf(`New%vHandler`, typ.Name)
-}
-
-func handlerChannel_name(m *model.Method) string {
-	return fmt.Sprintf("%v%vChannel", toLowerCameCase(m.Service.Def.Name), toUpperCamelCase(m.Name))
 }

@@ -24,7 +24,7 @@ func toUpperCamelCase(s string) string {
 	return s1
 }
 
-func toLowerCameCase(s string) string {
+func toLowerCamelCase(s string) string {
 	if len(s) == 0 {
 		return ""
 	}

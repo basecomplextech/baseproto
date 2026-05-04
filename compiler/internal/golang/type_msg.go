@@ -83,6 +83,14 @@ func (t *messageType) NewFunc() string {
 	return fmt.Sprintf("New%v", t.name)
 }
 
+// ParseFunc returns a parse func.
+func (t *messageType) ParseFunc() string {
+	if t.imp != "" {
+		return fmt.Sprintf("%v.Parse%v", t.imp, t.name)
+	}
+	return fmt.Sprintf("Parse%v", t.name)
+}
+
 // List
 
 // AddListElem returns an encode func for a list element.

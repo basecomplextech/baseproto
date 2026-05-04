@@ -53,6 +53,13 @@ func (t *anyType) OutputName() string {
 	return "baseproto.Value"
 }
 
+// Funcs
+
+// ParseFunc returns a parse func.
+func (t *anyType) ParseFunc() string {
+	return "baseproto.ParseValue"
+}
+
 // List
 
 // GetListElem returns a decode func for a list element.

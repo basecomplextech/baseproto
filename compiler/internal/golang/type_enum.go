@@ -99,6 +99,11 @@ func (t *enumType) DecodeCloneFunc() string {
 	return t.DecodeFunc()
 }
 
+// ParseFunc returns a parse func.
+func (t *enumType) ParseFunc() string {
+	return t.DecodeFunc()
+}
+
 // List
 
 // AddListElem returns an encode func for a list element.

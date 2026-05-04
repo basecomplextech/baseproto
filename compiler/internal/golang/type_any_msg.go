@@ -53,6 +53,13 @@ func (t *anyMessageType) OutputName() string {
 	return "baseproto.Message"
 }
 
+// Funcs
+
+// ParseFunc returns a parse func.
+func (t *anyMessageType) ParseFunc() string {
+	return "baseproto.ParseMessage"
+}
+
 // List
 
 // AddListElem returns an encode func for a list element.

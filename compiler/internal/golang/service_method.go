@@ -11,9 +11,12 @@ import (
 )
 
 type Method struct {
-	Name   string
+	Path   string
 	Type   model.MethodType
 	Oneway bool // Oneway method
+
+	Public  string
+	Private string
 
 	Request    MessageType // Message type
 	Response   MessageType // Message type
@@ -23,19 +26,25 @@ type Method struct {
 
 // MethodChannel defines in/out channel messages.
 type MethodChannel struct {
-	Name string
+	Name    string
+	Handler string
 
 	In  Type
 	Out Type
 }
 
 func newMethod(srv *model.Service, m *model.Method) (_ *Method, err error) {
-	name := toUpperCamelCase(m.Name)
+	path := m.Name
+	public := toUpperCamelCase(m.Name)
+	private := toLowerCamelCase(m.Name)
 
 	m1 := &Method{
-		Name:   name,
-		Type:   m.Type,
+		Path:   path,
 		Oneway: m.Oneway,
+		Type:   m.Type,
+
+		Public:  public,
+		Private: private,
 	}
 
 	if m.Request != nil {
@@ -71,6 +80,7 @@ func newMethod(srv *model.Service, m *model.Method) (_ *Method, err error) {
 func newMethodChannel(srv *model.Service, m *model.Method, ch *model.MethodChannel) (
 	_ *MethodChannel, err error) {
 	name := fmt.Sprintf("%v%vChannel", srv.Def.Name, toUpperCamelCase(m.Name))
+	handler := fmt.Sprintf("%v%vChannel", toLowerCamelCase(srv.Def.Name), toUpperCamelCase(m.Name))
 
 	var in Type
 	if ch.In != nil {
@@ -89,9 +99,11 @@ func newMethodChannel(srv *model.Service, m *model.Method, ch *model.MethodChann
 	}
 
 	ch1 := &MethodChannel{
-		Name: name,
-		In:   in,
-		Out:  out,
+		Name:    name,
+		Handler: handler,
+
+		In:  in,
+		Out: out,
 	}
 	return ch1, nil
 }

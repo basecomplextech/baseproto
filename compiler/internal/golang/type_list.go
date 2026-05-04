@@ -97,6 +97,11 @@ func (t *listType) DecodeFunc() string {
 	return fmt.Sprintf("baseproto.ParseTypedList[%v]", elem)
 }
 
+// ParseFunc returns a parse func.
+func (t *listType) ParseFunc() string {
+	return t.DecodeFunc()
+}
+
 // List
 
 // AddListElem returns an encode func for a list element.

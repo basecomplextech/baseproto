@@ -16,6 +16,11 @@ type ServiceType interface {
 
 	// Name returns a type name.
 	Name() string
+
+	// Funcs
+
+	// NewHandlerFunc returns a new handler function.
+	NewHandlerFunc() string
 }
 
 // internal
@@ -49,4 +54,14 @@ func (t *serviceType) Name() string {
 		return fmt.Sprintf("%s.%s", t.imp, t.name)
 	}
 	return t.name
+}
+
+// Funcs
+
+// NewHandlerFunc returns a new handler function.
+func (t *serviceType) NewHandlerFunc() string {
+	if t.imp != "" {
+		return fmt.Sprintf(`%v.New%vHandler`, t.imp, t.name)
+	}
+	return fmt.Sprintf(`New%vHandler`, t.name)
 }

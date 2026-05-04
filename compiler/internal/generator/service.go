@@ -64,7 +64,7 @@ func (w *serviceWriter) method(m *golang.Method) error {
 }
 
 func (w *serviceWriter) methodInput(m *golang.Method) error {
-	w.Writef(`%v`, m.Name)
+	w.Writef(`%v`, m.Public)
 
 	if m.Oneway {
 		w.Write(`(ctx baserpc.ConnContext`)

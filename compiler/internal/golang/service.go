@@ -23,7 +23,7 @@ type Service struct {
 func NewService(def *model.Definition) (*Service, error) {
 	srv := def.Service
 	handler := fmt.Sprintf("%vHandler", toUpperCamelCase(def.Name))
-	handlerImpl := fmt.Sprintf("%vHandler", toLowerCameCase(def.Name))
+	handlerImpl := fmt.Sprintf("%vHandler", toLowerCamelCase(def.Name))
 
 	// Make service
 	s := &Service{

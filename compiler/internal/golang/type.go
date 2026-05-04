@@ -23,6 +23,11 @@ type Type interface {
 	// OutputName returns an output type, i.e. baseproto.String (not string).
 	OutputName() string
 
+	// Funcs
+
+	// ParseFunc returns a parse func.
+	ParseFunc() string
+
 	// List
 
 	// AddListElem returns an encode func for a list element.
