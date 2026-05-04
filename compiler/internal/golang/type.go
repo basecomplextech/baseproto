@@ -37,6 +37,20 @@ type Type interface {
 	GetField(w writer.Writer, tag int) error
 }
 
+// EncodableType is a common interface for values/enums/structs.
+type EncodableType interface {
+	Type
+
+	// EncodeFunc returns an encode func.
+	EncodeFunc() string
+
+	// DecodeFunc returns a decode func.
+	DecodeFunc() string
+
+	// DecodeCloneFunc returns a decode func, which returns string clones.
+	DecodeCloneFunc() string
+}
+
 // NewType returns a new type.
 func NewType(typ *model.Type) (Type, error) {
 	return newType(typ)

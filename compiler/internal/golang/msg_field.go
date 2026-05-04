@@ -13,6 +13,8 @@ type MessageField struct {
 }
 
 func newMessageField(field *model.Field) (*MessageField, error) {
+	name := toUpperCamelCase(field.Name)
+
 	// Make type
 	typ, err := newType(field.Type)
 	if err != nil {
@@ -22,7 +24,7 @@ func newMessageField(field *model.Field) (*MessageField, error) {
 	// Make field
 	f := &MessageField{
 		Tag:  field.Tag,
-		Name: toUpperCamelCase(field.Name),
+		Name: name,
 		Type: typ,
 	}
 	return f, nil

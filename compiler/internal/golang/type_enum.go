@@ -12,19 +12,13 @@ import (
 )
 
 type EnumType interface {
-	Type
+	EncodableType
 	enum()
 
 	// Funcs
 
 	// OpenFunc returns an open func for an enum.
 	OpenFunc() string
-
-	// EncodeFunc returns an encode func for an enum.
-	EncodeFunc() string
-
-	// DecodeFunc returns a decode func for an enum.
-	DecodeFunc() string
 }
 
 // internal
@@ -98,6 +92,11 @@ func (t *enumType) DecodeFunc() string {
 		return fmt.Sprintf("%v.Decode%v", t.imp, t.name)
 	}
 	return fmt.Sprintf("Decode%v", t.name)
+}
+
+// DecodeCloneFunc returns a decode func, which returns string clones.
+func (t *enumType) DecodeCloneFunc() string {
+	return t.DecodeFunc()
 }
 
 // List

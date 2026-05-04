@@ -10,16 +10,8 @@ import (
 )
 
 type ValueType interface {
-	Type
+	EncodableType
 	value()
-
-	// Funcs
-
-	// EncodeFunc returns an encode func.
-	EncodeFunc() string
-
-	// DecodeFunc returns a decode func.
-	DecodeFunc() string
 
 	// Message
 
@@ -209,6 +201,18 @@ func (t *valueType) DecodeFunc() string {
 	}
 
 	panic("unsupported value type")
+}
+
+// DecodeCloneFunc returns a decode func, which returns string clones.
+func (t *valueType) DecodeCloneFunc() string {
+	switch t.kind {
+	case model.KindBytes:
+		return "baseproto.DecodeBytesClone"
+	case model.KindString:
+		return "baseproto.DecodeStringClone"
+	}
+
+	return t.DecodeFunc()
 }
 
 // List

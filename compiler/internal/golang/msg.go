@@ -19,7 +19,7 @@ type Message struct {
 
 func NewMessage(def *model.Definition) (*Message, error) {
 	msg := def.Message
-	name := toUpperCamelCase(def.Name)
+	name := def.Name
 	writerName := fmt.Sprintf("%vWriter", name)
 
 	// Make message

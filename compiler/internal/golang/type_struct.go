@@ -12,15 +12,9 @@ import (
 )
 
 type StructType interface {
-	Type
+	EncodableType
 
 	// Funcs
-
-	// EncodeFunc returns an encode struct func.
-	EncodeFunc() string
-
-	// DecodeFunc returns a decode struct func.
-	DecodeFunc() string
 
 	// OpenFunc returns an open struct func.
 	OpenFunc() string
@@ -84,9 +78,9 @@ func (t *structType) OpenFunc() string {
 // EncodeFunc returns an encode struct func.
 func (t *structType) EncodeFunc() string {
 	if t.imp != "" {
-		return fmt.Sprintf("%v.Encode%vTo", t.imp, t.name)
+		return fmt.Sprintf("%v.Encode%v", t.imp, t.name)
 	}
-	return fmt.Sprintf("Encode%vTo", t.name)
+	return fmt.Sprintf("Encode%v", t.name)
 }
 
 // DecodeFunc returns a decode struct func.
@@ -95,6 +89,11 @@ func (t *structType) DecodeFunc() string {
 		return fmt.Sprintf("%v.Decode%v", t.imp, t.name)
 	}
 	return "Decode" + t.name
+}
+
+// DecodeCloneFunc returns a decode func, which returns string clones.
+func (t *structType) DecodeCloneFunc() string {
+	return t.DecodeFunc()
 }
 
 // List
