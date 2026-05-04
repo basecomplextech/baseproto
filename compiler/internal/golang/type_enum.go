@@ -87,9 +87,9 @@ func (t *enumType) OpenFunc() string {
 // EncodeFunc returns an encode func for an enum.
 func (t *enumType) EncodeFunc() string {
 	if t.imp != "" {
-		return fmt.Sprintf("%v.Encode%vTo", t.imp, t.name)
+		return fmt.Sprintf("%v.Encode%v", t.imp, t.name)
 	}
-	return fmt.Sprintf("Encode%vTo", t.name)
+	return fmt.Sprintf("Encode%v", t.name)
 }
 
 // DecodeFunc returns a decode func for an enum.
