@@ -64,9 +64,9 @@ func (w *serviceWriter) method_input(def *model.Definition, m *model.Method) err
 	w.Writef(`%v`, name)
 
 	if m.Oneway {
-		w.Write(`(ctx rpc.ConnContext`)
+		w.Write(`(ctx baserpc.ConnContext`)
 	} else {
-		w.Write(`(ctx rpc.Context`)
+		w.Write(`(ctx baserpc.Context`)
 	}
 
 	switch {
@@ -81,7 +81,7 @@ func (w *serviceWriter) method_input(def *model.Definition, m *model.Method) err
 	if m.Type == model.MethodType_Subservice {
 		sub := m.Subservice
 		typeName := typeName(sub)
-		w.Writef(`, next rpc.NextHandler[%v]`, typeName)
+		w.Writef(`, next baserpc.NextHandler[%v]`, typeName)
 	}
 
 	w.Write(`) `)
@@ -104,12 +104,12 @@ func (w *serviceWriter) new_handler(def *model.Definition) error {
 	name := handler_name(def)
 
 	if def.Service.Sub {
-		w.Linef(`func New%vHandler(ctx rpc.Context, channel rpc.ServerChannel, index int) rpc.Subhandler1[%v] {`,
+		w.Linef(`func New%vHandler(ctx baserpc.Context, channel baserpc.ServerChannel, index int) baserpc.Subhandler1[%v] {`,
 			def.Name, def.Name)
 		w.Linef(`return new%vHandler(ctx, channel, index)`, def.Name)
 		w.Line(`}`)
 	} else {
-		w.Linef(`func New%vHandler(s %v) rpc.Handler {`, def.Name, def.Name)
+		w.Linef(`func New%vHandler(s %v) baserpc.Handler {`, def.Name, def.Name)
 		w.Linef(`return &%v{service: s}`, name)
 		w.Line(`}`)
 	}

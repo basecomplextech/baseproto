@@ -55,14 +55,14 @@ func (w *serviceImplWriter) def(def *model.Definition) error {
 		w.Line(`)`)
 		w.Line()
 		w.Linef(`type %v struct {`, name)
-		w.Linef(`ctx rpc.Context`)
-		w.Linef(`channel rpc.ServerChannel`)
+		w.Linef(`ctx baserpc.Context`)
+		w.Linef(`channel baserpc.ServerChannel`)
 		w.Linef(`index int`)
 		w.Linef(`service %v`, def.Name)
 		w.Linef(`result ref.R[[]byte]`)
 		w.Line(`}`)
 		w.Line()
-		w.Linef(`func new%vHandler(ctx rpc.Context, channel rpc.ServerChannel, index int) rpc.Subhandler1[%v] {`,
+		w.Linef(`func new%vHandler(ctx baserpc.Context, channel baserpc.ServerChannel, index int) baserpc.Subhandler1[%v] {`,
 			def.Name, def.Name)
 		w.Linef(`h := %vPool.New()`, name)
 		w.Line(`h.ctx = ctx`)
@@ -120,7 +120,7 @@ func (w *serviceImplWriter) handle(def *model.Definition) error {
 		w.Line(`h.service = service`)
 		w.Line()
 	} else {
-		w.Linef(`func (h *%v) Handle(ctx rpc.Context, ch rpc.ServerChannel) (ref.R[[]byte], status.Status) {`,
+		w.Linef(`func (h *%v) Handle(ctx baserpc.Context, ch baserpc.ServerChannel) (ref.R[[]byte], status.Status) {`,
 			name)
 		w.Line(`index := 0`)
 	}
@@ -138,9 +138,9 @@ func (w *serviceImplWriter) handle(def *model.Definition) error {
 	w.Line(`call, err := req.Calls().GetErr(index)`)
 	w.Line(`if err != nil {`)
 	if def.Service.Sub {
-		w.Line(`return rpc.WrapError(err)`)
+		w.Line(`return baserpc.WrapError(err)`)
 	} else {
-		w.Line(`return nil, rpc.WrapError(err)`)
+		w.Line(`return nil, baserpc.WrapError(err)`)
 	}
 	w.Line(`}`)
 	w.Line()
@@ -160,9 +160,9 @@ func (w *serviceImplWriter) handle(def *model.Definition) error {
 	w.Line()
 
 	if def.Service.Sub {
-		w.Linef(`return rpc.Errorf("unknown %v method %%q", method)`, def.Name)
+		w.Linef(`return baserpc.Errorf("unknown %v method %%q", method)`, def.Name)
 	} else {
-		w.Linef(`return nil, rpc.Errorf("unknown %v method %%q", method)`, def.Name)
+		w.Linef(`return nil, baserpc.Errorf("unknown %v method %%q", method)`, def.Name)
 	}
 	w.Line(`}`)
 	w.Line()
@@ -181,7 +181,7 @@ func (w *serviceImplWriter) methods(def *model.Definition) error {
 func (w *serviceImplWriter) method(def *model.Definition, m *model.Method) error {
 	// Declare method
 	name := handler_name(def)
-	w.Linef(`func (h *%v) _%v(ctx rpc.Context, ch rpc.ServerChannel, call prpc.Call, index int) (`,
+	w.Linef(`func (h *%v) _%v(ctx baserpc.Context, ch baserpc.ServerChannel, call prpc.Call, index int) (`,
 		name, toLowerCameCase(m.Name))
 	w.Line(`ref.R[[]byte], status.Status) {`)
 
@@ -251,7 +251,7 @@ func (w *serviceImplWriter) method(def *model.Definition, m *model.Method) error
 	// Handle output
 	switch {
 	case m.Oneway:
-		w.Line(`return nil, rpc.SkipResponse`)
+		w.Line(`return nil, baserpc.SkipResponse`)
 
 	case m.Subservice != nil:
 		w.Line(`return next.Result(), st`)
@@ -314,11 +314,11 @@ func (w *serviceImplWriter) channel_def(def *model.Definition, m *model.Method) 
 	w.Linef(`// %v`, name)
 	w.Line()
 	w.Linef(`type %v struct {`, name)
-	w.Line(`ch rpc.ServerChannel`)
+	w.Line(`ch baserpc.ServerChannel`)
 	w.Line(`req baseproto.Message`)
 	w.Line(`}`)
 	w.Line()
-	w.Linef(`func new%v(ch rpc.ServerChannel, req baseproto.Message) *%v {`, strings.Title(name), name)
+	w.Linef(`func new%v(ch baserpc.ServerChannel, req baseproto.Message) *%v {`, strings.Title(name), name)
 	w.Linef(`return &%v{ch: ch, req: req}`, name)
 	w.Line(`}`)
 	w.Line()

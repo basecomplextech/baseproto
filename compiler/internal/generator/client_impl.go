@@ -52,12 +52,12 @@ func (w *clientImplWriter) def(def *model.Definition) error {
 		w.Line(`)`)
 		w.Line()
 		w.Linef(`type %v struct {`, name)
-		w.Line(`client rpc.Client`)
-		w.Line(`req *rpc.Request`)
+		w.Line(`client baserpc.Client`)
+		w.Line(`req *baserpc.Request`)
 		w.Line(`st status.Status`)
 		w.Line(`}`)
 		w.Line()
-		w.Linef(`func new%vCall(client rpc.Client, req *rpc.Request) %vCall {`, def.Name, def.Name)
+		w.Linef(`func new%vCall(client baserpc.Client, req *baserpc.Request) %vCall {`, def.Name, def.Name)
 		w.Linef(`c := %vPool.New()`, name)
 		w.Line(`c.client = client`)
 		w.Line(`c.req = req`)
@@ -67,7 +67,7 @@ func (w *clientImplWriter) def(def *model.Definition) error {
 		w.Line()
 	} else {
 		w.Linef(`type %v struct {`, name)
-		w.Line(`client rpc.Client`)
+		w.Line(`client baserpc.Client`)
 		w.Line(`}`)
 		w.Line()
 	}
@@ -207,7 +207,7 @@ func (w *clientImplWriter) method_call(def *model.Definition, m *model.Method) e
 		w.Line(`c.req = nil`)
 	} else {
 		w.Line(`// Begin request`)
-		w.Line(`req := rpc.NewRequest()`)
+		w.Line(`req := baserpc.NewRequest()`)
 	}
 
 	// Free request
@@ -333,7 +333,7 @@ func (w *clientImplWriter) method_response(def *model.Definition, m *model.Metho
 
 func (w *clientImplWriter) unwrap(def *model.Definition) error {
 	name := clientImplName(def)
-	w.Linef(`func (c *%v) Unwrap() rpc.Client {`, name)
+	w.Linef(`func (c *%v) Unwrap() baserpc.Client {`, name)
 	w.Line(`return c.client `)
 	w.Line(`}`)
 	w.Line()
@@ -380,10 +380,10 @@ func (w *clientImplWriter) channel_def(def *model.Definition, m *model.Method) e
 	w.Linef(`// %v`, name)
 	w.Line()
 	w.Linef(`type %v struct {`, name)
-	w.Line(`ch rpc.Channel`)
+	w.Line(`ch baserpc.Channel`)
 	w.Line(`}`)
 	w.Line()
-	w.Linef(`func new%v(ch rpc.Channel) *%v {`, strings.Title(name), name)
+	w.Linef(`func new%v(ch baserpc.Channel) *%v {`, strings.Title(name), name)
 	w.Linef(`return &%v{ch: ch}`, name)
 	w.Line(`}`)
 	w.Line()

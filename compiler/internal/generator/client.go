@@ -61,7 +61,7 @@ func (w *clientWriter) new_client(def *model.Definition) error {
 	name := clientImplName(def)
 
 	if def.Service.Sub {
-		w.Linef(`func New%vCall(client rpc.Client, req *rpc.Request) %vCall {`, def.Name, def.Name)
+		w.Linef(`func New%vCall(client baserpc.Client, req *baserpc.Request) %vCall {`, def.Name, def.Name)
 		w.Linef(`return new%vCall(client, req)`, def.Name)
 		w.Line(`}`)
 		w.Line()
@@ -70,7 +70,7 @@ func (w *clientWriter) new_client(def *model.Definition) error {
 		w.Line(`}`)
 		w.Line()
 	} else {
-		w.Linef(`func New%vClient(client rpc.Client) %vClient {`, def.Name, def.Name)
+		w.Linef(`func New%vClient(client baserpc.Client) %vClient {`, def.Name, def.Name)
 		w.Linef(`return &%v{client: client}`, name)
 		w.Line(`}`)
 		w.Line()
@@ -144,7 +144,7 @@ func (w *clientWriter) method_output(def *model.Definition, m *model.Method) err
 // ifaceEnd
 
 func (w *clientWriter) ifaceEnd(def *model.Definition) error {
-	w.Linef(`Unwrap() rpc.Client`)
+	w.Linef(`Unwrap() baserpc.Client`)
 	w.Line(`}`)
 	w.Line()
 	return nil
