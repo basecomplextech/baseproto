@@ -5,8 +5,7 @@
 package generator
 
 import (
-	"fmt"
-
+	"github.com/basecomplextech/baseproto/compiler/internal/golang"
 	"github.com/basecomplextech/baseproto/compiler/internal/model"
 	"github.com/basecomplextech/baseproto/compiler/internal/writer"
 )
@@ -20,83 +19,60 @@ func newMessageWriterWriter(w writer.Writer) *messageWriterWriter {
 }
 
 func (w *messageWriterWriter) write(def *model.Definition) error {
-	if err := w.writer_def(def); err != nil {
+	msg, err := golang.NewMessage(def)
+	if err != nil {
 		return err
 	}
-	if err := w.writer_new_method(def); err != nil {
+
+	if err := w.def(msg); err != nil {
 		return err
 	}
-	if err := w.writer_fields(def); err != nil {
+	if err := w.new(msg); err != nil {
 		return err
 	}
-	if err := w.writer_end(def); err != nil {
+	if err := w.fields(msg); err != nil {
+		return err
+	}
+	if err := w.copy(msg); err != nil {
+		return err
+	}
+	if err := w.end(msg); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (w *messageWriterWriter) writer_def(def *model.Definition) error {
-	w.Linef(`// %vWriter`, def.Name)
+func (w *messageWriterWriter) def(msg *golang.Message) error {
+	w.Linef(`// %v`, msg.Writer)
 	w.Line()
-	w.Linef(`type %vWriter struct {`, def.Name)
-	w.Line(`w baseproto.MessageWriter`)
+	w.Writef(`type %v struct {`, msg.Writer)
+	w.Write(`w baseproto.MessageWriter`)
 	w.Line(`}`)
 	w.Line()
 	return nil
 }
 
-func (w *messageWriterWriter) writer_new_method(def *model.Definition) error {
-	w.Linef(`func New%vWriter() %vWriter {`, def.Name, def.Name)
-	w.Linef(`w := baseproto.NewMessageWriter()`)
-	w.Linef(`return %vWriter{w}`, def.Name)
-	w.Linef(`}`)
-	w.Line()
+func (w *messageWriterWriter) new(msg *golang.Message) error {
+	w.Linef(`func New%v() %v {`, msg.Writer, msg.Writer)
+	w.Linef(`return %v{baseproto.NewMessageWriter()}`, msg.Writer)
+	w.Line(`}`)
 
-	w.Linef(`func New%vWriterBuffer(b buffer.Buffer) %vWriter {`, def.Name, def.Name)
-	w.Linef(`w := baseproto.NewMessageWriterBuffer(b)`)
-	w.Linef(`return %vWriter{w}`, def.Name)
-	w.Linef(`}`)
-	w.Line()
+	w.Linef(`func New%vBuffer(b buffer.Buffer) %v {`, msg.Name, msg.Writer)
+	w.Linef(`return %v{baseproto.NewMessageWriterBuffer(b)}`, msg.Writer)
+	w.Line(`}`)
 
-	w.Linef(`func New%vWriterTo(w baseproto.MessageWriter) %vWriter {`, def.Name, def.Name)
-	w.Linef(`return %vWriter{w}`, def.Name)
-	w.Linef(`}`)
+	w.Linef(`func New%vWriterTo(w baseproto.MessageWriter) %v {`, msg.Name, msg.Writer)
+	w.Linef(`return %v{w}`, msg.Writer)
+	w.Line(`}`)
 	w.Line()
 	return nil
 }
 
-func (w *messageWriterWriter) writer_end(def *model.Definition) error {
-	w.Linef(`func (w %vWriter) Merge(msg %v) error {`, def.Name, def.Name)
-	w.Linef(`return w.w.Merge(msg.Unwrap())`)
-	w.Linef(`}`)
-	w.Line()
+// fields
 
-	w.Linef(`func (w %vWriter) End() error {`, def.Name)
-	w.Linef(`return w.w.End()`)
-	w.Linef(`}`)
-	w.Line()
-
-	w.Linef(`func (w %vWriter) Build() (_ %v, err error) {`, def.Name, def.Name)
-	w.Linef(`bytes, err := w.w.Build()`)
-	w.Linef(`if err != nil {
-		return
-	}`)
-	w.Linef(`return Open%vErr(bytes)`, def.Name)
-	w.Linef(`}`)
-	w.Line()
-
-	w.Linef(`func (w %vWriter) Unwrap() baseproto.MessageWriter {`, def.Name)
-	w.Linef(`return w.w`)
-	w.Linef(`}`)
-	w.Line()
-	return nil
-}
-
-func (w *messageWriterWriter) writer_fields(msg *model.Definition) error {
-	fields := msg.Message.Fields.List
-
-	for _, field := range fields {
-		if err := w.writer_field(msg, field); err != nil {
+func (w *messageWriterWriter) fields(msg *golang.Message) error {
+	for _, field := range msg.Fields {
+		if err := w.field(msg, field); err != nil {
 			return err
 		}
 	}
@@ -105,113 +81,137 @@ func (w *messageWriterWriter) writer_fields(msg *model.Definition) error {
 	return nil
 }
 
-func (w *messageWriterWriter) writer_field(msg *model.Definition, field *model.Field) error {
-	fname := messageFieldName(field)
-	tname := inTypeName(field.Type)
-	wname := fmt.Sprintf("%vWriter", msg.Name)
+func (w *messageWriterWriter) field(msg *golang.Message, field *golang.MessageField) error {
+	tag := field.Tag
+	typ := field.Type
+
+	switch t := typ.(type) {
+	case golang.AnyType:
+		w.Writef(`func (w %v) %v() baseproto.FieldWriter {`, msg.Writer, field.Name)
+		w.Writef(`return w.w.Field(%d)`, tag)
+		w.Line(`}`)
+
+	case golang.AnyMessageType:
+		w.Writef(`func (w %v) %v() baseproto.MessageWriter {`, msg.Writer, field.Name)
+		w.Writef(`return w.w.Field(%d).Message()`, tag)
+		w.Line(`}`)
+
+	case golang.EnumType:
+		encode := t.EncodeFunc()
+
+		w.Writef(`func (w %v) %v(v %v) {`, msg.Writer, field.Name, t.InputName())
+		w.Writef(`baseproto.WriteField(w.w.Field(%d), v, %v)`, tag, encode)
+		w.Line(`}`)
+
+	case golang.ListType:
+		writer := t.Writer()
+		newWriter := t.NewWriter()
+		addElem := t.Elem().AddListElem()
+
+		w.Linef(`func (w %v) %v() %v {`, msg.Writer, field.Name, writer)
+		w.Linef(`w1 := w.w.Field(%d).List()`, tag)
+		w.Linef(`return %v(w1, %v)`, newWriter, addElem)
+		w.Line(`}`)
+
+	case golang.MessageType:
+		writer := t.Writer()
+		newWriter := t.NewWriter()
+
+		w.Linef(`func (w %v) %v() %v {`, msg.Writer, field.Name, writer)
+		w.Linef(`w1 := w.w.Field(%d).Message()`, tag)
+		w.Linef(`return %v(w1)`, newWriter)
+		w.Line(`}`)
+
+	case golang.StructType:
+		encode := t.EncodeFunc()
+
+		w.Writef(`func (w %v) %v(v %v) {`, msg.Writer, field.Name, t.InputName())
+		w.Writef(`baseproto.WriteField(w.w.Field(%d), v, %v)`, tag, encode)
+		w.Line(`}`)
+
+	case golang.ValueType:
+		w.Writef(`func (w %v) %v(v %v) {`, msg.Writer, field.Name, typ.InputName())
+		t.WriteField(w, tag)
+		w.Line(`}`)
+
+	default:
+		panic("unsupported field type")
+	}
+	return nil
+}
+
+// copy
+
+func (w *messageWriterWriter) copy(msg *golang.Message) error {
+	var n int
+
+	for _, field := range msg.Fields {
+		ok, err := w.copyField(msg, field)
+		if err != nil {
+			return err
+		}
+		if ok {
+			n++
+		}
+	}
+
+	if n > 0 {
+		w.Line()
+	}
+	return nil
+}
+
+func (w *messageWriterWriter) copyField(msg *golang.Message, field *golang.MessageField) (
+	bool, error) {
 
 	tag := field.Tag
-	kind := field.Type.Kind
+	typ := field.Type
 
-	switch kind {
-	default:
-		w.Writef(`func (w %vWriter) %v(v %v) {`, msg.Name, fname, tname)
-
-		switch kind {
-		case model.KindBool:
-			w.Writef(`w.w.Field(%d).Bool(v)`, tag)
-		case model.KindByte:
-			w.Writef(`w.w.Field(%d).Byte(v)`, tag)
-
-		case model.KindInt16:
-			w.Writef(`w.w.Field(%d).Int16(v)`, tag)
-		case model.KindInt32:
-			w.Writef(`w.w.Field(%d).Int32(v)`, tag)
-		case model.KindInt64:
-			w.Writef(`w.w.Field(%d).Int64(v)`, tag)
-
-		case model.KindUint16:
-			w.Writef(`w.w.Field(%d).Uint16(v)`, tag)
-		case model.KindUint32:
-			w.Writef(`w.w.Field(%d).Uint32(v)`, tag)
-		case model.KindUint64:
-			w.Writef(`w.w.Field(%d).Uint64(v)`, tag)
-
-		case model.KindBin64:
-			w.Writef(`w.w.Field(%d).Bin64(v)`, tag)
-		case model.KindBin128:
-			w.Writef(`w.w.Field(%d).Bin128(v)`, tag)
-		case model.KindBin192:
-			w.Writef(`w.w.Field(%d).Bin192(v)`, tag)
-		case model.KindBin256:
-			w.Writef(`w.w.Field(%d).Bin256(v)`, tag)
-
-		case model.KindFloat32:
-			w.Writef(`w.w.Field(%d).Float32(v)`, tag)
-		case model.KindFloat64:
-			w.Writef(`w.w.Field(%d).Float64(v)`, tag)
-
-		case model.KindBytes:
-			w.Writef(`w.w.Field(%d).Bytes(v)`, tag)
-		case model.KindString:
-			w.Writef(`w.w.Field(%d).String(v)`, tag)
-		}
-		w.Linef(`}`)
-
-	case model.KindAny:
-		w.Writef(`func (w %v) %v() baseproto.FieldWriter {`, wname, fname)
-		w.Writef(`return w.w.Field(%d)`, tag)
-		w.Linef(`}`)
-
-		w.Writef(`func (w %v) Copy%v(v baseproto.Value) error {`, wname, fname)
+	switch t := typ.(type) {
+	case golang.AnyType:
+		w.Writef(`func (w %v) Copy%v(v baseproto.Value) error {`, msg.Writer, field.Name)
 		w.Writef(`return w.w.Field(%d).Any(v)`, tag)
-		w.Linef(`}`)
+		w.Line(`}`)
 
-	case model.KindAnyMessage:
-		w.Writef(`func (w %v) %v() baseproto.MessageWriter {`, wname, fname)
-		w.Writef(`return w.w.Field(%d).Message()`, tag)
-		w.Linef(`}`)
+	case golang.AnyMessageType:
+		w.Writef(`func (w %v) Copy%v(v baseproto.Message) error {`, msg.Writer, field.Name)
+		w.Writef(`return w.w.Field(%d).Copy(v)`, tag)
+		w.Line(`}`)
 
-		w.Writef(`func (w %v) Copy%v(v baseproto.Message) error {`, wname, fname)
-		w.Writef(`return w.w.Field(%d).Any(v.Raw())`, tag)
-		w.Linef(`}`)
+	case golang.MessageType:
+		w.Linef(`func (w %v) Copy%v(v %v) error {`, msg.Writer, field.Name, t.InputName())
+		w.Linef(`return w.w.Field(%d).Copy(v.Unwrap())`, tag)
+		w.Line(`}`)
 
-	case model.KindEnum:
-		writeFunc := typeWriteFunc(field.Type)
-
-		w.Writef(`func (w %v) %v(v %v) {`, wname, fname, tname)
-		w.Writef(`baseproto.WriteField(w.w.Field(%d), v, %v)`, tag, writeFunc)
-		w.Linef(`}`)
-
-	case model.KindStruct:
-		writeFunc := typeWriteFunc(field.Type)
-
-		w.Writef(`func (w %v) %v(v %v) {`, wname, fname, tname)
-		w.Writef(`baseproto.WriteField(w.w.Field(%d), v, %v)`, tag, writeFunc)
-		w.Linef(`}`)
-
-	case model.KindList:
-		writer := typeWriter(field.Type)
-		buildList := typeWriteFunc(field.Type)
-		encodeElement := typeWriteFunc(field.Type.Element)
-
-		w.Linef(`func (w %v) %v() %v {`, wname, fname, writer)
-		w.Linef(`w1 := w.w.Field(%d).List()`, tag)
-		w.Linef(`return %v(w1, %v)`, buildList, encodeElement)
-		w.Linef(`}`)
-
-	case model.KindMessage:
-		writer := typeWriter(field.Type)
-		writer_new_method := typeWriteFunc(field.Type)
-		w.Linef(`func (w %v) %v() %v {`, wname, fname, writer)
-		w.Linef(`w1 := w.w.Field(%d).Message()`, tag)
-		w.Linef(`return %v(w1)`, writer_new_method)
-		w.Linef(`}`)
-
-		tname := typeName(field.Type)
-		w.Linef(`func (w %v) Copy%v(v %v) error {`, wname, fname, tname)
-		w.Linef(`return w.w.Field(%d).Any(v.Unwrap().Raw())`, tag)
-		w.Linef(`}`)
+	default:
+		return false, nil
 	}
+
+	return true, nil
+}
+
+// end
+
+func (w *messageWriterWriter) end(msg *golang.Message) error {
+	w.Linef(`func (w %v) Merge(msg %v) error {`, msg.Writer, msg.Name)
+	w.Linef(`return w.w.Merge(msg.Unwrap())`)
+	w.Line(`}`)
+	w.Linef(`func (w %v) Unwrap() baseproto.MessageWriter {`, msg.Writer)
+	w.Linef(`return w.w`)
+	w.Line(`}`)
+	w.Line()
+
+	w.Linef(`func (w %v) End() error {`, msg.Writer)
+	w.Linef(`return w.w.End()`)
+	w.Line(`}`)
+
+	w.Linef(`func (w %v) Build() (_ %v, err error) {`, msg.Writer, msg.Name)
+	w.Linef(`bytes, err := w.w.Build()`)
+	w.Linef(`if err != nil {
+		return
+	}`)
+	w.Linef(`return Open%vErr(bytes)`, msg.Name)
+	w.Line(`}`)
+	w.Line()
 	return nil
 }

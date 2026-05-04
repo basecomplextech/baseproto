@@ -67,12 +67,12 @@ func (w *clientWriter) new_client(def *model.Definition) error {
 		w.Line()
 		w.Linef(`func New%vCallErr(st status.Status) %vCall {`, def.Name, def.Name)
 		w.Linef(`return &%v{st: st}`, name)
-		w.Linef(`}`)
+		w.Line(`}`)
 		w.Line()
 	} else {
 		w.Linef(`func New%vClient(client rpc.Client) %vClient {`, def.Name, def.Name)
 		w.Linef(`return &%v{client: client}`, name)
-		w.Linef(`}`)
+		w.Line(`}`)
 		w.Line()
 	}
 

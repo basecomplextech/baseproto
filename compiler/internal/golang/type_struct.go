@@ -16,6 +16,9 @@ type StructType interface {
 
 	// Funcs
 
+	// EncodeFunc returns an encode struct func.
+	EncodeFunc() string
+
 	// DecodeFunc returns a decode struct func.
 	DecodeFunc() string
 
@@ -58,20 +61,17 @@ func (t *structType) Name() string {
 	return t.name
 }
 
+// InputName returns an input type, i.e. string (not baseproto.String).
+func (t *structType) InputName() string {
+	return t.Name()
+}
+
+// OutputName returns an output type, i.e. baseproto.String (not string).
+func (t *structType) OutputName() string {
+	return t.Name()
+}
+
 // Funcs
-
-// DecodeFunc returns a decode struct func.
-func (t *structType) DecodeFunc() string {
-	if t.imp != "" {
-		return fmt.Sprintf("%v.Decode%v", t.imp, t.name)
-	}
-	return "Decode" + t.name
-}
-
-// DecodeListElem returns a decode func for a list element.
-func (t *structType) DecodeListElem() string {
-	return t.DecodeFunc()
-}
 
 // OpenFunc returns an open struct func.
 func (t *structType) OpenFunc() string {
@@ -81,22 +81,38 @@ func (t *structType) OpenFunc() string {
 	return "Open" + t.name
 }
 
-// Fields
-
-// FieldInput returns an input field type, i.e. string (not baseproto.String).
-func (t *structType) FieldInput() string {
-	return t.Name()
+// EncodeFunc returns an encode struct func.
+func (t *structType) EncodeFunc() string {
+	if t.imp != "" {
+		return fmt.Sprintf("%v.Encode%vTo", t.imp, t.name)
+	}
+	return fmt.Sprintf("Encode%vTo", t.name)
 }
 
-// FieldOutput returns an output field type, i.e. baseproto.String (not string).
-func (t *structType) FieldOutput() string {
-	return t.Name()
+// DecodeFunc returns a decode struct func.
+func (t *structType) DecodeFunc() string {
+	if t.imp != "" {
+		return fmt.Sprintf("%v.Decode%v", t.imp, t.name)
+	}
+	return "Decode" + t.name
 }
 
-// Write fields
+// List
 
-// ReturnField writes a field get.
-func (t *structType) ReturnField(w writer.Writer, tag int) error {
+// AddListElem returns an encode func for a list element.
+func (t *structType) AddListElem() string {
+	return t.EncodeFunc()
+}
+
+// GetListElem returns a decode func for a list element.
+func (t *structType) GetListElem() string {
+	return t.DecodeFunc()
+}
+
+// Message
+
+// GetField writes a field get.
+func (t *structType) GetField(w writer.Writer, tag int) error {
 	open := t.OpenFunc()
 	w.Writef(`return %v(m.msg.FieldRaw(%d))`, open, tag)
 	return nil

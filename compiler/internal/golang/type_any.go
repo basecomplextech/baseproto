@@ -43,34 +43,32 @@ func (t *anyType) Name() string {
 	return "baseproto.Value"
 }
 
-// Funcs
+// InputName returns an input type, i.e. string (not baseproto.String).
+func (t *anyType) InputName() string {
+	return "baseproto.Value"
+}
 
-// DecodeListElem returns a decode func for a list element.
-func (t *anyType) DecodeListElem() string {
+// OutputName returns an output type, i.e. baseproto.String (not string).
+func (t *anyType) OutputName() string {
+	return "baseproto.Value"
+}
+
+// List
+
+// GetListElem returns a decode func for a list element.
+func (t *anyType) GetListElem() string {
 	return "baseproto.OpenValue"
 }
 
-// Fields
-
-// FieldInput returns an input field type, i.e. string (not baseproto.String).
-func (t *anyType) FieldInput() string {
-	return "baseproto.Value"
+// AddListElem returns an encode func for a list element.
+func (t *anyType) AddListElem() string {
+	return "baseproto.WriteValue"
 }
 
-// FieldOutput returns an output field type, i.e. baseproto.String (not string).
-func (t *anyType) FieldOutput() string {
-	return "baseproto.Value"
-}
+// Message
 
-// Write fields
-
-// ReturnField writes a field get.
-func (t *anyType) ReturnField(w writer.Writer, tag int) error {
+// GetField writes a field get.
+func (t *anyType) GetField(w writer.Writer, tag int) error {
 	w.Writef(`return m.msg.Field(%d)`, tag)
-	return nil
-}
-
-// WriteField writes a field write.
-func (t *anyType) WriteField(w writer.Writer, tag int) error {
 	return nil
 }

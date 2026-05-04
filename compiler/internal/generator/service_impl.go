@@ -320,7 +320,7 @@ func (w *serviceImplWriter) channel_def(def *model.Definition, m *model.Method) 
 	w.Line()
 	w.Linef(`func new%v(ch rpc.ServerChannel, req baseproto.Message) *%v {`, strings.Title(name), name)
 	w.Linef(`return &%v{ch: ch, req: req}`, name)
-	w.Linef(`}`)
+	w.Line(`}`)
 	w.Line()
 	return nil
 }

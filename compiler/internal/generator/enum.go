@@ -69,7 +69,7 @@ func (w *enumWriter) open_method(def *model.Definition) error {
 	w.Linef(`func Open%v(b []byte) %v {`, name, name)
 	w.Linef(`v, _, _ := baseproto.DecodeInt32(b)`)
 	w.Linef(`return %v(v)`, name)
-	w.Linef(`}`)
+	w.Line(`}`)
 	w.Line()
 	return nil
 }
@@ -83,7 +83,7 @@ func (w *enumWriter) decode_method(def *model.Definition) error {
 	}`)
 	w.Linef(`result = %v(v)`, name)
 	w.Line(`return`)
-	w.Linef(`}`)
+	w.Line(`}`)
 	w.Line()
 	return nil
 }
@@ -91,7 +91,7 @@ func (w *enumWriter) decode_method(def *model.Definition) error {
 func (w *enumWriter) encode_method(def *model.Definition) error {
 	w.Linef(`func Encode%vTo(b buffer.Buffer, v %v) (int, error) {`, def.Name, def.Name)
 	w.Linef(`return baseproto.EncodeInt32(b, int32(v))`)
-	w.Linef(`}`)
+	w.Line(`}`)
 	w.Line()
 	return nil
 }

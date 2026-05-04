@@ -385,7 +385,7 @@ func (w *clientImplWriter) channel_def(def *model.Definition, m *model.Method) e
 	w.Line()
 	w.Linef(`func new%v(ch rpc.Channel) *%v {`, strings.Title(name), name)
 	w.Linef(`return &%v{ch: ch}`, name)
-	w.Linef(`}`)
+	w.Line(`}`)
 	w.Line()
 	return nil
 }

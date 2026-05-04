@@ -15,8 +15,16 @@ type ValueType interface {
 
 	// Funcs
 
+	// EncodeFunc returns an encode func.
+	EncodeFunc() string
+
 	// DecodeFunc returns a decode func.
 	DecodeFunc() string
+
+	// Message
+
+	// WriteField writes a field.
+	WriteField(w writer.Writer, tag int) error
 }
 
 // internal
@@ -93,14 +101,74 @@ func (t *valueType) Name() string {
 	return t.name
 }
 
+// InputName returns an input type, i.e. string (not baseproto.String).
+func (t *valueType) InputName() string {
+	return t.name
+}
+
+// OutputName returns an output type, i.e. baseproto.String (not string).
+func (t *valueType) OutputName() string {
+	switch t.kind {
+	case model.KindBytes:
+		return "baseproto.Bytes"
+	case model.KindString:
+		return "baseproto.String"
+	}
+
+	return t.name
+}
+
 // Funcs
+
+// EncodeFunc returns an encode func.
+func (t *valueType) EncodeFunc() string {
+	switch t.kind {
+	case model.KindBool:
+		return "baseproto.EncodeBool"
+	case model.KindByte:
+		return "baseproto.EncodeByte"
+
+	case model.KindInt16:
+		return "baseproto.EncodeInt16"
+	case model.KindInt32:
+		return "baseproto.EncodeInt32"
+	case model.KindInt64:
+		return "baseproto.EncodeInt64"
+
+	case model.KindUint16:
+		return "baseproto.EncodeUint16"
+	case model.KindUint32:
+		return "baseproto.EncodeUint32"
+	case model.KindUint64:
+		return "baseproto.EncodeUint64"
+
+	case model.KindBin64:
+		return "baseproto.EncodeBin64"
+	case model.KindBin128:
+		return "baseproto.EncodeBin128"
+	case model.KindBin192:
+		return "baseproto.EncodeBin192"
+	case model.KindBin256:
+		return "baseproto.EncodeBin256"
+
+	case model.KindFloat32:
+		return "baseproto.EncodeFloat32"
+	case model.KindFloat64:
+		return "baseproto.EncodeFloat64"
+
+	case model.KindBytes:
+		return "baseproto.EncodeBytes"
+	case model.KindString:
+		return "baseproto.EncodeString"
+
+	default:
+		panic("unsupported value type")
+	}
+}
 
 // DecodeFunc returns a decode func.
 func (t *valueType) DecodeFunc() string {
 	switch t.kind {
-	case model.KindAny:
-		return "baseproto.ParseValue"
-
 	case model.KindBool:
 		return "baseproto.DecodeBool"
 	case model.KindByte:
@@ -143,34 +211,22 @@ func (t *valueType) DecodeFunc() string {
 	panic("unsupported value type")
 }
 
-// DecodeListElem returns a decode func for a list element.
-func (t *valueType) DecodeListElem() string {
+// List
+
+// AddListElem returns an encode func for a list element.
+func (t *valueType) AddListElem() string {
+	return t.EncodeFunc()
+}
+
+// GetListElem returns a decode func for a list element.
+func (t *valueType) GetListElem() string {
 	return t.DecodeFunc()
 }
 
-// Fields
+// Message
 
-// FieldInput returns an input field type, i.e. string (not baseproto.String).
-func (t *valueType) FieldInput() string {
-	return t.name
-}
-
-// FieldOutput returns an output field type, i.e. baseproto.String (not string).
-func (t *valueType) FieldOutput() string {
-	switch t.kind {
-	case model.KindBytes:
-		return "baseproto.Bytes"
-	case model.KindString:
-		return "baseproto.String"
-	}
-
-	return t.name
-}
-
-// Write fields
-
-// ReturnField writes a field get.
-func (t *valueType) ReturnField(w writer.Writer, tag int) error {
+// GetField writes a field get.
+func (t *valueType) GetField(w writer.Writer, tag int) error {
 	switch t.kind {
 	case model.KindBool:
 		w.Writef(`return m.msg.Bool(%d)`, tag)
@@ -217,7 +273,7 @@ func (t *valueType) ReturnField(w writer.Writer, tag int) error {
 	return nil
 }
 
-// WriteField writes a field write.
+// WriteField writes a field.
 func (t *valueType) WriteField(w writer.Writer, tag int) error {
 	switch t.kind {
 	case model.KindBool:

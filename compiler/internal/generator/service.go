@@ -43,7 +43,7 @@ func (w *serviceWriter) iface(def *model.Definition) error {
 		}
 	}
 
-	w.Linef(`}`)
+	w.Line(`}`)
 	w.Line()
 	return nil
 }
@@ -107,11 +107,11 @@ func (w *serviceWriter) new_handler(def *model.Definition) error {
 		w.Linef(`func New%vHandler(ctx rpc.Context, channel rpc.ServerChannel, index int) rpc.Subhandler1[%v] {`,
 			def.Name, def.Name)
 		w.Linef(`return new%vHandler(ctx, channel, index)`, def.Name)
-		w.Linef(`}`)
+		w.Line(`}`)
 	} else {
 		w.Linef(`func New%vHandler(s %v) rpc.Handler {`, def.Name, def.Name)
 		w.Linef(`return &%v{service: s}`, name)
-		w.Linef(`}`)
+		w.Line(`}`)
 	}
 
 	w.Line()
@@ -159,7 +159,7 @@ func (w *serviceWriter) channel(def *model.Definition, m *model.Method) error {
 		w.Line(`SendEnd(ctx async.Context) status.Status`)
 	}
 
-	w.Linef(`}`)
+	w.Line(`}`)
 	w.Line()
 	return nil
 }

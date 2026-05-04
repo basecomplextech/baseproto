@@ -232,3 +232,7 @@ func (f FieldWriter) Message() MessageWriter {
 	f.w.beginField(f.tag)
 	return f.w.Message()
 }
+
+func (f FieldWriter) Copy(src values.Message) error {
+	return f.Any(src.Raw())
+}

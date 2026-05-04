@@ -4,19 +4,28 @@
 
 package golang
 
-import "github.com/basecomplextech/baseproto/compiler/internal/model"
+import (
+	"fmt"
+
+	"github.com/basecomplextech/baseproto/compiler/internal/model"
+)
 
 type Message struct {
 	Name   string
+	Writer string
+
 	Fields []*MessageField
 }
 
 func NewMessage(def *model.Definition) (*Message, error) {
 	msg := def.Message
+	name := toUpperCamelCase(def.Name)
+	writerName := fmt.Sprintf("%vWriter", name)
 
 	// Make message
 	m := &Message{
-		Name:   toUpperCamelCase(def.Name),
+		Name:   name,
+		Writer: writerName,
 		Fields: make([]*MessageField, 0, msg.Fields.Len()),
 	}
 

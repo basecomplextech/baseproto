@@ -17,11 +17,14 @@ type EnumType interface {
 
 	// Funcs
 
-	// DecodeFunc returns a decode func for an enum.
-	DecodeFunc() string
-
 	// OpenFunc returns an open func for an enum.
 	OpenFunc() string
+
+	// EncodeFunc returns an encode func for an enum.
+	EncodeFunc() string
+
+	// DecodeFunc returns a decode func for an enum.
+	DecodeFunc() string
 }
 
 // internal
@@ -61,15 +64,17 @@ func (t *enumType) Name() string {
 	return t.name
 }
 
-// Funcs
-
-// DecodeFunc returns a decode func for an enum.
-func (t *enumType) DecodeFunc() string {
-	if t.imp != "" {
-		return fmt.Sprintf("%v.Decode%v", t.imp, t.name)
-	}
-	return fmt.Sprintf("Decode%v", t.name)
+// InputName returns an input type, i.e. string (not baseproto.String).
+func (t *enumType) InputName() string {
+	return t.Name()
 }
+
+// OutputName returns an output type, i.e. baseproto.String (not string).
+func (t *enumType) OutputName() string {
+	return t.Name()
+}
+
+// Funcs
 
 // OpenFunc returns an open func for an enum.
 func (t *enumType) OpenFunc() string {
@@ -79,34 +84,40 @@ func (t *enumType) OpenFunc() string {
 	return fmt.Sprintf("Open%v", t.name)
 }
 
-// DecodeListElem returns a decode func for a list element.
-func (t *enumType) DecodeListElem() string {
+// EncodeFunc returns an encode func for an enum.
+func (t *enumType) EncodeFunc() string {
+	if t.imp != "" {
+		return fmt.Sprintf("%v.Encode%vTo", t.imp, t.name)
+	}
+	return fmt.Sprintf("Encode%vTo", t.name)
+}
+
+// DecodeFunc returns a decode func for an enum.
+func (t *enumType) DecodeFunc() string {
+	if t.imp != "" {
+		return fmt.Sprintf("%v.Decode%v", t.imp, t.name)
+	}
+	return fmt.Sprintf("Decode%v", t.name)
+}
+
+// List
+
+// AddListElem returns an encode func for a list element.
+func (t *enumType) AddListElem() string {
+	return t.EncodeFunc()
+}
+
+// GetListElem returns a decode func for a list element.
+func (t *enumType) GetListElem() string {
 	return t.DecodeFunc()
 }
 
-// Fields
+// Message
 
-// FieldInput returns an input field type, i.e. string (not baseproto.String).
-func (t *enumType) FieldInput() string {
-	return t.Name()
-}
-
-// FieldOutput returns an output field type, i.e. baseproto.String (not string).
-func (t *enumType) FieldOutput() string {
-	return t.Name()
-}
-
-// Write fields
-
-// ReturnField writes a field get.
-func (t *enumType) ReturnField(w writer.Writer, tag int) error {
+// GetField writes a field get.
+func (t *enumType) GetField(w writer.Writer, tag int) error {
 	open := t.OpenFunc()
 
 	w.Writef(`return %v(m.msg.FieldRaw(%d))`, open, tag)
-	return nil
-}
-
-// WriteField writes a field write.
-func (t *enumType) WriteField(w writer.Writer, tag int) error {
 	return nil
 }

@@ -17,26 +17,24 @@ type Type interface {
 	// Name returns a type name.
 	Name() string
 
-	// Funcs
+	// InputName returns an input type, i.e. string (not baseproto.String).
+	InputName() string
 
-	// DecodeListElem returns a decode func for a list element.
-	DecodeListElem() string
+	// OutputName returns an output type, i.e. baseproto.String (not string).
+	OutputName() string
 
-	// Fields
+	// List
 
-	// FieldInput returns an input field type, i.e. string (not baseproto.String).
-	FieldInput() string
+	// AddListElem returns an encode func for a list element.
+	AddListElem() string
 
-	// FieldOutput returns an output field type, i.e. baseproto.String (not string).
-	FieldOutput() string
+	// GetListElem returns a decode func for a list element.
+	GetListElem() string
 
-	// Write fields
+	// Message
 
-	// ReturnField writes a field get.
-	ReturnField(w writer.Writer, tag int) error
-
-	// WriteField writes a field write.
-	WriteField(w writer.Writer, tag int) error
+	// GetField writes a field get.
+	GetField(w writer.Writer, tag int) error
 }
 
 // NewType returns a new type.
