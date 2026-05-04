@@ -54,18 +54,17 @@ func (w *fileWriter) file(file *model.File) error {
 	w.Line(`var (`)
 	w.Line(`_ alloc.Buffer`)
 	w.Line(`_ async.Context`)
-	w.Line(`_ bin.Bin128`)
-	w.Line(`_ buffer.Buffer`)
-	w.Line(`_ baseproto.MessageTable`)
-	w.Line(`_ pools.Pool[any]`)
-	w.Line(`_ ref.Ref`)
-
 	if !w.skipRPC {
 		w.Line(`_ baserpc.Client`)
+	}
+	w.Line(`_ baseproto.Kind`)
+	w.Line(`_ bin.Bin64`)
+	w.Line(`_ buffer.Buffer`)
+	w.Line(`_ pools.Pool[any]`)
+	if !w.skipRPC {
 		w.Line(`_ prpc.Request`)
 	}
-
-	w.Line(`_ baseproto.Kind`)
+	w.Line(`_ ref.Ref`)
 	w.Line(`_ status.Status`)
 	w.Line(`)`)
 

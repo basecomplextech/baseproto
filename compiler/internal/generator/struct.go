@@ -100,7 +100,10 @@ func (w *structWriter) decode(str *golang.Struct) error {
 			return
 		}`)
 		w.Line(`off -= n`)
-		w.Line()
+
+		if i != 0 {
+			w.Line()
+		}
 	}
 
 	w.Line(`return size, err`)
