@@ -62,7 +62,7 @@ func (p *parser) ParseDirectory(path string) ([]*syntax.File, error) {
 	}
 
 	// Scan files
-	pattern := filepath.Join(path, "*.baseproto")
+	pattern := filepath.Join(path, "*.spec")
 	filepaths, err := filepath.Glob(pattern)
 	if err != nil {
 		return nil, err
